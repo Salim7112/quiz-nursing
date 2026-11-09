@@ -104,43 +104,52 @@
     <!-- Main Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <!-- Stats Bar -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-list-ol"></i>
+        <!-- Stats Bar & Reset Button -->
+        <div class="flex flex-col md:flex-row gap-3 mb-6 items-stretch">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-list-ol"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Questions</span>
+                        <span class="text-base font-bold text-slate-900 dark:text-white" id="statTotal">200</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Questions</span>
-                    <span class="text-base font-bold text-slate-900 dark:text-white" id="statTotal">200</span>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Correct Answers</span>
+                        <span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="statCorrect">0</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Incorrect Answers</span>
+                        <span class="text-base font-bold text-rose-600 dark:text-rose-400" id="statIncorrect">0</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Overall Progress</span>
+                        <span class="text-base font-bold text-brand-600 dark:text-brand-400" id="statProgress">0%</span>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Correct Answers</span>
-                    <span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="statCorrect">0</span>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Incorrect Answers</span>
-                    <span class="text-base font-bold text-rose-600 dark:text-rose-400" id="statIncorrect">0</span>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Overall Progress</span>
-                    <span class="text-base font-bold text-brand-600 dark:text-brand-400" id="statProgress">0%</span>
-                </div>
+            <!-- Reset Button Box -->
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center">
+                <button id="resetProgressBtn" class="w-full md:w-auto px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-bold border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>مسح الإجابات للبدء من جديد</span>
+                </button>
             </div>
         </div>
 
@@ -377,6 +386,11 @@
         </div>
     </footer>
 
+    <!-- Visitor Counter -->
+    <div style="text-align: center; margin: 15px 0;">
+      <img src="https://komarev.com/ghpvc/?username=salim7112&label=Total+Visits&color=0284c7&style=flat" alt="Visitor Count" />
+    </div>
+
     <!-- JavaScript Engine -->
     <script>
         // 200 Complete Academic Questions Array
@@ -466,12 +480,14 @@
             curQId++;
         }
 
-        // Global State
+        // Global State with LocalStorage Loading
         let currentMode = 'practice';
         let currentPage = 1;
         const pageSize = 10;
         let filteredQuestions = [...questionsData];
-        let userAnswers = {};
+        
+        // استرجاع الإجابات المحفوظة مسبقاً من ذاكرة المتصفح
+        let userAnswers = JSON.parse(localStorage.getItem('psych_saved_user_answers_v3') || '{}');
         let bookmarks = new Set(JSON.parse(localStorage.getItem('psych_bm_en_v2') || '[]'));
 
         let examQuestions = [];
@@ -527,6 +543,9 @@
             document.getElementById('prevBtn').addEventListener('click', () => changePage(-1));
             document.getElementById('nextBtn').addEventListener('click', () => changePage(1));
 
+            // ربط زر مسح الإجابات
+            document.getElementById('resetProgressBtn').addEventListener('click', resetAllProgress);
+
             document.getElementById('openGridBtn').addEventListener('click', openGridModal);
             document.getElementById('closeGridBtn').addEventListener('click', closeGridModal);
             document.getElementById('gridModal').addEventListener('click', (e) => {
@@ -539,6 +558,17 @@
             document.getElementById('flashcardElement').addEventListener('click', flipFlashcard);
             document.getElementById('prevFlashcardBtn').addEventListener('click', () => changeFlashcard(-1));
             document.getElementById('nextFlashcardBtn').addEventListener('click', () => changeFlashcard(1));
+        }
+
+        // دالة مسح الإجابات للبدء من جديد
+        function resetAllProgress() {
+            if (confirm("هل أنت متأكد من رغبتك في مسح كافة الإجابات السابقة والبدء من جديد؟")) {
+                userAnswers = {};
+                localStorage.removeItem('psych_saved_user_answers_v3');
+                applyFilters();
+                renderFullGridModal();
+                showToast('تم مسح جميع الإجابات بنجاح', 'success');
+            }
         }
 
         function switchMode(mode) {
@@ -735,8 +765,10 @@
             return card;
         }
 
+        // حفظ الإجابة فورياً في الذاكرة الدائمة عند النقر عليها
         function answerPracticeQuestion(qId, optIdx) {
             userAnswers[qId] = optIdx;
+            localStorage.setItem('psych_saved_user_answers_v3', JSON.stringify(userAnswers));
             renderPracticeQuestions();
             updateStats();
             renderFullGridModal();
@@ -1106,11 +1138,5 @@
         window.addEventListener('load', safeInitApp);
         setTimeout(safeInitApp, 300);
     </script>
-    
-   <div style="text-align: center; margin: 15px 0;">
-  <img src="https://komarev.com/ghpvc/?username=salim7112&label=Total+Visits&color=0284c7&style=flat" alt="Visitor Count" />
-</div>
- 
-    
 </body>
 </html>
