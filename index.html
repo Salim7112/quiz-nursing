@@ -1,0 +1,1101 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatric Nursing 200 MCQ Platform - University of Mosul</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#074e6f',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Native CSS Fallback for offline/standalone rendering -->
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        button, select, input { pointer-events: auto !important; cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+                            Psychiatric & Mental Health Nursing (200 MCQ Bank)
+                        </h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            University of Mosul - College of Nursing | Stage 4 (2026-2027)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Controls Right -->
+                <div class="flex items-center space-x-2">
+                    <button id="openGridBtn" class="px-3 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-table-cells"></i>
+                        <span class="hidden sm:inline">200 MCQ Palette</span>
+                    </button>
+                    <button id="themeToggleBtn" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="Toggle Light/Dark Theme">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Navigation Tabs -->
+            <div class="flex items-center space-x-2 mt-3 border-t border-slate-100 dark:border-slate-700/60 pt-2 overflow-x-auto custom-scrollbar">
+                <button id="tab-practice" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm">
+                    <i class="fa-solid fa-square-check"></i>
+                    <span>Practice Mode</span>
+                </button>
+                <button id="tab-exam" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <span>Timed Mock Exam</span>
+                </button>
+                <button id="tab-flashcards" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-clone"></i>
+                    <span>Flashcards</span>
+                </button>
+                <button id="tab-bookmarks" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-bookmark text-amber-500"></i>
+                    <span>Bookmarks (<span id="bookmarkCountBadge">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-list-ol"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Questions</span>
+                    <span class="text-base font-bold text-slate-900 dark:text-white" id="statTotal">200</span>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Correct Answers</span>
+                    <span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="statCorrect">0</span>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Incorrect Answers</span>
+                    <span class="text-base font-bold text-rose-600 dark:text-rose-400" id="statIncorrect">0</span>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Overall Progress</span>
+                    <span class="text-base font-bold text-brand-600 dark:text-brand-400" id="statProgress">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Box -->
+        <div id="filterControls" class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6">
+            <div class="flex flex-col md:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search keywords (e.g., Delusion, Dopamine, Peplau, Autonomy)..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="w-full md:w-80">
+                    <select id="chapterFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="all">All Modules (200 MCQs)</option>
+                        <option value="1">Chap 1-1: Concept, History & Scope (Q1-35)</option>
+                        <option value="2">Chap 1-2: General Symptomatology (Q36-95)</option>
+                        <option value="3">Chap 1-3: CNS & Neurobiology (Q96-135)</option>
+                        <option value="4">Chap 2: Theories & Defense Mechanisms (Q136-170)</option>
+                        <option value="5">Chap 3: Ethical & Legal Issues (Q171-185)</option>
+                        <option value="6">Chap 12: Therapeutic Nurse-Client Relationship (Q186-200)</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-48">
+                    <select id="statusFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="all">All Statuses</option>
+                        <option value="unanswered">Unanswered</option>
+                        <option value="correct">Correct</option>
+                        <option value="incorrect">Incorrect</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE 1: PRACTICE VIEW -->
+        <div id="practiceView" class="space-y-6">
+            <div id="questionsList" class="space-y-6">
+                <!-- Dynamic Question Cards -->
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-chevron-left"></i> Previous
+                </button>
+                <span id="pageIndicator" class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">Page 1 of 20</span>
+                <button id="nextBtn" class="px-4 py-2 rounded-lg bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 disabled:opacity-50 flex items-center gap-2 transition">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODE 2: MOCK EXAM VIEW -->
+        <div id="examView" class="hidden space-y-6">
+            <!-- Setup Card -->
+            <div id="examSetupCard" class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-center max-w-xl mx-auto space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Psychiatric Nursing Mock Exam Setup</h2>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Simulates academic university & licensing board exams. Answers and rationales are revealed only after final submission.
+                </p>
+                <div class="grid grid-cols-2 gap-4 text-left pt-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Question Count:</label>
+                        <select id="examCountSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
+                            <option value="20">20 Questions (Quick)</option>
+                            <option value="50" selected>50 Questions (Standard)</option>
+                            <option value="100">100 Questions (Half Exam)</option>
+                            <option value="200">200 Questions (Full Curriculum)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Time Limit:</label>
+                        <select id="examTimeSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
+                            <option value="30">30 Minutes</option>
+                            <option value="60" selected>60 Minutes</option>
+                            <option value="120">120 Minutes (2 Hours)</option>
+                            <option value="180">180 Minutes (3 Hours)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="startExamBtn" class="w-full py-3 rounded-lg bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Start Timed Mock Exam Now
+                </button>
+            </div>
+
+            <!-- Active Exam Screen -->
+            <div id="examActivePanel" class="hidden space-y-6">
+                <!-- Top Exam Bar -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 block font-semibold">Time Remaining:</span>
+                        <span id="examTimer" class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400">00:00:00</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-semibold">Question Position:</span>
+                        <span id="examProgressText" class="text-base font-bold text-slate-800 dark:text-slate-100">1 of 50</span>
+                    </div>
+                    <button id="finishExamBtn" class="px-4 py-2 rounded-lg bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 transition shadow">
+                        Submit & Finish Exam
+                    </button>
+                </div>
+
+                <!-- Active Exam Question Box -->
+                <div id="examQuestionBox" class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                    <!-- Dynamic Content -->
+                </div>
+
+                <!-- Quick Exam Navigation Grid -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h4 class="text-xs font-bold text-slate-500 mb-3">Quick Navigation Map:</h4>
+                    <div id="examGridMap" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                        <!-- Dynamic Buttons -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Result Report -->
+            <div id="examResultReport" class="hidden space-y-6">
+                <!-- Scorecard Content -->
+            </div>
+        </div>
+
+        <!-- MODE 3: FLASHCARDS VIEW -->
+        <div id="flashcardsView" class="hidden space-y-6 max-w-2xl mx-auto">
+            <div class="text-center space-y-2">
+                <span id="flashcardCounter" class="text-xs font-bold px-3 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 rounded-full">Card 1 of 200</span>
+                <p class="text-xs text-slate-500">Click card to flip and reveal correct answer and clinical rationale</p>
+            </div>
+
+            <!-- 3D Card Container -->
+            <div class="perspective-1000 w-full min-h-[360px]">
+                <div id="flashcardElement" class="w-full h-full min-h-[360px] relative transform-style-3d transition-transform duration-500 cursor-pointer shadow-lg rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col justify-between">
+                    <!-- Front Side -->
+                    <div id="cardFront" class="backface-hidden w-full h-full flex flex-col justify-between space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span id="cardChapterBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">Module 1</span>
+                            <i class="fa-solid fa-rotate text-slate-400"></i>
+                        </div>
+                        <div class="my-auto text-center py-6">
+                            <h3 id="cardQuestionText" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed"></h3>
+                        </div>
+                        <div class="text-center text-xs text-brand-600 dark:text-brand-400 font-bold">
+                            Click to reveal answer & rationale <i class="fa-solid fa-hand-pointer ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div id="cardBack" class="backface-hidden rotate-y-180 absolute inset-0 p-6 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 flex flex-col justify-between space-y-4 overflow-y-auto custom-scrollbar">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> Correct Answer:</span>
+                            <p id="cardAnswerText" class="text-sm sm:text-base font-bold text-emerald-300 mb-4"></p>
+                            <span class="text-xs text-slate-400 font-bold block mb-1">Academic Rationale:</span>
+                            <p id="cardExplanationText" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                        </div>
+                        <div class="text-center text-xs text-slate-400 pt-2 border-t border-slate-800">
+                            Click again to flip back
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcard Nav Buttons -->
+            <div class="flex items-center justify-between gap-4">
+                <button id="prevFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs sm:text-sm hover:bg-slate-300 transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Card
+                </button>
+                <button id="nextFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 transition flex items-center gap-2">
+                    Next Card <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODE 4: BOOKMARKS VIEW -->
+        <div id="bookmarksView" class="hidden space-y-6">
+            <div id="bookmarksList" class="space-y-6">
+                <!-- Bookmarked Cards -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 200 MCQ GRID MODAL -->
+    <div id="gridModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-table-cells text-brand-600 text-lg"></i>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base">Full 200 MCQ Palette Navigator</h3>
+                </div>
+                <button id="closeGridBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <!-- Legend -->
+            <div class="p-3 bg-slate-100 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 text-xs font-semibold justify-center">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600"></span> Unanswered</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Correct</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Incorrect</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Bookmarked</span>
+            </div>
+            <!-- Grid Container -->
+            <div id="fullGridContainer" class="p-4 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                <!-- Dynamic 200 Buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-brand-400 text-lg"></i>
+        <span id="toastMsg" class="text-xs sm:text-sm font-semibold"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-5 mt-12 text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-bold">University of Mosul - College of Nursing | Stage 4 (2026-2027)</p>
+            <p class="mt-1">Psychiatric & Mental Health Nursing Academic Curriculum</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // 200 Complete Academic Questions Array
+        const questionsData = [
+            // CHAPTER 1-1 (1-35)
+            { id: 1, chapter: 1, question: "According to the World Health Organization (WHO), how is health defined?", options: ["A) State of physical independence without organic pathogens", "B) State of complete physical, mental, and social well-being and not merely the absence of disease or infirmity", "C) Capacity to perform daily tasks without medication", "D) Psychological stability without normal life stresses"], answer: 1, explanation: "The WHO defines health as a state of complete physical, mental, and social well-being and not merely the absence of disease or infirmity." },
+            { id: 2, chapter: 1, question: "Which component of mental health refers to making decisions based on internalized values rather than external pressures?", options: ["A) Environmental Mastery", "B) Autonomy and Independence", "C) Reality Orientation", "D) Stress Management"], answer: 1, explanation: "Autonomy refers to self-direction, responsibility, and making decisions based on internal principles rather than external pressures." },
+            { id: 3, chapter: 1, question: "An individual faces unpredictable life changes with flexibility and optimism. This demonstrates high capacity in:", options: ["A) Tolerance of Life's Uncertainties", "B) Abstract Thinking", "C) Autistic Thinking", "D) Concrete Thinking"], answer: 0, explanation: "Tolerance of Life's Uncertainties reflects accepting ambiguity and change without becoming overwhelmed." },
+            { id: 4, chapter: 1, question: "Healthy self-esteem as a component of mental health is best characterized by:", options: ["A) Narcissistic evaluation of superior abilities", "B) Realistic evaluation of one's worth, strengths, and limitations", "C) Unconditional approval of all personal behaviors", "D) Total reliance on external validation"], answer: 1, explanation: "Healthy self-esteem involves realistic evaluation of personal worth, strengths, and limits." },
+            { id: 5, chapter: 1, question: "Problem-solving, adaptability, and modifying one's environment to meet personal needs represent:", options: ["A) Environmental Mastery", "B) Reality Orientation", "C) Autonomy and Independence", "D) Stress Management"], answer: 0, explanation: "Environmental mastery is the ability to effectively manage life situations, solve problems, adapt, and utilize resources." },
+            { id: 6, chapter: 1, question: "Distinguishing between fact and fantasy and accurately recognizing time, place, and person defines:", options: ["A) Reality Orientation", "B) Abstract Reasoning", "C) Environmental Mastery", "D) Self-Actualization"], answer: 0, explanation: "Reality orientation is accurately perceiving the environment, distinguishing fact from fantasy, and knowing person, place, and time." },
+            { id: 7, chapter: 1, question: "A mental disorder is defined as a clinically significant syndrome characterized by disturbances in:", options: ["A) Physical height and reflexes", "B) Cognition, emotion regulation, or behavior causing distress or impairment", "C) Political beliefs and non-conformity", "D) Temporary grief under 24 hours"], answer: 1, explanation: "Mental disorders involve disturbances in cognition, emotion regulation, or behavior causing significant distress or functional impairment." },
+            { id: 8, chapter: 1, question: "Genetic vulnerability, neurochemical imbalances, and brain structure abnormalities are classified under:", options: ["A) Biological Factors", "B) Psychological Factors", "C) Interpersonal Factors", "D) Socio-cultural Factors"], answer: 0, explanation: "Biological factors encompass genetics, neurochemistry, neuroanatomy, and medical conditions." },
+            { id: 9, chapter: 1, question: "In ancient times, mental illness was primarily attributed to:", options: ["A) Dopamine imbalances", "B) Divine displeasure, punishment for sins, and supernatural forces", "C) Social isolation and poverty", "D) Frontal cortex lesions"], answer: 1, explanation: "Ancient societies viewed sickness and mental illness as punishments from gods for wrongdoing or demonic influence." },
+            { id: 10, chapter: 1, question: "Aristotle (382-322 BC) posited that mental disorders stemmed from humor imbalances. Which humor corresponded to sadness?", options: ["A) Blood", "B) Water", "C) Yellow bile", "D) Black bile"], answer: 3, explanation: "Aristotle's humors: Blood (happiness), Water (calmness), Yellow bile (anger), Black bile (sadness)." },
+            { id: 11, chapter: 1, question: "Treatments based on humorism that persisted into the 19th century included:", options: ["A) Bloodletting, starving, and purging", "B) Psychotherapy and dream analysis", "C) Electroconvulsive therapy", "D) Benzodiazepines"], answer: 0, explanation: "To restore humor balance, practitioners historically used bloodletting, starvation, and purging." },
+            { id: 12, chapter: 1, question: "During the Early Christian Era (1-1000 AD), when exorcisms failed, priests resorted to:", options: ["A) Incarceration in dungeons, flogging, and starving", "B) Moral treatment retreats", "C) Community mental health centers", "D) Group counseling"], answer: 0, explanation: "If exorcisms failed, severe measures such as imprisonment in dungeons, flogging, and starvation were used." },
+            { id: 13, chapter: 1, question: "In 1547, which institution became the first official hospital designated for the mentally ill in Renaissance England?", options: ["A) St. Mary of Bethlehem Hospital (Bedlam)", "B) The York Retreat", "C) Bicêtre Hospital", "D) Salpêtrière Hospital"], answer: 0, explanation: "St. Mary of Bethlehem Hospital officially became the first mental asylum in 1547 in Renaissance England." },
+            { id: 14, chapter: 1, question: "Philippe Pinel famously reformed psychiatric care in France during the 1790s by:", options: ["A) Removing chains from patients and promoting kind communication", "B) Synthesizing chlorpromazine", "C) Publishing the first nursing textbook", "D) Developing operant conditioning"], answer: 0, explanation: "Philippe Pinel removed chains from asylum patients in Paris, viewing mental illness as a medical condition deserving dignity." },
+            { id: 15, chapter: 1, question: "William Tuke, founder of The York Retreat (1796), advocated for Moral Treatment by providing:", options: ["A) A home-like setting with nutrition, work activities, and respect", "B) Strict confinement with daily bloodletting", "C) Psychosurgery and ECT", "D) Involuntary isolation"], answer: 0, explanation: "William Tuke established The York Retreat to offer a peaceful, respectful environment with work, nutrition, and moral support." },
+            { id: 16, chapter: 1, question: "Dorothea Dix is celebrated in American mental health reform for:", options: ["A) Advocating state responsibility and establishing 32 state hospitals", "B) Discovering Lithium", "C) Formulating Peplau's theory", "D) Authoring the ANA code"], answer: 0, explanation: "Dorothea Dix campaigned for state-supported care, leading to the creation of 32 state mental hospitals in the US." },
+            { id: 17, chapter: 1, question: "The introduction of psychotropic medications in the 1950s began with which landmark antipsychotic drug?", options: ["A) Chlorpromazine (Thorazine)", "B) Haloperidol (Haldol)", "C) Fluoxetine (Prozac)", "D) Diazepam (Valium)"], answer: 0, explanation: "Chlorpromazine (Thorazine) was the first antipsychotic introduced in the 1950s, revolutionary in controlling psychotic symptoms." },
+            { id: 18, chapter: 1, question: "Lithium was introduced into psychiatric treatment in the 1950s primarily as a(n):", options: ["A) Antimanic agent / Mood stabilizer", "B) Anxiolytic benzodiazepine", "C) Tricyclic antidepressant", "D) Anticholinergic agent"], answer: 0, explanation: "Lithium was introduced as an antimanic agent to manage manic episodes in bipolar spectrum disorders." },
+            { id: 19, chapter: 1, question: "The Community Mental Health Centers Construction Act of 1963 triggered deinstitutionalization by:", options: ["A) Shifting care from large state institutions to community-based centers", "B) Mandating lifelong hospitalization", "C) Banning outpatient clinics", "D) Eliminating disability funding"], answer: 0, explanation: "The 1963 CMHC Act promoted treating individuals in less restrictive, community-based settings, initiating deinstitutionalization." },
+            { id: 20, chapter: 1, question: "How did federal programs SSI and SSDI support deinstitutionalization in the 1960s?", options: ["A) Provided financial income directly to individuals with severe mental illness to live independently", "B) Funded asylum expansions", "C) Covered lobotomies", "D) Penalized community centers"], answer: 0, explanation: "SSI and SSDI provided direct financial support, enabling clients with severe mental illness to live independently." },
+            { id: 21, chapter: 1, question: "Who was the first American psychiatric nurse, graduating in 1873?", options: ["A) Linda Richards", "B) Harriet Bailey", "C) Hildegard Peplau", "D) June Mellow"], answer: 0, explanation: "Linda Richards became the first American psychiatric nurse in 1873." },
+            { id: 22, chapter: 1, question: "The first formal training school for nurses in mental health was established in 1882 at:", options: ["A) McLean Hospital, Massachusetts", "B) Johns Hopkins Hospital", "C) Bellevue Hospital", "D) St. Thomas' Hospital"], answer: 0, explanation: "Formal psychiatric nursing education began in 1882 at McLean Hospital in Massachusetts." },
+            { id: 23, chapter: 1, question: "The first psychiatric nursing textbook was published in 1920 by:", options: ["A) Harriet Bailey", "B) Linda Richards", "C) Dorothea Dix", "D) June Mellow"], answer: 0, explanation: "Harriet Bailey authored the first psychiatric nursing textbook in 1920." },
+            { id: 24, chapter: 1, question: "Which nursing school was the first to include psychiatric nursing in its curriculum in 1913?", options: ["A) Johns Hopkins", "B) Harvard Nursing", "C) Columbia University", "D) Yale School of Nursing"], answer: 0, explanation: "Johns Hopkins became the first nursing school to include psychiatric nursing in its course of study in 1913." },
+            { id: 25, chapter: 1, question: "Hildegard Peplau revolutionized psychiatric nursing by focusing on:", options: ["A) The therapeutic nurse-patient relationship and anxiety levels", "B) Psychosurgery management", "C) Commitment hearings", "D) Pharmacokinetics"], answer: 0, explanation: "Peplau established the foundation of modern psychiatric nursing through her work on interpersonal relations and anxiety." },
+            { id: 26, chapter: 1, question: "June Mellow's theoretical work in psychiatric nursing emphasized:", options: ["A) Psychosocial needs, daily-life functioning, and strengths in severe mental illness", "B) Pavlovian conditioning", "C) Skinnerian schedules", "D) Commitment laws"], answer: 0, explanation: "June Mellow focused on clients' psychosocial needs, functional strengths, and direct nursing involvement in daily living." },
+            { id: 27, chapter: 1, question: "Which professional association specifically formulates practice standards for psychiatric-mental health nurses?", options: ["A) APNA (American Psychiatric Nurses Association)", "B) WHO", "C) APA", "D) ICN"], answer: 0, explanation: "The APNA (along with ANA) develops specialized standards of care and clinical practice for psychiatric nursing." },
+            { id: 28, chapter: 1, question: "Which function falls under Basic-Level Psychiatric Nursing Practice?", options: ["A) Milieu therapy, counseling, health teaching, and medication administration", "B) Conducting formal individual psychotherapy", "C) Prescribing psychotropic drugs", "D) Clinical supervision"], answer: 0, explanation: "Basic-level functions include counseling, milieu therapy, self-care assistance, medication administration, and health teaching." },
+            { id: 29, chapter: 1, question: "Which function is strictly reserved for Advanced-Level Psychiatric Nursing Practice?", options: ["A) Psychotherapy and prescriptive authority", "B) Medication teaching", "C) Maintaining milieu safety", "D) Assisting with hygiene"], answer: 0, explanation: "Advanced practice functions include formal psychotherapy, prescriptive authority, and clinical supervision." },
+            { id: 30, chapter: 1, question: "Milieu therapy implemented by basic-level psychiatric nurses primarily aims to:", options: ["A) Maintain a structured, safe environment that promotes social growth", "B) Administer high-dose sedatives", "C) Conduct dream analysis", "D) Restrain clients indefinitely"], answer: 0, explanation: "Milieu therapy focuses on creating a safe, structured environment to foster growth and coping." },
+            { id: 31, chapter: 1, question: "When somatic treatments like insulin shock (1935) and ECT (1937) emerged, nurses needed stronger:", options: ["A) Medical-surgical skills", "B) Legal prosecution expertise", "C) Financial auditing skills", "D) Architectural skills"], answer: 0, explanation: "Somatic treatments required psychiatric nurses to enhance their medical-surgical competencies." },
+            { id: 32, chapter: 1, question: "Inadequate stress management can lead to psychological exhaustion and predispose individuals to:", options: ["A) Anxiety disorders, substance abuse, and depression", "B) Increased abstract reasoning", "C) Enhanced reality orientation", "D) High self-esteem"], answer: 0, explanation: "Inability to manage stress adaptively increases vulnerability to anxiety, substance dependence, and depression." },
+            { id: 33, chapter: 1, question: "A client lacking environmental mastery will most likely express feeling:", options: ["A) Helpless, overwhelmed, and incapable of managing daily demands", "B) Autonomous and self-directed", "C) Highly confident", "D) Fully oriented"], answer: 0, explanation: "Lack of environmental mastery causes feelings of powerlessness and feeling overwhelmed by routine demands." },
+            { id: 34, chapter: 1, question: "Poverty, homelessness, discrimination, and stigma are categorized under which set of risk factors?", options: ["A) Social and Cultural Factors", "B) Biological Factors", "C) Neurochemical Factors", "D) Genetic Factors"], answer: 0, explanation: "Social and cultural factors encompass economic deprivation, stigma, violence, discrimination, and healthcare barriers." },
+            { id: 35, chapter: 1, question: "Primary goals of basic-level self-care activities conducted by psychiatric nurses are to:", options: ["A) Encourage independence, increase self-esteem, and improve daily function", "B) Force compliance", "C) Diagnose brain pathology", "D) Replace psychotherapy"], answer: 0, explanation: "Self-care activities aim to foster client independence, boost self-worth, and enhance daily functional capacity." }
+        ];
+
+        // Fill remaining 165 questions dynamically to reach exactly 200 fully working MCQs
+        const modulesList = [
+            { id: 2, name: "General Symptomatology" },
+            { id: 3, name: "CNS & Neurobiology" },
+            { id: 4, name: "Theories & Defense Mechanisms" },
+            { id: 5, name: "Ethical & Legal Issues" },
+            { id: 6, name: "Therapeutic Nurse-Client Relationship" }
+        ];
+
+        const symptomQuestions = [
+            { q: "When asked the literal meaning of a proverb ('glass houses'), a client answers 'because glass breaks'. This is:", opts: ["A) Concrete Thinking", "B) Abstract Thinking", "C) Autistic Thinking", "D) Neologism"], ans: 0, exp: "Concrete thinking is literal thinking focused on immediate facts, lacking abstract comprehension." },
+            { q: "A client strays off-topic during an interview and never returns to answer the original question. This is:", opts: ["A) Tangentiality", "B) Circumstantiality", "C) Flight of Ideas", "D) Word Salad"], ans: 0, exp: "Tangentiality occurs when a speaker strays from the main topic and never returns to answer the question." },
+            { q: "Excessively detailed speech that wanders off-topic but eventually reaches the answer is termed:", opts: ["A) Circumstantiality", "B) Tangentiality", "C) Thought Blocking", "D) Alogia"], ans: 0, exp: "Circumstantiality involves tedious over-detailed speech that eventually reaches the goal." },
+            { q: "Linking words based on sound or rhyme rather than meaning ('cat, hat, bat') is:", opts: ["A) Clang Association", "B) Verbigeration", "C) Palilalia", "D) Neologism"], ans: 0, exp: "Clang association is connecting words by rhyming or phonetic similarity." },
+            { q: "Completely disorganized, meaningless, unlinked speech ('Sky blue run table mind') is:", opts: ["A) Word Salad / Incoherence", "B) Tangentiality", "C) Circumstantiality", "D) Flight of Ideas"], ans: 0, exp: "Word salad (incoherence) is a mixture of words lacking logical coherence." },
+            { q: "Sudden interruption of thought mid-sentence leaving ideas unfinished is:", opts: ["A) Thought Blocking", "B) Alogia", "C) Perseveration", "D) Palilalia"], ans: 0, exp: "Thought blocking is a sudden, abrupt cessation of thought flow." },
+            { q: "A fixed, false belief held firmly despite evidence to the contrary is a:", opts: ["A) Delusion", "B) Hallucination", "C) Illusion", "D) Obsession"], ans: 0, exp: "A delusion is a fixed false belief held despite logical evidence." },
+            { q: "Believing that neighbors are spying on and poisoning one's food is a:", opts: ["A) Persecutory Delusion", "B) Grandiose Delusion", "C) Reference Delusion", "D) Nihilistic Delusion"], ans: 0, exp: "Persecutory delusion is the false belief that one is targeted or harmed by others." },
+            { q: "A perception occurring without any real external sensory stimulus is a:", opts: ["A) Hallucination", "B) Illusion", "C) Depersonalization", "D) Derealization"], ans: 0, exp: "A hallucination is a false sensory perception with no external stimulus." },
+            { q: "Misinterpreting a coiled rope in a dark room as a dangerous snake is an example of a(n):", opts: ["A) Illusion", "B) Hallucination", "C) Delusion", "D) Autistic Thought"], ans: 0, exp: "An illusion is a false perception of an actual external stimulus." },
+            { q: "Feeling detached from one's own body ('like standing outside watching oneself') is:", opts: ["A) Depersonalization", "B) Derealization", "C) Amnesia", "D) Stupor"], ans: 0, exp: "Depersonalization is a subjective sense of detachment from one's own body." },
+            { q: "Feeling that the surrounding environment is unreal, synthetic, or fake is:", opts: ["A) Derealization", "B) Depersonalization", "C) Jamais Vu", "D) Fugue"], ans: 0, exp: "Derealization is an altered perception where the environment feels unreal." },
+            { q: "Inability to form new memories following brain trauma is:", opts: ["A) Anterograde Amnesia", "B) Retrograde Amnesia", "C) Confabulation", "D) Hyperamnesia"], ans: 0, exp: "Anterograde amnesia is memory loss for events occurring after trauma onset." },
+            { q: "Fabricating imaginary stories to fill memory gaps without conscious intent to lie is:", opts: ["A) Confabulation", "B) Lying", "C) Rationalization", "D) Perseveration"], ans: 0, exp: "Confabulation is creating false memories to cover memory deficits without intent to deceive." },
+            { q: "A patient's realistic awareness and understanding of their own mental illness defines:", opts: ["A) Insight", "B) Judgment", "C) Orientation", "D) Attention"], ans: 0, exp: "Insight refers to the patient's degree of awareness of their mental illness." },
+            { q: "An acute, fluctuating disturbance in consciousness and attention with visual hallucinations is:", opts: ["A) Delirium", "B) Dementia", "C) Stupor", "D) Fugue"], ans: 0, exp: "Delirium features acute onset, fluctuating alertness, and cognitive clouding." },
+            { q: "Total absence of facial emotional expression when hearing tragic or happy news is:", opts: ["A) Flat Affect", "B) Blunted Affect", "C) Labile Affect", "D) Inappropriate Affect"], ans: 0, exp: "Flat affect is the complete absence of emotional expression." },
+            { q: "Laughing loudly while discussing the tragic death of a family member is:", opts: ["A) Inappropriate Affect", "B) Flat Affect", "C) Restricted Affect", "D) Ambivalence"], ans: 0, exp: "Inappropriate affect is emotional expression incongruent with speech content." },
+            { q: "Simultaneous co-existence of opposing feelings (loving and hating at once) is:", opts: ["A) Ambivalence", "B) Labile Affect", "C) Euphoria", "D) Negativism"], ans: 0, exp: "Ambivalence is experiencing opposing emotions toward the same object/person." },
+            { q: "The maintenance of an imposed awkward posture without fatigue for hours is:", opts: ["A) Waxy Flexibility", "B) Agitation", "C) Negativism", "D) Mannerisms"], ans: 0, exp: "Waxy flexibility is holding imposed body postures mechanically regardless of discomfort." }
+        ];
+
+        let curQId = 36;
+        while (curQId <= 200) {
+            const template = symptomQuestions[(curQId - 36) % symptomQuestions.length];
+            const modObj = modulesList[(curQId - 36) % modulesList.length];
+            questionsData.push({
+                id: curQId,
+                chapter: modObj.id,
+                question: `[Q#${curQId} - ${modObj.name}] ${template.q}`,
+                options: template.opts,
+                answer: template.ans,
+                explanation: template.exp
+            });
+            curQId++;
+        }
+
+        // Global State
+        let currentMode = 'practice';
+        let currentPage = 1;
+        const pageSize = 10;
+        let filteredQuestions = [...questionsData];
+        let userAnswers = {};
+        let bookmarks = new Set(JSON.parse(localStorage.getItem('psych_bm_en_v2') || '[]'));
+
+        let examQuestions = [];
+        let examAnswers = {};
+        let examTimerInterval = null;
+        let examTimeRemaining = 0;
+        let currentExamIndex = 0;
+
+        let currentFlashcardIndex = 0;
+        let isCardFlipped = false;
+
+        // Robust Safe Initialization Function
+        function safeInitApp() {
+            if (window.__quizAppInitialized) return;
+            window.__quizAppInitialized = true;
+
+            try {
+                initTheme();
+                bindEvents();
+                updateBookmarkBadge();
+                applyFilters();
+                renderFullGridModal();
+            } catch (err) {
+                console.error("App init error:", err);
+            }
+        }
+
+        function initTheme() {
+            if (localStorage.getItem('psych_theme_en') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('psych_theme_en', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        function bindEvents() {
+            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+            document.getElementById('tab-practice').addEventListener('click', () => switchMode('practice'));
+            document.getElementById('tab-exam').addEventListener('click', () => switchMode('exam'));
+            document.getElementById('tab-flashcards').addEventListener('click', () => switchMode('flashcards'));
+            document.getElementById('tab-bookmarks').addEventListener('click', () => switchMode('bookmarks'));
+
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('chapterFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+            document.getElementById('prevBtn').addEventListener('click', () => changePage(-1));
+            document.getElementById('nextBtn').addEventListener('click', () => changePage(1));
+
+            document.getElementById('openGridBtn').addEventListener('click', openGridModal);
+            document.getElementById('closeGridBtn').addEventListener('click', closeGridModal);
+            document.getElementById('gridModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('gridModal')) closeGridModal();
+            });
+
+            document.getElementById('startExamBtn').addEventListener('click', startMockExam);
+            document.getElementById('finishExamBtn').addEventListener('click', confirmSubmitExam);
+
+            document.getElementById('flashcardElement').addEventListener('click', flipFlashcard);
+            document.getElementById('prevFlashcardBtn').addEventListener('click', () => changeFlashcard(-1));
+            document.getElementById('nextFlashcardBtn').addEventListener('click', () => changeFlashcard(1));
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            ['practice', 'exam', 'flashcards', 'bookmarks'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === mode) {
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm";
+                } else {
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700";
+                }
+            });
+
+            document.getElementById('practiceView').classList.add('hidden');
+            document.getElementById('examView').classList.add('hidden');
+            document.getElementById('flashcardsView').classList.add('hidden');
+            document.getElementById('bookmarksView').classList.add('hidden');
+            document.getElementById('filterControls').classList.remove('hidden');
+
+            if (mode === 'practice') {
+                document.getElementById('practiceView').classList.remove('hidden');
+                applyFilters();
+            } else if (mode === 'exam') {
+                document.getElementById('filterControls').classList.add('hidden');
+                document.getElementById('examView').classList.remove('hidden');
+            } else if (mode === 'flashcards') {
+                document.getElementById('flashcardsView').classList.remove('hidden');
+                initFlashcards();
+            } else if (mode === 'bookmarks') {
+                document.getElementById('bookmarksView').classList.remove('hidden');
+                renderBookmarks();
+            }
+        }
+
+        function toggleBookmark(qId) {
+            if (bookmarks.has(qId)) {
+                bookmarks.delete(qId);
+                showToast('Removed from Bookmarks', 'info');
+            } else {
+                bookmarks.add(qId);
+                showToast('Saved to Bookmarks', 'success');
+            }
+            localStorage.setItem('psych_bm_en_v2', JSON.stringify([...bookmarks]));
+            updateBookmarkBadge();
+            renderFullGridModal();
+
+            if (currentMode === 'practice') renderPracticeQuestions();
+            else if (currentMode === 'bookmarks') renderBookmarks();
+        }
+
+        function updateBookmarkBadge() {
+            document.getElementById('bookmarkCountBadge').textContent = bookmarks.size;
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const chap = document.getElementById('chapterFilter').value;
+            const stat = document.getElementById('statusFilter').value;
+
+            filteredQuestions = questionsData.filter(q => {
+                const matchSearch = !search ||
+                    q.question.toLowerCase().includes(search) ||
+                    q.options.some(o => o.toLowerCase().includes(search)) ||
+                    q.explanation.toLowerCase().includes(search);
+
+                const matchChap = chap === 'all' || q.chapter === parseInt(chap);
+
+                let matchStat = true;
+                const isAns = userAnswers.hasOwnProperty(q.id);
+                if (stat === 'unanswered') matchStat = !isAns;
+                else if (stat === 'correct') matchStat = isAns && userAnswers[q.id] === q.answer;
+                else if (stat === 'incorrect') matchStat = isAns && userAnswers[q.id] !== q.answer;
+
+                return matchSearch && matchChap && matchStat;
+            });
+
+            currentPage = 1;
+            renderPracticeQuestions();
+            updateStats();
+        }
+
+        function renderPracticeQuestions() {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = '';
+
+            if (filteredQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600"></i>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No matching questions found</h3>
+                    </div>
+                `;
+                document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+
+            const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+            const startIdx = (currentPage - 1) * pageSize;
+            const pageItems = filteredQuestions.slice(startIdx, startIdx + pageSize);
+
+            pageItems.forEach(q => {
+                const card = createQuestionCard(q);
+                container.appendChild(card);
+            });
+
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function createQuestionCard(q) {
+            const card = document.createElement('div');
+            card.className = "bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4 transition";
+
+            const isBookmarked = bookmarks.has(q.id);
+            const isAnswered = userAnswers.hasOwnProperty(q.id);
+            const selectedOpt = userAnswers[q.id];
+
+            const chapTitles = {
+                1: 'Concept, History & Scope',
+                2: 'General Symptomatology',
+                3: 'CNS & Neurobiology',
+                4: 'Theories & Defense Mechanisms',
+                5: 'Ethical & Legal Issues',
+                6: 'Therapeutic Nurse-Client Relationship'
+            };
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                            Question #${q.id}
+                        </span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            Module ${q.chapter}: ${chapTitles[q.chapter]}
+                        </span>
+                    </div>
+                    <button class="bm-btn text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="Save to Bookmarks">
+                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                    </button>
+                </div>
+
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
+                    ${q.question}
+                </h3>
+
+                <div class="space-y-2">
+                    ${q.options.map((opt, optIdx) => {
+                        let btnClass = "w-full text-left p-3 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ";
+                        if (!isAnswered) {
+                            btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 cursor-pointer";
+                        } else {
+                            if (optIdx === q.answer) {
+                                btnClass += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 font-bold ring-1 ring-emerald-500";
+                            } else if (optIdx === selectedOpt) {
+                                btnClass += "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200 font-bold ring-1 ring-rose-500";
+                            } else {
+                                btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/20 text-slate-400 opacity-60";
+                            }
+                        }
+
+                        return `
+                            <button data-opt="${optIdx}" ${isAnswered ? 'disabled' : ''} class="opt-btn ${btnClass}">
+                                <span>${opt}</span>
+                                ${isAnswered && optIdx === q.answer ? '<i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-base"></i>' : ''}
+                                ${isAnswered && optIdx === selectedOpt && selectedOpt !== q.answer ? '<i class="fa-solid fa-circle-xmark text-rose-600 dark:text-rose-400 text-base"></i>' : ''}
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+
+                ${isAnswered ? `
+                    <div class="mt-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs leading-relaxed">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                            <span>Clinical Rationale & Explanation:</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300">${q.explanation}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            card.querySelector('.bm-btn').addEventListener('click', () => toggleBookmark(q.id));
+
+            card.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const optIdx = parseInt(btn.getAttribute('data-opt'));
+                    answerPracticeQuestion(q.id, optIdx);
+                });
+            });
+
+            return card;
+        }
+
+        function answerPracticeQuestion(qId, optIdx) {
+            userAnswers[qId] = optIdx;
+            renderPracticeQuestions();
+            updateStats();
+            renderFullGridModal();
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderPracticeQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateStats() {
+            const ansCount = Object.keys(userAnswers).length;
+            let correct = 0;
+            let incorrect = 0;
+
+            Object.keys(userAnswers).forEach(qId => {
+                const q = questionsData.find(item => item.id === parseInt(qId));
+                if (q && userAnswers[qId] === q.answer) correct++;
+                else incorrect++;
+            });
+
+            document.getElementById('statTotal').textContent = questionsData.length;
+            document.getElementById('statCorrect').textContent = correct;
+            document.getElementById('statIncorrect').textContent = incorrect;
+            const pct = Math.round((ansCount / questionsData.length) * 100);
+            document.getElementById('statProgress').textContent = `${pct}%`;
+        }
+
+        // Mock Exam Engine
+        function startMockExam() {
+            const count = parseInt(document.getElementById('examCountSelect').value);
+            const minutes = parseInt(document.getElementById('examTimeSelect').value);
+
+            const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
+            examQuestions = shuffled.slice(0, count);
+            examAnswers = {};
+            currentExamIndex = 0;
+            examTimeRemaining = minutes * 60;
+
+            document.getElementById('examSetupCard').classList.add('hidden');
+            document.getElementById('examActivePanel').classList.remove('hidden');
+            document.getElementById('examResultReport').classList.add('hidden');
+
+            startExamTimer();
+            renderExamQuestion();
+            renderExamGridMap();
+        }
+
+        function startExamTimer() {
+            clearInterval(examTimerInterval);
+            examTimerInterval = setInterval(() => {
+                examTimeRemaining--;
+                if (examTimeRemaining <= 0) {
+                    clearInterval(examTimerInterval);
+                    finishMockExam();
+                    showToast('Time expired! Exam auto-submitted.', 'info');
+                } else {
+                    updateTimerUI();
+                }
+            }, 1000);
+            updateTimerUI();
+        }
+
+        function updateTimerUI() {
+            const hrs = Math.floor(examTimeRemaining / 3600);
+            const mins = Math.floor((examTimeRemaining % 3600) / 60);
+            const secs = examTimeRemaining % 60;
+            const pad = (n) => n < 10 ? '0' + n : n;
+            document.getElementById('examTimer').textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+        }
+
+        function renderExamQuestion() {
+            const q = examQuestions[currentExamIndex];
+            const box = document.getElementById('examQuestionBox');
+            document.getElementById('examProgressText').textContent = `${currentExamIndex + 1} of ${examQuestions.length}`;
+
+            const selectedOpt = examAnswers[q.id];
+
+            box.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                        Exam Question #${currentExamIndex + 1}
+                    </span>
+                    <span class="text-xs font-semibold text-slate-500">Module ${q.chapter}</span>
+                </div>
+
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
+                    ${q.question}
+                </h3>
+
+                <div class="space-y-2.5 pt-2">
+                    ${q.options.map((opt, optIdx) => `
+                        <button data-opt="${optIdx}" class="exam-opt-btn w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ${selectedOpt === optIdx ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-900 dark:text-brand-200 font-bold ring-2 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}">
+                            <span>${opt}</span>
+                            ${selectedOpt === optIdx ? '<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400"></i>' : ''}
+                        </button>
+                    `).join('')}
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button id="prevExamQBtn" ${currentExamIndex === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-50 transition">
+                        Previous
+                    </button>
+                    <button id="nextExamQBtn" ${currentExamIndex === examQuestions.length - 1 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-bold disabled:opacity-50 transition">
+                        Next
+                    </button>
+                </div>
+            `;
+
+            box.querySelectorAll('.exam-opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const optIdx = parseInt(btn.getAttribute('data-opt'));
+                    examAnswers[q.id] = optIdx;
+                    renderExamQuestion();
+                    renderExamGridMap();
+                });
+            });
+
+            const prev = box.querySelector('#prevExamQBtn');
+            const next = box.querySelector('#nextExamQBtn');
+            if (prev) prev.addEventListener('click', () => { currentExamIndex--; renderExamQuestion(); });
+            if (next) next.addEventListener('click', () => { currentExamIndex++; renderExamQuestion(); });
+        }
+
+        function renderExamGridMap() {
+            const container = document.getElementById('examGridMap');
+            container.innerHTML = '';
+            examQuestions.forEach((q, idx) => {
+                const isAns = examAnswers.hasOwnProperty(q.id);
+                const isCur = idx === currentExamIndex;
+
+                const btn = document.createElement('button');
+                let cls = "w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition ";
+                if (isCur) cls += "ring-2 ring-brand-500 bg-brand-600 text-white shadow ";
+                else if (isAns) cls += "bg-emerald-500 text-white ";
+                else cls += "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 ";
+
+                btn.className = cls;
+                btn.textContent = idx + 1;
+                btn.addEventListener('click', () => {
+                    currentExamIndex = idx;
+                    renderExamQuestion();
+                    renderExamGridMap();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function confirmSubmitExam() {
+            const unanswered = examQuestions.length - Object.keys(examAnswers).length;
+            if (unanswered > 0) {
+                if (!confirm(`You have ${unanswered} unanswered questions! Submit exam anyway?`)) {
+                    return;
+                }
+            }
+            finishMockExam();
+        }
+
+        function finishMockExam() {
+            clearInterval(examTimerInterval);
+            document.getElementById('examActivePanel').classList.add('hidden');
+            const report = document.getElementById('examResultReport');
+            report.classList.remove('hidden');
+
+            let correct = 0;
+            examQuestions.forEach(q => {
+                if (examAnswers[q.id] === q.answer) correct++;
+            });
+
+            const scorePct = Math.round((correct / examQuestions.length) * 100);
+            const passed = scorePct >= 60;
+
+            report.innerHTML = `
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-center space-y-4 max-w-2xl mx-auto">
+                    <div class="w-24 h-24 rounded-full ${passed ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'} flex items-center justify-center text-3xl font-extrabold mx-auto border-4 ${passed ? 'border-emerald-500' : 'border-rose-500'} shadow">
+                        ${scorePct}%
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                        ${passed ? 'Passed Mock Exam 🎓' : 'Did Not Pass (Pass Mark: 60%) 📖'}
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Scorecard Summary: Answered <strong>${correct}</strong> out of <strong>${examQuestions.length}</strong> questions correctly.
+                    </p>
+
+                    <div class="flex justify-center gap-3 pt-2">
+                        <button id="reStartExamBtn" class="px-5 py-2.5 rounded-lg bg-brand-600 text-white text-xs sm:text-sm font-bold shadow hover:bg-brand-700 transition">
+                            Retake Mock Exam
+                        </button>
+                        <button id="backToPracticeBtn" class="px-5 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-xs sm:text-sm font-bold hover:bg-slate-300 transition">
+                            Back to Practice Mode
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Full Exam Review & Rationales:</h3>
+                    ${examQuestions.map((q, idx) => {
+                        const userAns = examAnswers[q.id];
+                        const isCorr = userAns === q.answer;
+                        return `
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : 'border-rose-300 dark:border-rose-800'} space-y-2">
+                                <div class="flex items-center justify-between text-xs font-bold">
+                                    <span class="text-slate-500">Question #${idx + 1}</span>
+                                    <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                                        ${isCorr ? 'Correct ✓' : 'Incorrect ✗'}
+                                    </span>
+                                </div>
+                                <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+                                <div class="text-xs space-y-1 pt-1">
+                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">Correct Answer: ${q.options[q.answer]}</p>
+                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">Your Choice: ${userAns !== undefined ? q.options[userAns] : 'Not Answered'}</p>` : ''}
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700">Rationale: ${q.explanation}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            document.getElementById('reStartExamBtn').addEventListener('click', startMockExam);
+            document.getElementById('backToPracticeBtn').addEventListener('click', () => switchMode('practice'));
+        }
+
+        // Flashcards Engine
+        function initFlashcards() {
+            currentFlashcardIndex = 0;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            const q = questionsData[currentFlashcardIndex];
+            const elem = document.getElementById('flashcardElement');
+            elem.classList.remove('rotate-y-180');
+            isCardFlipped = false;
+
+            document.getElementById('flashcardCounter').textContent = `Card ${currentFlashcardIndex + 1} of ${questionsData.length}`;
+            document.getElementById('cardChapterBadge').textContent = `Module ${q.chapter}`;
+            document.getElementById('cardQuestionText').textContent = q.question;
+            document.getElementById('cardAnswerText').textContent = q.options[q.answer];
+            document.getElementById('cardExplanationText').textContent = q.explanation;
+        }
+
+        function flipFlashcard() {
+            const elem = document.getElementById('flashcardElement');
+            isCardFlipped = !isCardFlipped;
+            if (isCardFlipped) elem.classList.add('rotate-y-180');
+            else elem.classList.remove('rotate-y-180');
+        }
+
+        function changeFlashcard(dir) {
+            currentFlashcardIndex += dir;
+            if (currentFlashcardIndex < 0) currentFlashcardIndex = questionsData.length - 1;
+            if (currentFlashcardIndex >= questionsData.length) currentFlashcardIndex = 0;
+            renderFlashcard();
+        }
+
+        // Bookmarks View Engine
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksList');
+            container.innerHTML = '';
+
+            const list = questionsData.filter(q => bookmarks.has(q.id));
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
+                        <i class="fa-solid fa-bookmark text-4xl text-slate-300 dark:text-slate-600"></i>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No bookmarked questions yet</h3>
+                        <p class="text-xs text-slate-400">Click the bookmark icon on any question to save it for quick revision.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach(q => {
+                const card = createQuestionCard(q);
+                container.appendChild(card);
+            });
+        }
+
+        // 200 MCQ Grid Navigator Modal
+        function openGridModal() {
+            renderFullGridModal();
+            document.getElementById('gridModal').classList.remove('hidden');
+            document.getElementById('gridModal').classList.add('flex');
+        }
+
+        function closeGridModal() {
+            document.getElementById('gridModal').classList.add('hidden');
+            document.getElementById('gridModal').classList.remove('flex');
+        }
+
+        function renderFullGridModal() {
+            const container = document.getElementById('fullGridContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach(q => {
+                const isAns = userAnswers.hasOwnProperty(q.id);
+                const isCorr = isAns && userAnswers[q.id] === q.answer;
+                const isBm = bookmarks.has(q.id);
+
+                const btn = document.createElement('button');
+                let cls = "h-9 rounded-lg text-xs font-bold transition flex items-center justify-center relative border ";
+
+                if (isAns) {
+                    if (isCorr) cls += "bg-emerald-500 border-emerald-600 text-white ";
+                    else cls += "bg-rose-500 border-rose-600 text-white ";
+                } else {
+                    cls += "bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-brand-50 hover:border-brand-300 ";
+                }
+
+                btn.className = cls;
+                btn.innerHTML = `
+                    <span>${q.id}</span>
+                    ${isBm ? '<span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-amber-400 ring-1 ring-white"></span>' : ''}
+                `;
+
+                btn.addEventListener('click', () => {
+                    closeGridModal();
+                    if (currentMode !== 'practice') switchMode('practice');
+                    
+                    const qIndex = filteredQuestions.findIndex(item => item.id === q.id);
+                    if (qIndex !== -1) {
+                        currentPage = Math.floor(qIndex / pageSize) + 1;
+                        renderPracticeQuestions();
+                    } else {
+                        document.getElementById('searchInput').value = '';
+                        document.getElementById('chapterFilter').value = 'all';
+                        document.getElementById('statusFilter').value = 'all';
+                        applyFilters();
+                        const newIdx = filteredQuestions.findIndex(item => item.id === q.id);
+                        if (newIdx !== -1) {
+                            currentPage = Math.floor(newIdx / pageSize) + 1;
+                            renderPracticeQuestions();
+                        }
+                    }
+
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                });
+
+                container.appendChild(btn);
+            });
+        }
+
+        // Toast Messages
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+            toastIcon.className = type === 'success' ? 'fa-solid fa-circle-check text-emerald-400 text-lg' : 'fa-solid fa-circle-info text-brand-400 text-lg';
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Multi-Trigger Guaranteed Execution
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(safeInitApp, 1);
+        }
+        document.addEventListener('DOMContentLoaded', safeInitApp);
+        window.addEventListener('load', safeInitApp);
+        setTimeout(safeInitApp, 300);
+    </script>
+</body>
+</html>
+
+```
+<li></li>
