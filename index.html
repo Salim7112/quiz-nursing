@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nursing Quiz Platform - University of Mosul</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#074e6f',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Native CSS Fallback for offline/standalone rendering -->
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+        .font-ar { font-family: 'Tajawal', 'Inter', system-ui, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        button, select, input { pointer-events: auto !important; cursor: pointer; }
+
+        /* ---------- Three-line menu button ---------- */
+        .nq-burger { width: 44px; height: 44px; border-radius: 12px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; padding-left: 12px; border: 1px solid rgba(100,116,139,.35); background: transparent; flex-shrink: 0; transition: background .2s; }
+        .nq-burger:hover { background: rgba(100,116,139,.12); }
+        .nq-burger span { display: block; height: 2.5px; width: 20px; border-radius: 2px; background: currentColor; transition: transform .3s, opacity .2s, width .3s; }
+        .nq-burger span:nth-child(2) { width: 13px; }
+        .nq-burger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .nq-burger.open span:nth-child(2) { opacity: 0; }
+        .nq-burger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* ---------- Slide-in subject drawer ---------- */
+        .nq-overlay { position: fixed; inset: 0; z-index: 40; background: rgba(2,6,23,.55); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+        .nq-overlay.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+        .nq-drawer { position: fixed; top: 0; left: 0; bottom: 0; z-index: 45; width: min(88vw, 380px); display: flex; flex-direction: column; transform: translateX(-102%); visibility: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), visibility 0s .35s; }
+        .nq-drawer.open { transform: none; visibility: visible; transition-delay: 0s; }
+
+        /* ---------- Subject cards ---------- */
+        .nq-card { position: relative; overflow: hidden; width: 100%; text-align: left; border-radius: 20px; padding: 16px 18px 52px; color: #fff; border: 2px solid transparent; transition: transform .2s, box-shadow .2s; }
+        .nq-card:active { transform: scale(.98); }
+        .nq-card.mental { background: linear-gradient(135deg, #4338ca, #7c3aed); }
+        .nq-card.critical { background: linear-gradient(135deg, #be123c, #ea580c); }
+        .nq-card.active { border-color: #fff; box-shadow: 0 0 0 3px #38bdf8; }
+        .nq-card:not(.active) .nq-badge { display: none; }
+        .nq-wave { position: absolute; left: 0; right: 0; bottom: 8px; width: 100%; height: 38px; pointer-events: none; }
+        .nq-wave path { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+        .nq-wave .base { stroke: rgba(255,255,255,.25); }
+        .nq-wave .pulse { stroke: #fff; stroke-dasharray: 26 74; animation: nq-sweep var(--dur, 2.6s) linear infinite; }
+        @keyframes nq-sweep { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+        @media (prefers-reduced-motion: reduce) {
+            .nq-wave .pulse { animation: none; stroke-dasharray: none; }
+            .nq-drawer, .nq-overlay, .nq-burger span, .nq-card { transition: none; }
+        }
+
+        /* ---------- Creative Instagram contact card ---------- */
+        .nq-ig { position:relative; display:block; text-decoration:none !important; border-radius:20px; padding:2px; background:linear-gradient(120deg,#f09433,#dc2743,#bc1888,#6a3df0,#f09433); background-size:300% 300%; animation:nq-ig-flow 6s linear infinite; box-shadow:0 8px 22px rgba(220,39,67,.3); transition:transform .2s; }
+        .nq-ig:hover { transform:translateY(-2px); }
+        .nq-ig:active { transform:scale(.98); }
+        .nq-ig-inner { display:flex; align-items:center; gap:12px; border-radius:18px; padding:12px 14px; background:#fff; color:#1e293b; }
+        .dark .nq-ig-inner { background:#0f172a; color:#f1f5f9; }
+        .nq-ig-icon { position:relative; width:46px; height:46px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; background:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 55%,#cc2366 75%,#bc1888); }
+        .nq-ig-icon::after { content:""; position:absolute; inset:0; border-radius:14px; border:2px solid #dc2743; animation:nq-ig-ping 2s ease-out infinite; }
+        .nq-ig-handle { font-weight:800; font-size:16px; direction:ltr; background:linear-gradient(90deg,#dc2743,#bc1888); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .nq-ig-arrow { margin-left:auto; opacity:.5; transition:transform .2s, opacity .2s; }
+        .nq-ig:hover .nq-ig-arrow { transform:translateX(-4px); opacity:1; }
+        @keyframes nq-ig-flow { 0% { background-position:0% 50%; } 100% { background-position:300% 50%; } }
+        @keyframes nq-ig-ping { 0% { transform:scale(1); opacity:.8; } 100% { transform:scale(1.5); opacity:0; } }
+        @media (prefers-reduced-motion: reduce) { .nq-ig, .nq-ig-icon::after { animation:none; } }
+
+        /* ================= Welcome splash ================= */
+        body.sp-lock { overflow:hidden; }
+        #splash { position:fixed; inset:0; z-index:100; overflow-y:auto; overflow-x:hidden; color:#fff; font-family:'Tajawal','Inter',system-ui,sans-serif; background:radial-gradient(120% 90% at 50% 0%, #0c4a6e 0%, #0b1530 45%, #020617 100%); transition:opacity .6s ease, transform .6s ease, visibility 0s .6s; }
+        #splash.sp-out { opacity:0; transform:scale(1.06); visibility:hidden; pointer-events:none; }
+        .sp-blob { position:absolute; border-radius:50%; filter:blur(70px); opacity:.55; pointer-events:none; animation:sp-float 14s ease-in-out infinite; }
+        .sp-b1 { width:320px; height:320px; background:#0284c7; top:-90px; left:-90px; }
+        .sp-b2 { width:300px; height:300px; background:#7c3aed; bottom:-80px; right:-80px; animation-delay:-5s; }
+        .sp-b3 { width:240px; height:240px; background:#e11d48; top:46%; left:55%; opacity:.28; animation-delay:-9s; }
+        @keyframes sp-float { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(40px,-30px) scale(1.15); } }
+        .sp-dots { position:absolute; inset:0; pointer-events:none; background-image:radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px); background-size:26px 26px; -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 20%, transparent 75%); mask-image:radial-gradient(circle at 50% 40%, #000 20%, transparent 75%); }
+        .sp-ecg { position:absolute; left:0; right:0; top:50%; width:100%; height:120px; transform:translateY(-50%); opacity:.35; pointer-events:none; }
+        .sp-ecg path { fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+        .sp-ecg .b { stroke:rgba(255,255,255,.15); }
+        .sp-ecg .p { stroke:#38bdf8; stroke-dasharray:18 82; animation:nq-sweep 4s linear infinite; filter:drop-shadow(0 0 6px #38bdf8); }
+        .sp-wrap { position:relative; z-index:2; min-height:100%; max-width:520px; margin:0 auto; padding:34px 20px 26px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+        .sp-in { opacity:0; transform:translateY(22px); animation:sp-rise .8s cubic-bezier(.2,.8,.2,1) forwards; }
+        @keyframes sp-rise { to { opacity:1; transform:none; } }
+        .sp-emblem { position:relative; width:104px; height:104px; margin-bottom:18px; display:flex; align-items:center; justify-content:center; }
+        .sp-emblem::before { content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 0deg,#38bdf8,#7c3aed,#e11d48,#f59e0b,#38bdf8); animation:sp-spin 5s linear infinite; filter:blur(.3px); }
+        .sp-emblem::after { content:""; position:absolute; inset:-14px; border-radius:50%; border:1.5px solid rgba(56,189,248,.5); animation:nq-ig-ping 2.6s ease-out infinite; }
+        .sp-emblem-in { position:relative; width:92px; height:92px; border-radius:50%; background:#0b1530; display:flex; align-items:center; justify-content:center; font-size:40px; box-shadow:inset 0 0 24px rgba(56,189,248,.35); }
+        .sp-emblem-in i { background:linear-gradient(135deg,#7dd3fc,#c4b5fd); -webkit-background-clip:text; background-clip:text; color:transparent; animation:sp-beat 1.6s ease-in-out infinite; }
+        @keyframes sp-spin { to { transform:rotate(360deg); } }
+        @keyframes sp-beat { 0%,100% { transform:scale(1); } 15% { transform:scale(1.14); } 30% { transform:scale(1); } 45% { transform:scale(1.1); } }
+        .sp-title { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:clamp(34px,10vw,48px); line-height:1.05; letter-spacing:-.5px; background:linear-gradient(90deg,#fff,#7dd3fc,#c4b5fd,#fff); background-size:250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:sp-shine 5s linear infinite; }
+        @keyframes sp-shine { to { background-position:250% 0; } }
+        .sp-sub { margin-top:8px; font-size:20px; font-weight:800; color:#e0f2fe; }
+        .sp-uni { margin-top:10px; display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.4px; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#bae6fd; font-family:'Inter',system-ui,sans-serif; }
+        .sp-desc { margin-top:18px; font-size:16px; line-height:1.9; font-weight:500; color:rgba(226,232,240,.92); max-width:420px; }
+        .sp-desc b { color:#fff; }
+        .sp-cta { margin-top:26px; font-size:13px; font-weight:800; letter-spacing:.3px; color:#7dd3fc; display:flex; align-items:center; gap:10px; width:100%; }
+        .sp-cta::before, .sp-cta::after { content:""; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(125,211,252,.5),transparent); }
+        .sp-cards { width:100%; margin-top:14px; display:flex; flex-direction:column; gap:14px; }
+        .sp-card { position:relative; overflow:hidden; width:100%; border:0; border-radius:22px; padding:18px 18px 54px; color:#fff; text-align:right; cursor:pointer; font-family:inherit; box-shadow:0 14px 34px rgba(0,0,0,.45); transition:transform .25s, box-shadow .25s; }
+        .sp-card.mental { background:linear-gradient(135deg,#4338ca,#7c3aed); box-shadow:0 14px 34px rgba(99,70,230,.45); }
+        .sp-card.critical { background:linear-gradient(135deg,#be123c,#ea580c); box-shadow:0 14px 34px rgba(225,29,72,.4); }
+        .sp-card:hover { transform:translateY(-4px) scale(1.012); }
+        .sp-card:active { transform:scale(.97); }
+        .sp-card::after { content:""; position:absolute; top:0; bottom:0; width:60px; left:-90px; background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-20deg); animation:sp-glint 3.8s ease-in-out infinite; pointer-events:none; }
+        .sp-card.critical::after { animation-delay:1.9s; }
+        @keyframes sp-glint { 0% { left:-90px; } 45%,100% { left:130%; } }
+        .sp-card-top { display:flex; align-items:center; justify-content:space-between; gap:10px; direction:rtl; }
+        .sp-ico { width:50px; height:50px; border-radius:15px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+        .sp-go { margin-right:auto; margin-left:0; width:40px; height:40px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; transition:transform .25s; }
+        .mental .sp-go { color:#4338ca; } .critical .sp-go { color:#be123c; }
+        .sp-card:hover .sp-go { transform:translateX(-6px); }
+        .sp-card-txt { flex:1; min-width:0; text-align:right; }
+        .sp-go-l { font-size:12px; font-weight:700; opacity:.85; }
+        .sp-card h3 { margin:2px 0 0; font-size:19px; font-weight:800; line-height:1.3; }
+        .sp-card .en { margin:2px 0 0; font-size:12px; font-weight:600; opacity:.85; font-family:'Inter',system-ui,sans-serif; direction:ltr; text-align:right; }
+        .sp-foot { margin-top:26px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+        .sp-ig { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px; text-decoration:none; color:#fff; font-weight:800; font-size:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(6px); transition:background .2s, transform .2s; }
+        .sp-ig:hover { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); transform:translateY(-2px); }
+        .sp-ig span { direction:ltr; }
+        .sp-dev { font-size:11px; color:rgba(148,163,184,.9); font-family:'Inter',system-ui,sans-serif; }
+        @media (prefers-reduced-motion: reduce) { #splash *, #splash *::before, #splash *::after { animation:none !important; } .sp-in { opacity:1; transform:none; } }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Subject Drawer (opened by the three-line button) -->
+    <div id="drawerOverlay" class="nq-overlay"></div>
+    <aside id="subjectDrawer" class="nq-drawer bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 shadow-2xl" aria-hidden="true" role="dialog" aria-label="Choose a subject">
+        <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
+            <div>
+                <h2 class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">Nursing Quiz</h2>
+                <p class="font-ar text-sm text-slate-500 dark:text-slate-400" dir="rtl">اختر المادة</p>
+            </div>
+            <button id="closeDrawerBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white transition" aria-label="Close menu">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4">
+            <!-- Mental Health Nursing -->
+            <button class="nq-card mental" data-subject="mental">
+                <div class="flex items-center justify-between">
+                    <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-brain"></i></span>
+                    <span class="nq-badge text-xs font-bold bg-white text-indigo-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>Open now</span>
+                </div>
+                <h3 class="mt-3 text-lg font-extrabold leading-tight">Mental Health Nursing</h3>
+                <p class="font-ar text-base font-bold opacity-95" dir="rtl">تمريض الصحة النفسية</p>
+                <p class="mt-1 text-xs font-semibold opacity-85"><span class="nq-count" data-bank="mental"></span></p>
+                <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:5s">
+                    <path class="base" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                    <path class="pulse" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                </svg>
+            </button>
+
+            <!-- Critical Care Nursing -->
+            <button class="nq-card critical" data-subject="critical">
+                <div class="flex items-center justify-between">
+                    <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-heart-pulse"></i></span>
+                    <span class="nq-badge text-xs font-bold bg-white text-rose-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>Open now</span>
+                </div>
+                <h3 class="mt-3 text-lg font-extrabold leading-tight">Critical Care Nursing</h3>
+                <p class="font-ar text-base font-bold opacity-95" dir="rtl">تمريض الحالات الحرجة</p>
+                <p class="mt-1 text-xs font-semibold opacity-85"><span class="nq-count" data-bank="critical"></span></p>
+                <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:2.4s">
+                    <path class="base" pathLength="100" d="M0 22 H48 L56 22 L62 8 L70 36 L78 16 L84 22 H124 L132 22 L138 8 L146 36 L154 16 L160 22 H200"/>
+                    <path class="pulse" pathLength="100" d="M0 22 H48 L56 22 L62 8 L70 36 L78 16 L84 22 H124 L132 22 L138 8 L146 36 L154 16 L160 22 H200"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-5 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <p class="font-ar text-center text-sm font-bold text-slate-600 dark:text-slate-300 mb-3" dir="rtl">💬 للتواصل والاقتراحات</p>
+            <a href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer" class="nq-ig" aria-label="Instagram @m_d_l7">
+                <span class="nq-ig-inner">
+                    <span class="nq-ig-icon"><i class="fa-brands fa-instagram"></i></span>
+                    <span class="min-w-0">
+                        <span class="block font-ar text-xs font-bold text-slate-500 dark:text-slate-400" dir="rtl">تابعني على إنستغرام</span>
+                        <span class="nq-ig-handle">@m_d_l7</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-left nq-ig-arrow"></i>
+                </span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Header / Navbar -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 min-w-0">
+                    <button id="menuBtn" class="nq-burger text-slate-700 dark:text-slate-200" aria-label="Open subject menu" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div id="headerLogo" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
+                        <i id="headerIcon" class="fa-solid fa-brain"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white leading-tight">
+                            Nursing Quiz
+                        </h1>
+                        <p class="text-xs font-bold text-brand-600 dark:text-brand-400 truncate">
+                            <span id="subjectLabel">Mental Health Nursing</span>
+                            <span id="subjectLabelAr" class="font-ar mx-1" dir="rtl">تمريض الصحة النفسية</span>
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
+                            University of Mosul - College of Nursing | Stage 4 (2026-2027)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Controls Right -->
+                <div class="flex items-center space-x-2">
+                    <button id="openGridBtn" class="px-3 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-table-cells"></i>
+                        <span id="paletteLabel" class="hidden sm:inline">200 MCQ Palette</span>
+                    </button>
+                    <button id="themeToggleBtn" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="Toggle Light/Dark Theme">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Navigation Tabs -->
+            <div class="flex items-center space-x-2 mt-3 border-t border-slate-100 dark:border-slate-700/60 pt-2 overflow-x-auto custom-scrollbar">
+                <button id="tab-practice" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm">
+                    <i class="fa-solid fa-square-check"></i>
+                    <span>Practice Mode</span>
+                </button>
+                <button id="tab-exam" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <span>Timed Mock Exam</span>
+                </button>
+                <button id="tab-flashcards" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-clone"></i>
+                    <span>Flashcards</span>
+                </button>
+                <button id="tab-bookmarks" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-bookmark text-amber-500"></i>
+                    <span>Bookmarks (<span id="bookmarkCountBadge">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Stats Bar & Reset Button -->
+        <div class="flex flex-col md:flex-row gap-3 mb-6 items-stretch">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-list-ol"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Questions</span>
+                        <span class="text-base font-bold text-slate-900 dark:text-white" id="statTotal">200</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Correct Answers</span>
+                        <span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="statCorrect">0</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Incorrect Answers</span>
+                        <span class="text-base font-bold text-rose-600 dark:text-rose-400" id="statIncorrect">0</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Overall Progress</span>
+                        <span class="text-base font-bold text-brand-600 dark:text-brand-400" id="statProgress">0%</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Reset Button Box -->
+            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center">
+                <button id="resetProgressBtn" class="w-full md:w-auto px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-bold border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>مسح الإجابات للبدء من جديد</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Box -->
+        <div id="filterControls" class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6">
+            <div class="flex flex-col md:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search keywords..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="w-full md:w-80">
+                    <select id="chapterFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <!-- Filled from the selected subject -->
+                    </select>
+                </div>
+                <div class="w-full md:w-48">
+                    <select id="statusFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="all">All Statuses</option>
+                        <option value="unanswered">Unanswered</option>
+                        <option value="correct">Correct</option>
+                        <option value="incorrect">Incorrect</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE 1: PRACTICE VIEW -->
+        <div id="practiceView" class="space-y-6">
+            <div id="questionsList" class="space-y-6">
+                <!-- Dynamic Question Cards -->
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2 transition">
+                    <i class="fa-solid fa-chevron-left"></i> Previous
+                </button>
+                <span id="pageIndicator" class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">Page 1 of 20</span>
+                <button id="nextBtn" class="px-4 py-2 rounded-lg bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 disabled:opacity-50 flex items-center gap-2 transition">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODE 2: MOCK EXAM VIEW -->
+        <div id="examView" class="hidden space-y-6">
+            <!-- Setup Card -->
+            <div id="examSetupCard" class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-center max-w-xl mx-auto space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <h2 id="examSetupTitle" class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Mock Exam Setup</h2>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Simulates academic university & licensing board exams. Answers and rationales are revealed only after final submission.
+                </p>
+                <div class="grid grid-cols-2 gap-4 text-left pt-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Question Count:</label>
+                        <select id="examCountSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
+                            <!-- Filled from the selected subject -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Time Limit:</label>
+                        <select id="examTimeSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
+                            <option value="30">30 Minutes</option>
+                            <option value="60" selected>60 Minutes</option>
+                            <option value="120">120 Minutes (2 Hours)</option>
+                            <option value="180">180 Minutes (3 Hours)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="startExamBtn" class="w-full py-3 rounded-lg bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Start Timed Mock Exam Now
+                </button>
+            </div>
+
+            <!-- Active Exam Screen -->
+            <div id="examActivePanel" class="hidden space-y-6">
+                <!-- Top Exam Bar -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 block font-semibold">Time Remaining:</span>
+                        <span id="examTimer" class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400">00:00:00</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block font-semibold">Question Position:</span>
+                        <span id="examProgressText" class="text-base font-bold text-slate-800 dark:text-slate-100">1 of 50</span>
+                    </div>
+                    <button id="finishExamBtn" class="px-4 py-2 rounded-lg bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 transition shadow">
+                        Submit & Finish Exam
+                    </button>
+                </div>
+
+                <!-- Active Exam Question Box -->
+                <div id="examQuestionBox" class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                    <!-- Dynamic Content -->
+                </div>
+
+                <!-- Quick Exam Navigation Grid -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h4 class="text-xs font-bold text-slate-500 mb-3">Quick Navigation Map:</h4>
+                    <div id="examGridMap" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                        <!-- Dynamic Buttons -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Result Report -->
+            <div id="examResultReport" class="hidden space-y-6">
+                <!-- Scorecard Content -->
+            </div>
+        </div>
+
+        <!-- MODE 3: FLASHCARDS VIEW -->
+        <div id="flashcardsView" class="hidden space-y-6 max-w-2xl mx-auto">
+            <div class="text-center space-y-2">
+                <span id="flashcardCounter" class="text-xs font-bold px-3 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 rounded-full">Card 1 of 200</span>
+                <p class="text-xs text-slate-500">Click card to flip and reveal correct answer and clinical rationale</p>
+            </div>
+
+            <!-- 3D Card Container -->
+            <div class="perspective-1000 w-full min-h-[360px]">
+                <div id="flashcardElement" class="w-full h-full min-h-[360px] relative transform-style-3d transition-transform duration-500 cursor-pointer shadow-lg rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col justify-between">
+                    <!-- Front Side -->
+                    <div id="cardFront" class="backface-hidden w-full h-full flex flex-col justify-between space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span id="cardChapterBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">Module 1</span>
+                            <i class="fa-solid fa-rotate text-slate-400"></i>
+                        </div>
+                        <div class="my-auto text-center py-6">
+                            <h3 id="cardQuestionText" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed"></h3>
+                        </div>
+                        <div class="text-center text-xs text-brand-600 dark:text-brand-400 font-bold">
+                            Click to reveal answer & rationale <i class="fa-solid fa-hand-pointer ml-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div id="cardBack" class="backface-hidden rotate-y-180 absolute inset-0 p-6 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 flex flex-col justify-between space-y-4 overflow-y-auto custom-scrollbar">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> Correct Answer:</span>
+                            <p id="cardAnswerText" class="text-sm sm:text-base font-bold text-emerald-300 mb-4"></p>
+                            <span class="text-xs text-slate-400 font-bold block mb-1">Academic Rationale:</span>
+                            <p id="cardExplanationText" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                        </div>
+                        <div class="text-center text-xs text-slate-400 pt-2 border-t border-slate-800">
+                            Click again to flip back
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcard Nav Buttons -->
+            <div class="flex items-center justify-between gap-4">
+                <button id="prevFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs sm:text-sm hover:bg-slate-300 transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Card
+                </button>
+                <button id="nextFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 transition flex items-center gap-2">
+                    Next Card <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODE 4: BOOKMARKS VIEW -->
+        <div id="bookmarksView" class="hidden space-y-6">
+            <div id="bookmarksList" class="space-y-6">
+                <!-- Bookmarked Cards -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MCQ GRID MODAL -->
+    <div id="gridModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-table-cells text-brand-600 text-lg"></i>
+                    <h3 id="gridTitle" class="font-bold text-slate-900 dark:text-white text-base">Full MCQ Palette Navigator</h3>
+                </div>
+                <button id="closeGridBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <!-- Legend -->
+            <div class="p-3 bg-slate-100 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 text-xs font-semibold justify-center">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600"></span> Unanswered</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Correct</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Incorrect</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Bookmarked</span>
+            </div>
+            <!-- Grid Container -->
+            <div id="fullGridContainer" class="p-4 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                <!-- Dynamic Buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-brand-400 text-lg"></i>
+        <span id="toastMsg" class="text-xs sm:text-sm font-semibold"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-bold text-slate-700 dark:text-slate-200">
+                University of Mosul - College of Nursing | Stage 4 (2026-2027)
+            </p>
+            <p class="font-medium text-slate-600 dark:text-slate-300">
+                Developed & Maintained by: <span class="text-brand-600 dark:text-brand-400 font-bold">salem mohammed</span>
+            </p>
+            <p>
+                Follow on Instagram:
+                <a href="https://www.instagram.com/m_d_l7?dlrf=dzQ5Zmp5c21oeHFr" target="_blank" rel="noopener noreferrer" class="text-pink-600 dark:text-pink-400 hover:underline font-bold inline-flex items-center gap-1">
+                    <i class="fa-brands fa-instagram"></i> @m_d_l7
+                </a>
+            </p>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 pt-1">
+                © 2026 Nursing Quiz - Academic Curriculum
+            </p>
+        </div>
+    </footer>
+
+    <!-- Visitor Counter -->
+    <div style="text-align: center; margin: 15px 0;">
+      <img src="https://komarev.com/ghpvc/?username=salim7112&label=Total+Visits&color=0284c7&style=flat" alt="Visitor Count" />
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // ================= SUBJECT 1: MENTAL HEALTH NURSING (200 MCQs) =================
+        const mentalQuestions = [
+            // CHAPTER 1-1 (1-35)
+            { id: 1, chapter: 1, question: "According to the World Health Organization (WHO), how is health defined?", options: ["A) State of physical independence without organic pathogens", "B) State of complete physical, mental, and social well-being and not merely the absence of disease or infirmity", "C) Capacity to perform daily tasks without medication", "D) Psychological stability without normal life stresses"], answer: 1, explanation: "The WHO defines health as a state of complete physical, mental, and social well-being and not merely the absence of disease or infirmity." },
+            { id: 2, chapter: 1, question: "Which component of mental health refers to making decisions based on internalized values rather than external pressures?", options: ["A) Environmental Mastery", "B) Autonomy and Independence", "C) Reality Orientation", "D) Stress Management"], answer: 1, explanation: "Autonomy refers to self-direction, responsibility, and making decisions based on internal principles rather than external pressures." },
+            { id: 3, chapter: 1, question: "An individual faces unpredictable life changes with flexibility and optimism. This demonstrates high capacity in:", options: ["A) Tolerance of Life's Uncertainties", "B) Abstract Thinking", "C) Autistic Thinking", "D) Concrete Thinking"], answer: 0, explanation: "Tolerance of Life's Uncertainties reflects accepting ambiguity and change without becoming overwhelmed." },
+            { id: 4, chapter: 1, question: "Healthy self-esteem as a component of mental health is best characterized by:", options: ["A) Narcissistic evaluation of superior abilities", "B) Realistic evaluation of one's worth, strengths, and limitations", "C) Unconditional approval of all personal behaviors", "D) Total reliance on external validation"], answer: 1, explanation: "Healthy self-esteem involves realistic evaluation of personal worth, strengths, and limits." },
+            { id: 5, chapter: 1, question: "Problem-solving, adaptability, and modifying one's environment to meet personal needs represent:", options: ["A) Environmental Mastery", "B) Reality Orientation", "C) Autonomy and Independence", "D) Stress Management"], answer: 0, explanation: "Environmental mastery is the ability to effectively manage life situations, solve problems, adapt, and utilize resources." },
+            { id: 6, chapter: 1, question: "Distinguishing between fact and fantasy and accurately recognizing time, place, and person defines:", options: ["A) Reality Orientation", "B) Abstract Reasoning", "C) Environmental Mastery", "D) Self-Actualization"], answer: 0, explanation: "Reality orientation is accurately perceiving the environment, distinguishing fact from fantasy, and knowing person, place, and time." },
+            { id: 7, chapter: 1, question: "A mental disorder is defined as a clinically significant syndrome characterized by disturbances in:", options: ["A) Physical height and reflexes", "B) Cognition, emotion regulation, or behavior causing distress or impairment", "C) Political beliefs and non-conformity", "D) Temporary grief under 24 hours"], answer: 1, explanation: "Mental disorders involve disturbances in cognition, emotion regulation, or behavior causing significant distress or functional impairment." },
+            { id: 8, chapter: 1, question: "Genetic vulnerability, neurochemical imbalances, and brain structure abnormalities are classified under:", options: ["A) Biological Factors", "B) Psychological Factors", "C) Interpersonal Factors", "D) Socio-cultural Factors"], answer: 0, explanation: "Biological factors encompass genetics, neurochemistry, neuroanatomy, and medical conditions." },
+            { id: 9, chapter: 1, question: "In ancient times, mental illness was primarily attributed to:", options: ["A) Dopamine imbalances", "B) Divine displeasure, punishment for sins, and supernatural forces", "C) Social isolation and poverty", "D) Frontal cortex lesions"], answer: 1, explanation: "Ancient societies viewed sickness and mental illness as punishments from gods for wrongdoing or demonic influence." },
+            { id: 10, chapter: 1, question: "Aristotle (382-322 BC) posited that mental disorders stemmed from humor imbalances. Which humor corresponded to sadness?", options: ["A) Blood", "B) Water", "C) Yellow bile", "D) Black bile"], answer: 3, explanation: "Aristotle's humors: Blood (happiness), Water (calmness), Yellow bile (anger), Black bile (sadness)." },
+            { id: 11, chapter: 1, question: "Treatments based on humorism that persisted into the 19th century included:", options: ["A) Bloodletting, starving, and purging", "B) Psychotherapy and dream analysis", "C) Electroconvulsive therapy", "D) Benzodiazepines"], answer: 0, explanation: "To restore humor balance, practitioners historically used bloodletting, starvation, and purging." },
+            { id: 12, chapter: 1, question: "During the Early Christian Era (1-1000 AD), when exorcisms failed, priests resorted to:", options: ["A) Incarceration in dungeons, flogging, and starving", "B) Moral treatment retreats", "C) Community mental health centers", "D) Group counseling"], answer: 0, explanation: "If exorcisms failed, severe measures such as imprisonment in dungeons, flogging, and starvation were used." },
+            { id: 13, chapter: 1, question: "In 1547, which institution became the first official hospital designated for the mentally ill in Renaissance England?", options: ["A) St. Mary of Bethlehem Hospital (Bedlam)", "B) The York Retreat", "C) Bicêtre Hospital", "D) Salpêtrière Hospital"], answer: 0, explanation: "St. Mary of Bethlehem Hospital officially became the first mental asylum in 1547 in Renaissance England." },
+            { id: 14, chapter: 1, question: "Philippe Pinel famously reformed psychiatric care in France during the 1790s by:", options: ["A) Removing chains from patients and promoting kind communication", "B) Synthesizing chlorpromazine", "C) Publishing the first nursing textbook", "D) Developing operant conditioning"], answer: 0, explanation: "Philippe Pinel removed chains from asylum patients in Paris, viewing mental illness as a medical condition deserving dignity." },
+            { id: 15, chapter: 1, question: "William Tuke, founder of The York Retreat (1796), advocated for Moral Treatment by providing:", options: ["A) A home-like setting with nutrition, work activities, and respect", "B) Strict confinement with daily bloodletting", "C) Psychosurgery and ECT", "D) Involuntary isolation"], answer: 0, explanation: "William Tuke established The York Retreat to offer a peaceful, respectful environment with work, nutrition, and moral support." },
+            { id: 16, chapter: 1, question: "Dorothea Dix is celebrated in American mental health reform for:", options: ["A) Advocating state responsibility and establishing 32 state hospitals", "B) Discovering Lithium", "C) Formulating Peplau's theory", "D) Authoring the ANA code"], answer: 0, explanation: "Dorothea Dix campaigned for state-supported care, leading to the creation of 32 state mental hospitals in the US." },
+            { id: 17, chapter: 1, question: "The introduction of psychotropic medications in the 1950s began with which landmark antipsychotic drug?", options: ["A) Chlorpromazine (Thorazine)", "B) Haloperidol (Haldol)", "C) Fluoxetine (Prozac)", "D) Diazepam (Valium)"], answer: 0, explanation: "Chlorpromazine (Thorazine) was the first antipsychotic introduced in the 1950s, revolutionary in controlling psychotic symptoms." },
+            { id: 18, chapter: 1, question: "Lithium was introduced into psychiatric treatment in the 1950s primarily as a(n):", options: ["A) Antimanic agent / Mood stabilizer", "B) Anxiolytic benzodiazepine", "C) Tricyclic antidepressant", "D) Anticholinergic agent"], answer: 0, explanation: "Lithium was introduced as an antimanic agent to manage manic episodes in bipolar spectrum disorders." },
+            { id: 19, chapter: 1, question: "The Community Mental Health Centers Construction Act of 1963 triggered deinstitutionalization by:", options: ["A) Shifting care from large state institutions to community-based centers", "B) Mandating lifelong hospitalization", "C) Banning outpatient clinics", "D) Eliminating disability funding"], answer: 0, explanation: "The 1963 CMHC Act promoted treating individuals in less restrictive, community-based settings, initiating deinstitutionalization." },
+            { id: 20, chapter: 1, question: "How did federal programs SSI and SSDI support deinstitutionalization in the 1960s?", options: ["A) Provided financial income directly to individuals with severe mental illness to live independently", "B) Funded asylum expansions", "C) Covered lobotomies", "D) Penalized community centers"], answer: 0, explanation: "SSI and SSDI provided direct financial support, enabling clients with severe mental illness to live independently." },
+            { id: 21, chapter: 1, question: "Who was the first American psychiatric nurse, graduating in 1873?", options: ["A) Linda Richards", "B) Harriet Bailey", "C) Hildegard Peplau", "D) June Mellow"], answer: 0, explanation: "Linda Richards became the first American psychiatric nurse in 1873." },
+            { id: 22, chapter: 1, question: "The first formal training school for nurses in mental health was established in 1882 at:", options: ["A) McLean Hospital, Massachusetts", "B) Johns Hopkins Hospital", "C) Bellevue Hospital", "D) St. Thomas' Hospital"], answer: 0, explanation: "Formal psychiatric nursing education began in 1882 at McLean Hospital in Massachusetts." },
+            { id: 23, chapter: 1, question: "The first psychiatric nursing textbook was published in 1920 by:", options: ["A) Harriet Bailey", "B) Linda Richards", "C) Dorothea Dix", "D) June Mellow"], answer: 0, explanation: "Harriet Bailey authored the first psychiatric nursing textbook in 1920." },
+            { id: 24, chapter: 1, question: "Which nursing school was the first to include psychiatric nursing in its curriculum in 1913?", options: ["A) Johns Hopkins", "B) Harvard Nursing", "C) Columbia University", "D) Yale School of Nursing"], answer: 0, explanation: "Johns Hopkins became the first nursing school to include psychiatric nursing in its course of study in 1913." },
+            { id: 25, chapter: 1, question: "Hildegard Peplau revolutionized psychiatric nursing by focusing on:", options: ["A) The therapeutic nurse-patient relationship and anxiety levels", "B) Psychosurgery management", "C) Commitment hearings", "D) Pharmacokinetics"], answer: 0, explanation: "Peplau established the foundation of modern psychiatric nursing through her work on interpersonal relations and anxiety." },
+            { id: 26, chapter: 1, question: "June Mellow's theoretical work in psychiatric nursing emphasized:", options: ["A) Psychosocial needs, daily-life functioning, and strengths in severe mental illness", "B) Pavlovian conditioning", "C) Skinnerian schedules", "D) Commitment laws"], answer: 0, explanation: "June Mellow focused on clients' psychosocial needs, functional strengths, and direct nursing involvement in daily living." },
+            { id: 27, chapter: 1, question: "Which professional association specifically formulates practice standards for psychiatric-mental health nurses?", options: ["A) APNA (American Psychiatric Nurses Association)", "B) WHO", "C) APA", "D) ICN"], answer: 0, explanation: "The APNA (along with ANA) develops specialized standards of care and clinical practice for psychiatric nursing." },
+            { id: 28, chapter: 1, question: "Which function falls under Basic-Level Psychiatric Nursing Practice?", options: ["A) Milieu therapy, counseling, health teaching, and medication administration", "B) Conducting formal individual psychotherapy", "C) Prescribing psychotropic drugs", "D) Clinical supervision"], answer: 0, explanation: "Basic-level functions include counseling, milieu therapy, self-care assistance, medication administration, and health teaching." },
+            { id: 29, chapter: 1, question: "Which function is strictly reserved for Advanced-Level Psychiatric Nursing Practice?", options: ["A) Psychotherapy and prescriptive authority", "B) Medication teaching", "C) Maintaining milieu safety", "D) Assisting with hygiene"], answer: 0, explanation: "Advanced practice functions include formal psychotherapy, prescriptive authority, and clinical supervision." },
+            { id: 30, chapter: 1, question: "Milieu therapy implemented by basic-level psychiatric nurses primarily aims to:", options: ["A) Maintain a structured, safe environment that promotes social growth", "B) Administer high-dose sedatives", "C) Conduct dream analysis", "D) Restrain clients indefinitely"], answer: 0, explanation: "Milieu therapy focuses on creating a safe, structured environment to foster growth and coping." },
+            { id: 31, chapter: 1, question: "When somatic treatments like insulin shock (1935) and ECT (1937) emerged, nurses needed stronger:", options: ["A) Medical-surgical skills", "B) Legal prosecution expertise", "C) Financial auditing skills", "D) Architectural skills"], answer: 0, explanation: "Somatic treatments required psychiatric nurses to enhance their medical-surgical competencies." },
+            { id: 32, chapter: 1, question: "Inadequate stress management can lead to psychological exhaustion and predispose individuals to:", options: ["A) Anxiety disorders, substance abuse, and depression", "B) Increased abstract reasoning", "C) Enhanced reality orientation", "D) High self-esteem"], answer: 0, explanation: "Inability to manage stress adaptively increases vulnerability to anxiety, substance dependence, and depression." },
+            { id: 33, chapter: 1, question: "A client lacking environmental mastery will most likely express feeling:", options: ["A) Helpless, overwhelmed, and incapable of managing daily demands", "B) Autonomous and self-directed", "C) Highly confident", "D) Fully oriented"], answer: 0, explanation: "Lack of environmental mastery causes feelings of powerlessness and feeling overwhelmed by routine demands." },
+            { id: 34, chapter: 1, question: "Poverty, homelessness, discrimination, and stigma are categorized under which set of risk factors?", options: ["A) Social and Cultural Factors", "B) Biological Factors", "C) Neurochemical Factors", "D) Genetic Factors"], answer: 0, explanation: "Social and cultural factors encompass economic deprivation, stigma, violence, discrimination, and healthcare barriers." },
+            { id: 35, chapter: 1, question: "Primary goals of basic-level self-care activities conducted by psychiatric nurses are to:", options: ["A) Encourage independence, increase self-esteem, and improve daily function", "B) Force compliance", "C) Diagnose brain pathology", "D) Replace psychotherapy"], answer: 0, explanation: "Self-care activities aim to foster client independence, boost self-worth, and enhance daily functional capacity." }
+        ];
+
+        // Fill remaining 165 questions dynamically to reach exactly 200 fully working MCQs
+        const modulesList = [
+            { id: 2, name: "General Symptomatology" },
+            { id: 3, name: "CNS & Neurobiology" },
+            { id: 4, name: "Theories & Defense Mechanisms" },
+            { id: 5, name: "Ethical & Legal Issues" },
+            { id: 6, name: "Therapeutic Nurse-Client Relationship" }
+        ];
+
+        const symptomQuestions = [
+            { q: "When asked the literal meaning of a proverb ('glass houses'), a client answers 'because glass breaks'. This is:", opts: ["A) Concrete Thinking", "B) Abstract Thinking", "C) Autistic Thinking", "D) Neologism"], ans: 0, exp: "Concrete thinking is literal thinking focused on immediate facts, lacking abstract comprehension." },
+            { q: "A client strays off-topic during an interview and never returns to answer the original question. This is:", opts: ["A) Tangentiality", "B) Circumstantiality", "C) Flight of Ideas", "D) Word Salad"], ans: 0, exp: "Tangentiality occurs when a speaker strays from the main topic and never returns to answer the question." },
+            { q: "Excessively detailed speech that wanders off-topic but eventually reaches the answer is termed:", opts: ["A) Circumstantiality", "B) Tangentiality", "C) Thought Blocking", "D) Alogia"], ans: 0, exp: "Circumstantiality involves tedious over-detailed speech that eventually reaches the goal." },
+            { q: "Linking words based on sound or rhyme rather than meaning ('cat, hat, bat') is:", opts: ["A) Clang Association", "B) Verbigeration", "C) Palilalia", "D) Neologism"], ans: 0, exp: "Clang association is connecting words by rhyming or phonetic similarity." },
+            { q: "Completely disorganized, meaningless, unlinked speech ('Sky blue run table mind') is:", opts: ["A) Word Salad / Incoherence", "B) Tangentiality", "C) Circumstantiality", "D) Flight of Ideas"], ans: 0, exp: "Word salad (incoherence) is a mixture of words lacking logical coherence." },
+            { q: "Sudden interruption of thought mid-sentence leaving ideas unfinished is:", opts: ["A) Thought Blocking", "B) Alogia", "C) Perseveration", "D) Palilalia"], ans: 0, exp: "Thought blocking is a sudden, abrupt cessation of thought flow." },
+            { q: "A fixed, false belief held firmly despite evidence to the contrary is a:", opts: ["A) Delusion", "B) Hallucination", "C) Illusion", "D) Obsession"], ans: 0, exp: "A delusion is a fixed false belief held despite logical evidence." },
+            { q: "Believing that neighbors are spying on and poisoning one's food is a:", opts: ["A) Persecutory Delusion", "B) Grandiose Delusion", "C) Reference Delusion", "D) Nihilistic Delusion"], ans: 0, exp: "Persecutory delusion is the false belief that one is targeted or harmed by others." },
+            { q: "A perception occurring without any real external sensory stimulus is a:", opts: ["A) Hallucination", "B) Illusion", "C) Depersonalization", "D) Derealization"], ans: 0, exp: "A hallucination is a false sensory perception with no external stimulus." },
+            { q: "Misinterpreting a coiled rope in a dark room as a dangerous snake is an example of a(n):", opts: ["A) Illusion", "B) Hallucination", "C) Delusion", "D) Autistic Thought"], ans: 0, exp: "An illusion is a false perception of an actual external stimulus." },
+            { q: "Feeling detached from one's own body ('like standing outside watching oneself') is:", opts: ["A) Depersonalization", "B) Derealization", "C) Amnesia", "D) Stupor"], ans: 0, exp: "Depersonalization is a subjective sense of detachment from one's own body." },
+            { q: "Feeling that the surrounding environment is unreal, synthetic, or fake is:", opts: ["A) Derealization", "B) Depersonalization", "C) Jamais Vu", "D) Fugue"], ans: 0, exp: "Derealization is an altered perception where the environment feels unreal." },
+            { q: "Inability to form new memories following brain trauma is:", opts: ["A) Anterograde Amnesia", "B) Retrograde Amnesia", "C) Confabulation", "D) Hyperamnesia"], ans: 0, exp: "Anterograde amnesia is memory loss for events occurring after trauma onset." },
+            { q: "Fabricating imaginary stories to fill memory gaps without conscious intent to lie is:", opts: ["A) Confabulation", "B) Lying", "C) Rationalization", "D) Perseveration"], ans: 0, exp: "Confabulation is creating false memories to cover memory deficits without intent to deceive." },
+            { q: "A patient's realistic awareness and understanding of their own mental illness defines:", opts: ["A) Insight", "B) Judgment", "C) Orientation", "D) Attention"], ans: 0, exp: "Insight refers to the patient's degree of awareness of their mental illness." },
+            { q: "An acute, fluctuating disturbance in consciousness and attention with visual hallucinations is:", opts: ["A) Delirium", "B) Dementia", "C) Stupor", "D) Fugue"], ans: 0, exp: "Delirium features acute onset, fluctuating alertness, and cognitive clouding." },
+            { q: "Total absence of facial emotional expression when hearing tragic or happy news is:", opts: ["A) Flat Affect", "B) Blunted Affect", "C) Labile Affect", "D) Inappropriate Affect"], ans: 0, exp: "Flat affect is the complete absence of emotional expression." },
+            { q: "Laughing loudly while discussing the tragic death of a family member is:", opts: ["A) Inappropriate Affect", "B) Flat Affect", "C) Restricted Affect", "D) Ambivalence"], ans: 0, exp: "Inappropriate affect is emotional expression incongruent with speech content." },
+            { q: "Simultaneous co-existence of opposing feelings (loving and hating at once) is:", opts: ["A) Ambivalence", "B) Labile Affect", "C) Euphoria", "D) Negativism"], ans: 0, exp: "Ambivalence is experiencing opposing emotions toward the same object/person." },
+            { q: "The maintenance of an imposed awkward posture without fatigue for hours is:", opts: ["A) Waxy Flexibility", "B) Agitation", "C) Negativism", "D) Mannerisms"], ans: 0, exp: "Waxy flexibility is holding imposed body postures mechanically regardless of discomfort." }
+        ];
+
+        // Chapter 2: the 20 unique symptomatology questions (no more auto-duplication)
+        symptomQuestions.forEach((t, i) => mentalQuestions.push({ id: 36 + i, chapter: 2, question: t.q, options: t.opts, answer: t.ans, explanation: t.exp }));
+
+        // Hard questions (chapters 2-6), built from the lecture notes. IDs are assigned automatically.
+        const H = (chapter, question, o, answer, explanation) => ({ chapter, question, options: o.map((x, i) => `${'ABCD'[i]}) ${x}`), answer, explanation });
+        const hardQuestions = [
+            // ---- Chapter 2: Symptomatology ----
+            H(2, "A patient answers 'Monday' when asked his name, his age and what he ate for breakfast. He does not repeat the nurse's words or his own last word. This is best described as:", ["Echolalia", "Palilalia", "Perseveration", "Verbigeration"], 2, "Perseveration is persistent repetition of the same response beyond relevance. Echolalia repeats the examiner's words, palilalia repeats the patient's own last word, and verbigeration is meaningless stereotyped repetition of phrases."),
+            H(2, "After describing a real birthday party, a patient adds invented guests and events, distorting a memory that actually exists. Which term fits best?", ["Confabulation", "Falsification", "Hyperamnesia", "Jamais vu"], 1, "Falsification distorts real memories by adding false details. Confabulation fabricates stories to fill memory gaps, and hyperamnesia is abnormally increased recall."),
+            H(2, "A client reacts only to a painful stimulus and shows minimal response to voice or touch. Which level of consciousness is this?", ["Stupor", "Confusion", "Coma", "Delirium"], 0, "Stupor is minimal response to external stimuli (e.g., only to pain). Coma is complete unresponsiveness, with no reaction to voice or touch."),
+            H(2, "A patient who claims to have special powers shows intense euphoria with grandiosity. Which mood term describes this?", ["Elation", "Euphoria", "Ambivalence", "Exaltation"], 3, "Exaltation is intense euphoria with grandiosity. Elation is a cheerful mood with increased activity; euphoria is an exaggerated feeling of well-being."),
+            H(2, "One patient believes a minor mistake ruined his whole career, a belief held with strong emotion but less rigidly than a delusion. Another has recurrent intrusive thoughts about contamination that he recognizes as irrational. These are respectively:", ["Overvalued idea and obsession", "Delusion and obsession", "Obsession and overvalued idea", "Preoccupation and delusion"], 0, "An overvalued idea is an unreasonable belief with emotional importance but less rigid than a delusion. An obsession is a recurrent, intrusive thought recognized as irrational."),
+            // ---- Chapter 3: CNS & Neurobiology ----
+            H(3, "After a stroke, one patient ignores one side of space (neglect syndrome); another shows memory loss with hallucinations. The likely lesion locations are respectively:", ["Frontal; occipital", "Temporal; parietal", "Parietal; temporal", "Occipital; frontal"], 2, "Parietal damage causes neglect syndrome; temporal damage causes memory loss and hallucinations. Frontal damage causes personality change and impulsivity."),
+            H(3, "A patient with schizophrenia has hallucinations and delusions, but also flat emotions and low motivation. Which dopamine pattern explains both clusters?", ["Decreased mesolimbic and increased mesocortical activity", "Increased mesolimbic and decreased mesocortical activity", "Decreased nigrostriatal activity only", "Increased activity in every pathway equally"], 1, "Excess mesolimbic dopamine produces positive symptoms; reduced mesocortical dopamine produces negative symptoms. Nigrostriatal deficiency is the Parkinson's pathway."),
+            H(3, "Chronic stress and depression are linked to reduced hippocampal volume. Which sequence best explains this?", ["Overactive HPA axis, high cortisol, hippocampal damage and reduced plasticity", "Low GABA, amygdala underactivity, reduced cortisol", "High acetylcholine, excitotoxicity, plaque formation", "Low dopamine, nigrostriatal loss, tremor"], 0, "The hypothalamus activates the HPA axis; sustained cortisol damages the hippocampus and reduces plasticity, impairing conversion of short-term to long-term memory."),
+            H(3, "Which neurochemical picture matches Huntington's disease, whose hallmark is chorea?", ["Low acetylcholine with beta-amyloid plaques", "Low GABA with excess glutamate causing seizures", "Excess dopamine with low glutamate", "Degeneration of GABA and acetylcholine neurons with loss of basal ganglia inhibition"], 3, "Huntington's involves loss of GABA and acetylcholine neurons. The first option describes Alzheimer's and the second epilepsy."),
+            H(3, "Which brainstem structure, when impaired, can cause reduced consciousness or coma, and which nearby nucleus is the main source of brain norepinephrine?", ["Reticular activating system; locus coeruleus", "Hypothalamus; raphe nuclei", "Thalamus; amygdala", "Cerebellum; locus coeruleus"], 0, "The RAS controls alertness and arousal. The locus coeruleus supplies norepinephrine; the raphe nuclei produce serotonin."),
+            // ---- Chapter 4: Theories & Defense Mechanisms ----
+            H(4, "A student avoids thinking about her mother's illness to concentrate on exams, while another woman has no memory of being abused as a child. These are respectively:", ["Repression and suppression", "Denial and dissociation", "Suppression and repression", "Regression and fixation"], 2, "Suppression is a conscious decision to set aside disturbing thoughts; repression is unconscious blocking of painful memories."),
+            H(4, "A formerly anti-gun man becomes a hunter after befriending one, while a teenager starts dressing and speaking like a musician he admires. These are respectively:", ["Identification and introjection", "Introjection and identification", "Projection and reaction formation", "Compensation and sublimation"], 1, "Introjection internalizes another person's beliefs or values as one's own; identification adopts the behaviors or values of an admired person."),
+            H(4, "A man who cheated on his spouse buys expensive gifts afterward, while an employee who resents his boss constantly praises him. These are respectively:", ["Reaction formation and undoing", "Compensation and denial", "Sublimation and rationalization", "Undoing and reaction formation"], 3, "Undoing counteracts an unacceptable act with a positive behavior; reaction formation behaves opposite to one's true feelings."),
+            H(4, "A 9-year-old copes poorly with social and academic demands and feels inferior to peers. Which Erikson stage is involved and which virtue results from success?", ["Industry vs. inferiority; competence", "Initiative vs. guilt; purpose", "Identity vs. role confusion; fidelity", "Autonomy vs. shame/doubt; will"], 0, "Industry vs. inferiority covers ages 6-12 and yields competence. Initiative vs. guilt (3-6) yields purpose."),
+            H(4, "In Peplau's phases, a client who actively uses the resources and teaching the nurse provides is in which phase, and what follows it?", ["Identification; exploitation", "Orientation; identification", "Exploitation; resolution", "Resolution; orientation"], 2, "Exploitation is active use of the resources offered; resolution follows, when goals are met and the relationship ends appropriately."),
+            // ---- Chapter 5: Ethical & Legal Issues ----
+            H(5, "A client with suicidal thoughts refuses hospitalization. Which conflict is present and what may justify involuntary admission?", ["Autonomy vs. nonmaleficence; preventing harm may override refusal", "Justice vs. veracity; fairness overrides truthfulness", "Fidelity vs. beneficence; loyalty overrides welfare", "Utilitarianism vs. deontology; duty overrides outcome"], 0, "Respecting autonomy allows refusal, but when refusal risks self-harm, nonmaleficence (do no harm) may override it."),
+            H(5, "A nurse tells an agitated client, 'Take this medication or I will give you an injection,' without touching him. Which intentional tort is this?", ["Battery", "Assault", "False imprisonment", "Negligence"], 1, "Assault is an act causing fear of harmful or offensive contact. Battery requires actual unpermitted contact, such as giving medication without consent."),
+            H(5, "In a malpractice claim, the nurse owed a duty, failed to meet the standard of care, and the client was injured, but the injury would have occurred anyway. Which element is missing?", ["Duty", "Breach of duty", "Injury or damage", "Causation"], 3, "Malpractice requires duty, breach, injury and a direct causal link between breach and injury. Here causation is absent."),
+            H(5, "A hospital closes a rehabilitation program to fund acute beds that serve most patients, accepting that a few will lose services. Which theory underlies this?", ["Deontology", "Fidelity", "Utilitarianism", "Veracity"], 2, "Utilitarianism seeks the greatest good for the greatest number, regardless of the impact on a few. Deontology judges the act itself, not its outcome."),
+            H(5, "A client with severe dementia cannot understand treatment options. Which action best resolves the conflict between informed consent and cognitive impairment?", ["Proceed because the client cannot object", "Obtain a decision from a legal guardian acting in the client's best interest", "Delay all treatment until capacity returns", "Ask the nurse manager to consent"], 1, "When capacity is lacking, decisions are made through a legal guardian acting in the client's best interest."),
+            // ---- Chapter 6: Therapeutic Nurse-Client Relationship ----
+            H(6, "A client says her son confuses her. The nurse replies, 'My son confuses me too; I know how you feel.' Which analysis is correct?", ["Empathy; it validates the client's feelings", "Positive regard; shared experience builds rapport", "Sympathy; it shifts focus to the nurse, invalidates the client and threatens boundaries", "Acceptance; it communicates non-judgment"], 2, "This is an ineffective sympathy statement: nurse-centered, it shifts focus from the client and may blur professional boundaries."),
+            H(6, "A nurse keeps a client's request secret, stays past her shift, accepts a gift and defends the relationship when questioned. What does this indicate and what is the best first step?", ["Therapeutic empathy; continue and document", "Acceptable social contact; limit it later", "Resolved countertransference; no action needed", "Boundary violation warning signs; seek supervision and discuss with colleagues"], 3, "These are classic warning signs of boundary violation. Nurses should not handle such issues alone: seek supervision and discuss with colleagues."),
+            H(6, "A client yells and swears at the nurse. Which response shows acceptance without approving the behavior?", ["'I want to understand your feelings, but I cannot communicate effectively while you are yelling.'", "'Stop yelling or I will end this session.'", "'You can talk to me in any way you like.'", "'I know exactly how you feel; I get angry too.'"], 0, "Acceptance acknowledges the client without judgment and treats behavior as communication, but it does not mean approval of harmful behavior."),
+            H(6, "Which situation is NOT a mandatory exception to confidentiality?", ["Suspected child or elder abuse", "A court order for records", "A client describing ongoing family conflict with no risk of harm", "A client stating a plan to harm another person"], 2, "Mandatory exceptions include child or elder abuse, risk of harm to self or others, court orders and specific legal reporting requirements."),
+            H(6, "A nurse freely chooses a value after weighing consequences and publicly affirms it, but her daily practice does not reflect it. Which values-clarification step is incomplete?", ["Acting", "Choosing", "Prizing", "Reflecting"], 0, "Values clarification has three steps: choosing, prizing, and acting. Acting means behaving consistently with the chosen value."),
+            // ---- Chapter 3: more ----
+            H(3, "After a frontal head injury, a patient makes impulsive financial decisions, cannot plan ahead and behaves inappropriately in social settings. Dysfunction of which region is most consistent, and in which disorders is it also implicated?", ["Prefrontal cortex; schizophrenia, depression and ADHD", "Occipital cortex; epilepsy and Parkinson's disease", "Cerebellum; Huntington's disease and myasthenia gravis", "Hippocampus; Alzheimer's disease and ADHD"], 0, "The prefrontal cortex governs planning, decision-making, social behavior and emotional regulation; its dysfunction is seen in schizophrenia, depression and ADHD."),
+            H(3, "A patient shows ataxia, tremor, slurred speech and poor balance. Research also links this structure to attention, timing and emotional regulation. Which structure is it?", ["Medulla", "Thalamus", "Cerebellum", "Pons"], 2, "The cerebellum coordinates voluntary movement, balance, posture and muscle tone; its damage causes ataxia, tremors, poor coordination and slurred speech."),
+            H(3, "Overactivity of which limbic structure, which processes fear, aggression and threat perception, is associated with phobias and PTSD?", ["Hippocampus", "Amygdala", "Hypothalamus", "Thalamus"], 1, "Amygdala overactivity is associated with anxiety disorders, phobias and PTSD. The hippocampus converts short-term into long-term memory."),
+            H(3, "Which limbic structure regulates temperature, hunger and thirst, controls the pituitary gland, and activates the HPA stress axis?", ["Thalamus", "Amygdala", "Hippocampus", "Hypothalamus"], 3, "The hypothalamus maintains homeostasis and regulates the endocrine system through the pituitary. The thalamus is a sensory and motor relay center."),
+            H(3, "Which option correctly lists the components of the brainstem and a function it regulates?", ["Thalamus, hypothalamus, amygdala; emotion and memory", "Frontal, parietal, temporal lobes; language and vision", "Midbrain, pons, medulla; heart rate, breathing and swallowing", "Cerebellum, pons, thalamus; balance and posture"], 2, "The brainstem (midbrain, pons, medulla) regulates heart rate, blood pressure, breathing, swallowing, reflexes, and the sleep-wake cycle."),
+            H(3, "A drug that enhances the main inhibitory neurotransmitter would be expected to help which pair of conditions linked to its low activity?", ["Parkinson's disease and myasthenia gravis", "Schizophrenia and Alzheimer's disease", "Anxiety disorders and epilepsy", "Depression and ADHD"], 2, "GABA reduces neuronal excitability and has a calming effect; low GABA activity is linked to anxiety disorders and epilepsy."),
+            H(3, "Which statement about glutamate is correct?", ["It is the main inhibitory transmitter and is low in epilepsy", "Excess causes excitotoxicity in stroke, and reduced NMDA function is linked to schizophrenia", "Its deficiency causes Parkinson's disease", "It is produced mainly in the raphe nuclei"], 1, "Glutamate is the primary excitatory transmitter, essential for learning and memory. Excess damages neurons; NMDA hypofunction is linked to psychosis and cognitive problems."),
+            H(3, "Reduced acetylcholine is characteristic of one disorder, whereas dysfunction at acetylcholine receptors causes another. Which pair is correct?", ["Parkinson's disease; Huntington's disease", "Epilepsy; Alzheimer's disease", "Myasthenia gravis; Alzheimer's disease", "Alzheimer's disease; myasthenia gravis"], 3, "Reduced acetylcholine is seen in Alzheimer's disease; dysfunction at acetylcholine receptors causes myasthenia gravis."),
+            H(3, "A patient taking a psychotropic drug becomes sedated and gains weight. Blockade of which receptors best explains this?", ["Nigrostriatal dopamine receptors", "GABA receptors", "NMDA glutamate receptors", "Histamine receptors"], 3, "Histamine is involved in alertness, gastric secretion and immune responses; its blockade by some psychotropic drugs causes sedation and weight gain."),
+            H(3, "Which description fits Parkinson's disease?", ["Excess glutamate with low GABA causing seizures", "Loss of cholinergic neurons with beta-amyloid plaques", "Nigrostriatal dopamine deficiency with a dopamine-acetylcholine imbalance causing tremor, rigidity and slow movement", "Excess mesolimbic dopamine causing hallucinations"], 2, "Parkinson's disease results from dopamine deficiency in the nigrostriatal pathway; emotional symptoms such as depression and apathy may also occur."),
+            H(3, "Which neurotransmitter, made mainly in the brainstem raphe nuclei, regulates mood, sleep, appetite, pain perception and sexual behavior, and is low in depression, anxiety and suicidal behavior?", ["Norepinephrine", "Serotonin", "Dopamine", "GABA"], 1, "Serotonin comes mainly from the raphe nuclei. Norepinephrine comes from the locus coeruleus."),
+            H(3, "Excess norepinephrine is associated with ______, whereas low levels may contribute to ______.", ["Depression; anxiety", "Psychosis; Parkinson's disease", "Epilepsy; Alzheimer's disease", "Anxiety; depression"], 3, "Excess norepinephrine causes hyperarousal and anxiety; low levels may contribute to depression (low energy, poor focus)."),
+            H(3, "Which concept explains why psychotherapy, medication and environmental stimulation can promote recovery by strengthening neural connections?", ["Excitotoxicity", "Homeostasis", "Neuroplasticity", "Deinstitutionalization"], 2, "Neuroplasticity is the CNS ability to adapt and reorganize; learning, experience, psychotherapy and medications can strengthen neural connections."),
+            H(3, "Which combination best describes the pathology of Alzheimer's disease?", ["Loss of GABA neurons with chorea", "Loss of cholinergic neurons with beta-amyloid plaques and tau tangles", "Excess dopamine with plaque formation", "Low glutamate with seizures"], 1, "Alzheimer's involves acetylcholine loss causing memory loss and confusion, plus beta-amyloid plaques and tau tangles that damage neurons."),
+            H(3, "Which combination underlies the hyperarousal (fast heart rate, sweating, alertness) of anxiety disorders?", ["High GABA, low norepinephrine, amygdala underactivity", "Low acetylcholine and high dopamine", "Low GABA, high norepinephrine and amygdala overactivity", "High serotonin and low glutamate"], 2, "Anxiety reflects too much excitation and too little inhibition: low GABA, high norepinephrine and an overactive amygdala."),
+            // ---- Chapter 4: more ----
+            H(4, "A woman describes her impulses as 'wanting everything now,' while her conscience scolds her and she finds a realistic compromise. Which personality component mediates between the unrealistic id and the moralistic superego, and on which principle does it operate?", ["Superego; moral principle", "Id; pleasure principle", "Ego; reality principle", "Ego; pleasure principle"], 2, "The ego is the rational, problem-solving component and operates on the reality principle. The id operates on the pleasure principle."),
+            H(4, "In Freud's psychosexual stages, a 7-year-old whose sexual energy is dormant and who focuses on peer interactions and learning is in which stage?", ["Phallic stage", "Latency stage", "Genital stage", "Anal stage"], 1, "The latency stage (5-11/13 years) has dormant sexual energy with focus on peers and learning. The genital stage reawakens sexual impulses."),
+            H(4, "A woman suddenly develops temporary blindness after witnessing a traumatic event, with no physical cause. Which defense mechanism is this?", ["Dissociation", "Conversion", "Denial", "Intellectualization"], 1, "Conversion expresses emotional distress through physical (sensory or motor) symptoms."),
+            H(4, "After being yelled at by her boss, a woman yells at her children. Which defense mechanism is this?", ["Projection", "Displacement", "Regression", "Reaction formation"], 1, "Displacement redirects emotions from the original source to a safer, less threatening target."),
+            H(4, "A woman disconnects from reality during a traumatic event and later cannot recall it, while a man with cancer keeps making long-term plans as if nothing is wrong. These are respectively:", ["Denial and dissociation", "Dissociation and denial", "Repression and fixation", "Suppression and undoing"], 1, "Dissociation is temporary separation from awareness or identity to escape stress; denial refuses to accept an unbearable reality."),
+            H(4, "A man with repressed same-sex attraction accuses others of being gay. Which defense mechanism is this?", ["Reaction formation", "Introjection", "Projection", "Compensation"], 2, "Projection attributes one's own unacceptable thoughts or feelings to others."),
+            H(4, "A person with aggressive urges becomes a competitive boxer, whereas a poor student becomes a star athlete to feel accomplished. These are respectively:", ["Sublimation and compensation", "Compensation and sublimation", "Undoing and identification", "Displacement and regression"], 0, "Sublimation redirects unacceptable impulses into socially acceptable activities; compensation overachieves in one area to offset weakness in another."),
+            H(4, "A grown man throws a tantrum when he does not get his way, while an adult continues to rely on others to make decisions like a dependent child. These are respectively:", ["Fixation and regression", "Regression and fixation", "Resistance and repression", "Dissociation and denial"], 1, "Regression is reverting to childlike behavior under stress; fixation is being stuck at a developmental stage due to unresolved conflict."),
+            H(4, "A person calmly describes every detail of a car crash in which he was injured, without showing any emotion. Which defense mechanism is this?", ["Intellectualization", "Suppression", "Denial", "Rationalization"], 0, "Intellectualization focuses on facts and logic while avoiding emotional involvement."),
+            H(4, "A client begins to treat the nurse like his critical father. The nurse, in turn, feels irritated by the client because he resembles her own difficult brother. These reactions are respectively:", ["Countertransference and transference", "Transference and countertransference", "Projection and introjection", "Resistance and identification"], 1, "Transference is the client's unconscious transfer of feelings about others onto the nurse; countertransference is the nurse's personal feelings projected onto the client."),
+            H(4, "A 4-year-old uses symbolic thinking and language but cannot see situations from another person's viewpoint. Which Piaget stage is this?", ["Sensorimotor", "Concrete operational", "Formal operational", "Preoperational"], 3, "The preoperational stage (2-6 years) involves symbolic thinking, egocentrism and language. Object permanence belongs to the sensorimotor stage."),
+            H(4, "A client has focused attention and a narrowed perceptual field but can still be redirected. Which level of anxiety is this, and how does the next level differ?", ["Moderate; severe anxiety greatly reduces perception and causes physical symptoms", "Mild; moderate anxiety causes panic", "Severe; panic is only a heightened awareness", "Moderate; mild anxiety causes loss of control"], 0, "Moderate anxiety narrows the perceptual field with focused attention. Severe anxiety greatly reduces perception with physical symptoms; panic brings loss of control."),
+            H(4, "A nurse reflects accurately on a client's feelings, accepts him without judgment, and remains authentic. Which three conditions of Rogers's client-centered therapy are shown?", ["Free association, dream analysis and resistance", "Positive reinforcement, modeling and desensitization", "Unconditional positive regard, genuineness and empathetic understanding", "Orientation, identification and exploitation"], 2, "Rogers's core conditions are unconditional positive regard, genuineness (congruence) and empathetic understanding."),
+            H(4, "A patient starts taking his medication on time so that the nurse stops nagging him about it. Which Skinner concept is this?", ["Positive reinforcement", "Classical conditioning", "Negative reinforcement", "Systematic desensitization"], 2, "Negative reinforcement removes an unpleasant stimulus to increase a behavior; positive reinforcement rewards a behavior to encourage repetition."),
+            H(4, "A severely anxious client is hungry, exhausted, and has not slept for two days. According to Maslow, what should the nurse address first?", ["Self-actualization through goal setting", "Esteem through recognition of achievements", "Love and belonging through group therapy", "Physiological needs such as food and sleep"], 3, "Basic needs must be addressed first: physiological needs, then safety, love/belonging, esteem and self-actualization."),
+            // ---- Chapter 5: more ----
+            H(5, "A nurse refuses to falsify a record even though doing so would produce a good outcome for a client, because the act itself is wrong. Which ethical theory guides her?", ["Utilitarianism", "Beneficence", "Deontology", "Justice"], 2, "Deontology judges whether an action is morally right in itself, independent of outcome; duty and intention determine morality."),
+            H(5, "A depressed client refuses antidepressant medication. Which pair of principles is in conflict?", ["Autonomy and beneficence", "Justice and veracity", "Fidelity and nonmaleficence", "Utilitarianism and deontology"], 0, "Respecting autonomy supports the refusal, while beneficence (the duty to do good) encourages treatment to improve wellbeing."),
+            H(5, "Two clients need admission to a psychiatric unit but only one bed is available. Which principle should guide the team's decision?", ["Fidelity, admitting the client who has waited longer to honor commitments", "Veracity, informing both clients of the unit's capacity only", "Autonomy, letting the clients decide who is admitted", "Justice, deciding by fairness and clinical urgency"], 3, "Justice means fairness and equality; limited resources are allocated by fairness and clinical urgency."),
+            H(5, "A client tells the nurse he plans to harm a specific person. Which action is appropriate?", ["Keep confidentiality because the client trusted the nurse", "Break confidentiality and report the threat to protect the potential victim", "Wait until the client repeats the threat", "Tell only the client's family"], 1, "Confidentiality has exceptions, including risk of harm to others; the duty to protect may require reporting the threat."),
+            H(5, "Which statement best defines nonmaleficence?", ["The obligation to do no harm, whether intentional or unintentional", "The duty to do good and promote others' welfare", "Loyalty to commitments and responsibilities", "The right to self-determination"], 0, "Nonmaleficence is the obligation to 'do no harm' and requires careful consideration to avoid injury or suffering. Beneficence is the duty to do good."),
+            H(5, "A nurse promises a client that she will return to discuss his concerns and does so reliably, while also telling him the truth about a test result without deception. These actions illustrate which two principles?", ["Justice and autonomy", "Beneficence and nonmaleficence", "Fidelity and veracity", "Utilitarianism and deontology"], 2, "Fidelity is faithfulness to commitments and maintaining trust; veracity is truthfulness and not deceiving clients."),
+            H(5, "A nurse gives an injection of medication to a competent client who has refused it, without his consent. Which intentional tort has occurred?", ["Assault", "Negligence", "False imprisonment", "Battery"], 3, "Battery is unpermitted or harmful physical contact, such as giving medication without consent or improper restraint."),
+            H(5, "A nurse places a calm, cooperative client in seclusion for staff convenience when there is no emergency. Which tort is most applicable?", ["Battery", "False imprisonment", "Malpractice", "Assault"], 1, "False imprisonment is the unlawful restriction of a client's freedom, such as inappropriate use of restraint or seclusion."),
+            H(5, "Which statement correctly distinguishes negligence from malpractice?", ["Negligence is intentional; malpractice is unintentional", "Both are intentional torts requiring physical contact", "Malpractice is a specific type of negligence involving professionals, requiring duty, breach, injury and causation", "Malpractice applies only to physicians"], 2, "Negligence is failure to act as a reasonably prudent person would. Malpractice is negligence by professionals (e.g., nurses, physicians) and needs four proven elements."),
+            H(5, "A client asks to read his psychiatric record. Under the Bill of Rights for Psychiatric Patients, when may access be limited?", ["When access may be detrimental to the client's health", "When the client has been discharged", "When the client has refused a medication", "Whenever the nurse is busy"], 0, "Clients may access their records except when access may be detrimental to their health."),
+            H(5, "Which condition must be met before a psychiatric client can be included in an experimental procedure?", ["A physician's verbal order only", "Agreement of the family without the client's involvement", "A treatment-team vote", "Informed, voluntary, written consent"], 3, "The client has the right to be free from experimental procedures without informed, voluntary, written consent."),
+            H(5, "Under the Bill of Rights, the right to communicate by telephone, mail and visitors may be restricted only when:", ["Staff find the calls inconvenient", "The client has been admitted involuntarily", "Restriction is therapeutically justified", "The client's family requests it"], 2, "Clients may communicate with others unless restricted for therapeutic reasons."),
+            H(5, "Which element is NOT among the content areas of the ANA Code of Ethics for Nurses?", ["Respect for human dignity and compassion", "Primary commitment to the patient", "Advocacy for health, safety and patient rights", "Priority of the institution's finances over client needs"], 3, "The ANA Code emphasizes dignity, patient commitment, advocacy, accountability, professional integrity, safe work environments, advancing the profession, collaboration and social justice."),
+            H(5, "A nurse witnesses a colleague behaving unethically and says nothing. Which guideline for confronting ethical dilemmas does this violate?", ["Speak up about ethical concerns, since silence may imply agreement", "Resolve the issue alone without involving others", "Reflect on personal values only after the event", "Avoid discussing it with supervisors"], 0, "Guidelines state that nurses should speak up, seek supervision or discussion with colleagues, and reflect on personal values; silence may imply agreement with unethical behavior."),
+            H(5, "Which action most directly helps a nurse minimize legal liability?", ["Practicing beyond the scope when staff are short", "Documenting all assessments, interventions and outcomes accurately and completely", "Avoiding relationships with clients' families", "Making decisions independently without consulting peers"], 1, "Liability prevention includes practicing within the nurse practice act, following standards, collaborating with peers and documenting accurately and completely."),
+            // ---- Chapter 6: more ----
+            H(6, "A nurse promises to return in 10 minutes but returns after 30. Which trust-promoting behavior was compromised?", ["Approachability", "Keeping promises and consistency", "Suggesting rather than telling", "Objectivity"], 1, "Reliable actions and following through on commitments build trust; small behaviors strongly affect the client's perception of safety."),
+            H(6, "A client senses that the nurse is rushed, offering superficial reassurance and artificial kindness. Which core component of the relationship is lacking?", ["Acceptance", "Confidentiality", "Positive regard", "Genuine interest"], 3, "Clients can detect insincerity; genuine interest means being fully present, asking meaningful questions and allowing silence."),
+            H(6, "Which statement correctly contrasts empathy with sympathy?", ["Empathy is client-centered and supports independence; sympathy is nurse-centered and may increase dependence", "Empathy is subjective; sympathy is objective", "Empathy is feeling pity; sympathy is understanding feelings", "Both are equally therapeutic"], 0, "Empathy is understanding the client's feelings, is objective and client-centered. Sympathy is feeling pity, is subjective and nurse-centered."),
+            H(6, "Which set lists therapeutic empathy techniques?", ["Advice-giving, reassurance and approval", "Interrupting, probing and changing the subject", "Reflection, clarification and summarizing emotions", "Defending, minimizing and rationalizing"], 2, "Reflection, clarification and summarizing emotions convey understanding back to the client."),
+            H(6, "Which nurse behavior best conveys positive regard?", ["Using the client's diagnosis to address him", "Using the client's preferred name and allowing choice whenever possible", "Avoiding eye contact to prevent discomfort", "Giving advice quickly to save time"], 1, "Positive regard is belief in the client's worth; use of the preferred name, choice, preferences and meaningful time convey it."),
+            H(6, "A nurse feels irritated by a client who reminds her of a difficult relative. Which concept does this describe, and what is needed to control it?", ["Empathy; objectivity", "Transference; mentorship", "Boundary crossing; gifts", "Countertransference; self-awareness"], 3, "Countertransference is the nurse's emotional reaction toward a client; self-awareness of personal values, beliefs and triggers helps control it."),
+            H(6, "A nurse believes that all clients with substance use are 'weak' and has no evidence for this. Which type of belief is this?", ["Irrational belief based on misinformation", "Rational belief", "Cultural belief based on traditional norms", "Value clarified by choosing"], 0, "Beliefs may be rational (evidence-based), irrational (fear, misinformation) or cultural (traditional norms); recognizing them prevents bias."),
+            H(6, "A nurse's hostility and cynicism toward a client hinder rapport. Which concept best explains this?", ["Values", "Negative attitude as an emotional frame of reference", "Positive regard", "Acceptance"], 1, "Attitudes are emotional frames of reference that influence behavior; negative attitudes hinder therapeutic rapport."),
+            H(6, "Which relationship is goal-directed, time-limited, focused on the client's needs only, and based on professional standards and ethics?", ["Social relationship", "Intimate relationship", "Therapeutic relationship", "Peer relationship"], 2, "The therapeutic relationship is focused solely on client needs. Social relationships involve mutual sharing, and intimate relationships are strictly prohibited."),
+            H(6, "Which activity belongs to the working phase of the nurse-client relationship?", ["Introduction and initial trust-building only", "Termination of the relationship", "Initial setting of goals and contract", "Addressing resistance and practicing new coping skills"], 3, "Working phase tasks include collecting data, teaching coping, addressing resistance, evaluating progress, practicing new skills and promoting independence."),
+            H(6, "A nurse helps a client with feeding, bathing, toileting and dressing while maintaining professional limits. Which nurse role is this?", ["Teacher", "Parent surrogate", "Advocate", "Counselor"], 1, "The parent surrogate role assists with basic daily activities while maintaining professional limits."),
+            H(6, "According to strategies for avoiding inappropriate nurse-client relationships, which statement is correct?", ["Only inexperienced female staff are at risk of boundary loss", "Boundary violations cannot occur with careful staff", "Staff should avoid discussing sexual feelings openly", "All staff, regardless of gender, experience or discipline, are at risk, and supervisors should identify 'at-risk' clients"], 3, "All staff are at risk; supervisors should identify at-risk clients and openly discuss issues such as sexual feelings or over-involvement."),
+            H(6, "Which nurse approach best reflects 'suggesting rather than telling'?", ["Encouraging shared decision-making by offering options", "Ordering the client to follow the plan", "Making decisions for the client to save time", "Withholding options to avoid confusion"], 0, "Suggesting rather than telling is a trust-promoting behavior that encourages shared decision-making."),
+            H(6, "Which statement correctly describes the therapeutic relationship?", ["It is social and unlimited in duration", "It is healing-focused, professional, time-limited, and not social or intimate", "It meets both the nurse's and client's personal needs", "It is based mainly on shared personal problems"], 1, "The therapeutic relationship is healing-focused, professional and time-limited; sharing personal problems is a boundary-violation warning sign."),
+            H(6, "A client who trusts the nurse becomes less anxious and more willing to disclose. According to the notes, which is NOT an effect of developing trust?", ["Reduces anxiety", "Encourages disclosure", "Creates emotional safety", "Increases client resistance and withholding of information"], 3, "Trust reduces anxiety, encourages disclosure and creates emotional safety; without trust clients withhold information and resist interventions.")
+        ];
+        hardQuestions.sort((a, b) => a.chapter - b.chapter).forEach((q, i) => mentalQuestions.push({ id: 56 + i, ...q }));
+
+        // Spread correct answers evenly over A/B/C/D for chapters 1-2 (fixed seed, so the order is stable)
+        (function rebalanceAnswers(list) {
+            let seed = 20260711;
+            const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+            const shuffle = arr => { for (let j = arr.length - 1; j > 0; j--) { const k = Math.floor(rnd() * (j + 1)); [arr[j], arr[k]] = [arr[k], arr[j]]; } return arr; };
+            const targets = shuffle(list.map((_, i) => i % 4));
+            list.forEach((q, i) => {
+                const texts = q.options.map(o => o.replace(/^[A-D]\)\s*/, ''));
+                const correct = texts[q.answer];
+                const others = shuffle(texts.filter((_, j) => j !== q.answer));
+                others.splice(targets[i], 0, correct);
+                q.options = others.map((t, j) => `${'ABCD'[j]}) ${t}`);
+                q.answer = targets[i];
+            });
+        })(mentalQuestions.filter(q => q.chapter <= 2));
+
+        // ================= SUBJECT 2: CRITICAL CARE NURSING =================
+        const criticalQuestions = [
+            // Module 1: Hemodynamics & Shock
+            { id: 1, chapter: 1, question: "A commonly targeted minimum mean arterial pressure (MAP) in critically ill adults to maintain organ perfusion is:", options: ["A) 40 mmHg", "B) 65 mmHg", "C) 90 mmHg", "D) 110 mmHg"], answer: 1, explanation: "A MAP of at least 65 mmHg is the usual target to keep vital organs perfused. MAP = (SBP + 2 x DBP) / 3." },
+            { id: 2, chapter: 1, question: "Warm, flushed skin with low blood pressure and low systemic vascular resistance in a septic patient suggests:", options: ["A) Cardiogenic shock", "B) Hypovolemic shock", "C) Distributive shock", "D) Obstructive shock"], answer: 2, explanation: "Septic shock is a distributive shock: widespread vasodilation lowers SVR, so the skin can be warm early on." },
+            { id: 3, chapter: 1, question: "Which is the initial fluid of choice for resuscitation in septic shock?", options: ["A) Isotonic crystalloids", "B) Dextrose 5% in water", "C) Packed red blood cells only", "D) Hypotonic saline 0.45%"], answer: 0, explanation: "Guidelines recommend isotonic crystalloids (normal saline or balanced solutions). D5W and hypotonic fluids do not stay in the vascular space." },
+            { id: 4, chapter: 1, question: "Which finding is the earliest sign of hypovolemic shock?", options: ["A) Severe hypotension", "B) Tachycardia and restlessness", "C) Anuria", "D) Bradycardia"], answer: 1, explanation: "The body compensates early by raising the heart rate, and restlessness appears early. Hypotension is a late sign." },
+            { id: 5, chapter: 1, question: "Which drug is the first-line vasopressor for septic shock?", options: ["A) Dopamine", "B) Phenylephrine", "C) Norepinephrine", "D) Dobutamine"], answer: 2, explanation: "Norepinephrine is the recommended first-choice vasopressor to restore MAP in septic shock." },
+            // Module 2: Respiratory Failure & Mechanical Ventilation
+            { id: 6, chapter: 2, question: "A normal arterial blood pH range is:", options: ["A) 7.15 - 7.25", "B) 6.80 - 7.00", "C) 7.35 - 7.45", "D) 7.50 - 7.60"], answer: 2, explanation: "Normal arterial pH is 7.35-7.45. Below 7.35 is acidosis; above 7.45 is alkalosis." },
+            { id: 7, chapter: 2, question: "ABG results: pH 7.28, PaCO2 56 mmHg, HCO3 24 mEq/L. This indicates:", options: ["A) Metabolic acidosis", "B) Respiratory alkalosis", "C) Metabolic alkalosis", "D) Respiratory acidosis"], answer: 3, explanation: "Low pH with high PaCO2 and normal HCO3 is uncompensated respiratory acidosis: the lungs are retaining CO2." },
+            { id: 8, chapter: 2, question: "In ARDS, lung-protective ventilation uses a tidal volume of about:", options: ["A) 6 mL/kg predicted body weight", "B) 12 mL/kg actual body weight", "C) 15 mL/kg predicted body weight", "D) 10 mL/kg actual body weight"], answer: 0, explanation: "Low tidal volume (about 6 mL/kg of predicted body weight) reduces ventilator-induced lung injury." },
+            { id: 9, chapter: 2, question: "Which action helps prevent ventilator-associated pneumonia (VAP)?", options: ["A) Keeping the patient flat in bed", "B) Routine saline instillation before every suction", "C) Continuous sedation with no daily interruption", "D) Raising the head of the bed to 30-45 degrees"], answer: 3, explanation: "Elevating the head of the bed 30-45 degrees reduces aspiration. Other bundle steps: daily sedation interruption, oral care, and subglottic suctioning." },
+            { id: 10, chapter: 2, question: "A high-pressure alarm sounds on a ventilator. The nurse's priority is to:", options: ["A) Assess the patient for secretions, coughing, biting, or a kinked tube", "B) Silence the alarm and re-check in an hour", "C) Increase the tidal volume", "D) Turn the ventilator off"], answer: 0, explanation: "High pressure usually means increased resistance: secretions, coughing, biting the tube, kinks, or bronchospasm. Assess the patient first, and if it is not resolved, bag manually and call for help." },
+            // Module 3: Cardiac Emergencies & ECG
+            { id: 11, chapter: 3, question: "The immediate treatment for ventricular fibrillation is:", options: ["A) Synchronized cardioversion", "B) Atropine 0.5 mg IV", "C) Defibrillation with high-quality CPR", "D) Adenosine 6 mg rapid IV push"], answer: 2, explanation: "VF is a shockable rhythm: start CPR and deliver an unsynchronized shock (defibrillation) as soon as a defibrillator is available." },
+            { id: 12, chapter: 3, question: "The recommended adult chest compression rate during CPR is:", options: ["A) 60-80 per minute", "B) 80-100 per minute", "C) 100-120 per minute", "D) 140-160 per minute"], answer: 2, explanation: "Compress at 100-120 per minute, at least 5 cm (2 inches) deep, allow full chest recoil, and minimize interruptions." },
+            { id: 13, chapter: 3, question: "During cardiac arrest, epinephrine 1 mg IV/IO is repeated every:", options: ["A) 1-2 minutes", "B) 10 minutes", "C) 15 minutes", "D) 3-5 minutes"], answer: 3, explanation: "Epinephrine 1 mg is given every 3-5 minutes during cardiac arrest according to ACLS guidelines." },
+            { id: 14, chapter: 3, question: "Beck's triad (hypotension, distended neck veins, muffled heart sounds) indicates:", options: ["A) Tension pneumothorax", "B) Pulmonary embolism", "C) Cardiac tamponade", "D) Aortic dissection"], answer: 2, explanation: "Fluid around the heart limits ventricular filling, causing the classic triad of cardiac tamponade." },
+            { id: 15, chapter: 3, question: "A stable patient with SVT does not respond to vagal maneuvers. The first-line drug is:", options: ["A) Adenosine", "B) Atropine", "C) Lidocaine", "D) Epinephrine"], answer: 0, explanation: "Adenosine briefly blocks AV node conduction. Give it by rapid IV push followed by a saline flush." },
+            // Module 4: Neuro, Renal & ICU Care
+            { id: 16, chapter: 4, question: "The Glasgow Coma Scale (GCS) score ranges from:", options: ["A) 0 to 10", "B) 1 to 10", "C) 0 to 15", "D) 3 to 15"], answer: 3, explanation: "GCS adds eye opening (1-4), verbal response (1-5) and motor response (1-6), so the lowest score is 3 and the highest is 15." },
+            { id: 17, chapter: 4, question: "Which findings make up Cushing's triad of raised intracranial pressure?", options: ["A) Hypotension, tachycardia, rapid breathing", "B) Hypertension, bradycardia, irregular respirations", "C) Fever, tachycardia, hypotension", "D) Hypotension, bradycardia, rapid breathing"], answer: 1, explanation: "Cushing's triad is a late, ominous sign of raised ICP and impending herniation." },
+            { id: 18, chapter: 4, question: "For a patient with raised intracranial pressure, the best positioning is:", options: ["A) Head of bed at 30 degrees with the head in a neutral midline position", "B) Flat with the legs elevated", "C) Head turned to one side", "D) Trendelenburg position"], answer: 0, explanation: "A 30-degree head-up position with the neck neutral promotes venous drainage from the brain. Avoid neck flexion, head rotation, and Trendelenburg." },
+            { id: 19, chapter: 4, question: "Which ECG change is most typical of hyperkalemia?", options: ["A) Tall, peaked T waves", "B) Prominent U waves", "C) Delta waves", "D) Flattened T waves"], answer: 0, explanation: "Early hyperkalemia causes tall, peaked T waves; later the QRS widens and P waves disappear. Hypokalemia produces U waves and flat T waves." },
+            { id: 20, chapter: 4, question: "The CAM-ICU tool is used to screen ICU patients for:", options: ["A) Pain", "B) Sedation depth", "C) Pressure injury risk", "D) Delirium"], answer: 3, explanation: "The Confusion Assessment Method for the ICU detects delirium (acute change, inattention, disorganized thinking, altered consciousness). RASS is used for sedation depth." }
+        ];
+
+        // ================= SUBJECT SETTINGS =================
+        const banks = {
+            mental: {
+                key: 'mental',
+                nameEn: 'Mental Health Nursing',
+                nameAr: 'تمريض الصحة النفسية',
+                icon: 'fa-brain',
+                grad: 'from-brand-600 to-indigo-600',
+                examTitle: 'Mental Health Nursing Mock Exam Setup',
+                placeholder: 'Search keywords (e.g., Delusion, Dopamine, Peplau, Autonomy)...',
+                ansKey: 'psych_saved_user_answers_v3',
+                bmKey: 'psych_bm_en_v2',
+                data: mentalQuestions,
+                modules: [
+                    { id: 1, title: 'Concept, History &amp; Scope', label: 'Chap 1-1: Concept, History &amp; Scope' },
+                    { id: 2, title: 'General Symptomatology', label: 'Chap 1-2: General Symptomatology' },
+                    { id: 3, title: 'CNS &amp; Neurobiology', label: 'Chap 1-3: CNS &amp; Neurobiology' },
+                    { id: 4, title: 'Theories &amp; Defense Mechanisms', label: 'Chap 2: Theories &amp; Defense Mechanisms' },
+                    { id: 5, title: 'Ethical &amp; Legal Issues', label: 'Chap 3: Ethical &amp; Legal Issues' },
+                    { id: 6, title: 'Therapeutic Nurse-Client Relationship', label: 'Chap 12: Therapeutic Nurse-Client Relationship' }
+                ]
+            },
+            critical: {
+                key: 'critical',
+                nameEn: 'Critical Care Nursing',
+                nameAr: 'تمريض الحالات الحرجة',
+                icon: 'fa-heart-pulse',
+                grad: 'from-rose-600 to-orange-500',
+                examTitle: 'Critical Care Nursing Mock Exam Setup',
+                placeholder: 'Search keywords (e.g., MAP, ABG, ARDS, Cushing, Adenosine)...',
+                ansKey: 'nq_critical_answers_v1',
+                bmKey: 'nq_critical_bm_v1',
+                data: criticalQuestions,
+                modules: [
+                    { id: 1, title: 'Hemodynamics &amp; Shock', label: 'Module 1: Hemodynamics &amp; Shock' },
+                    { id: 2, title: 'Respiratory Failure &amp; Ventilation', label: 'Module 2: Respiratory Failure &amp; Ventilation' },
+                    { id: 3, title: 'Cardiac Emergencies &amp; ECG', label: 'Module 3: Cardiac Emergencies &amp; ECG' },
+                    { id: 4, title: 'Neuro, Renal &amp; ICU Care', label: 'Module 4: Neuro, Renal &amp; ICU Care' }
+                ]
+            }
+        };
+
+        function loadJSON(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        // Global State with LocalStorage Loading
+        let currentBankKey = localStorage.getItem('nq_subject') === 'critical' ? 'critical' : 'mental';
+        let currentBank = banks[currentBankKey];
+        let questionsData = currentBank.data;
+
+        let currentMode = 'practice';
+        let currentPage = 1;
+        const pageSize = 10;
+        let filteredQuestions = [...questionsData];
+
+        let userAnswers = loadJSON(currentBank.ansKey, {});
+        let bookmarks = new Set(loadJSON(currentBank.bmKey, []));
+
+        let examQuestions = [];
+        let examAnswers = {};
+        let examTimerInterval = null;
+        let examTimeRemaining = 0;
+        let currentExamIndex = 0;
+
+        let currentFlashcardIndex = 0;
+        let isCardFlipped = false;
+
+        // Robust Safe Initialization Function
+        function safeInitApp() {
+            if (window.__quizAppInitialized) return;
+            window.__quizAppInitialized = true;
+
+            try {
+                initTheme();
+                bindEvents();
+                applyBankToUI();
+                updateBookmarkBadge();
+                applyFilters();
+                renderFullGridModal();
+            } catch (err) {
+                console.error("App init error:", err);
+            }
+        }
+
+        function initTheme() {
+            if (localStorage.getItem('psych_theme_en') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('psych_theme_en', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // ---------- Subject drawer ----------
+        function openDrawer() {
+            document.getElementById('subjectDrawer').classList.add('open');
+            document.getElementById('subjectDrawer').setAttribute('aria-hidden', 'false');
+            document.getElementById('drawerOverlay').classList.add('open');
+            const burger = document.getElementById('menuBtn');
+            burger.classList.add('open');
+            burger.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            document.getElementById('subjectDrawer').classList.remove('open');
+            document.getElementById('subjectDrawer').setAttribute('aria-hidden', 'true');
+            document.getElementById('drawerOverlay').classList.remove('open');
+            const burger = document.getElementById('menuBtn');
+            burger.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function toggleDrawer() {
+            if (document.getElementById('subjectDrawer').classList.contains('open')) closeDrawer();
+            else openDrawer();
+        }
+
+        // Updates every subject-dependent label, filter and option on the page
+        function applyBankToUI() {
+            const b = currentBank;
+            const n = questionsData.length;
+
+            document.getElementById('subjectLabel').textContent = b.nameEn;
+            document.getElementById('subjectLabelAr').textContent = b.nameAr;
+
+            const logo = document.getElementById('headerLogo');
+            Object.values(banks).forEach(x => x.grad.split(' ').forEach(c => logo.classList.remove(c)));
+            b.grad.split(' ').forEach(c => logo.classList.add(c));
+            document.getElementById('headerIcon').className = 'fa-solid ' + b.icon;
+
+            document.getElementById('paletteLabel').textContent = `${n} MCQ Palette`;
+            document.getElementById('gridTitle').textContent = `Full ${n} MCQ Palette Navigator`;
+            document.getElementById('examSetupTitle').textContent = b.examTitle;
+            document.getElementById('searchInput').placeholder = b.placeholder;
+
+            document.getElementById('chapterFilter').innerHTML =
+                `<option value="all">All Modules (${n} MCQs)</option>` +
+                b.modules.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
+
+            const counts = [20, 50, 100, 200].filter(c => c < n);
+            counts.push(n);
+            const examSel = document.getElementById('examCountSelect');
+            examSel.innerHTML = counts.map(c => `<option value="${c}">${c} Questions${c === n ? ' (Full Bank)' : ''}</option>`).join('');
+            examSel.value = counts.includes(50) ? '50' : String(n);
+
+            document.querySelectorAll('.nq-card').forEach(card => {
+                card.classList.toggle('active', card.getAttribute('data-subject') === currentBankKey);
+            });
+            Object.keys(banks).forEach(k => {
+                const el = document.querySelector(`.nq-count[data-bank="${k}"]`);
+                if (el) el.textContent = `${banks[k].data.length} questions`;
+            });
+        }
+
+        function switchSubject(key) {
+            closeDrawer();
+            if (!banks[key] || key === currentBankKey) return;
+
+            currentBankKey = key;
+            currentBank = banks[key];
+            questionsData = currentBank.data;
+            localStorage.setItem('nq_subject', key);
+
+            userAnswers = loadJSON(currentBank.ansKey, {});
+            bookmarks = new Set(loadJSON(currentBank.bmKey, []));
+
+            clearInterval(examTimerInterval);
+            examQuestions = [];
+            examAnswers = {};
+            document.getElementById('examSetupCard').classList.remove('hidden');
+            document.getElementById('examActivePanel').classList.add('hidden');
+            document.getElementById('examResultReport').classList.add('hidden');
+            currentFlashcardIndex = 0;
+
+            applyBankToUI();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            updateBookmarkBadge();
+            renderFullGridModal();
+            switchMode(currentMode);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('Switched to ' + currentBank.nameEn, 'success');
+        }
+
+        function bindEvents() {
+            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+            document.getElementById('menuBtn').addEventListener('click', toggleDrawer);
+            document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
+            document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+            document.querySelectorAll('.nq-card').forEach(card => {
+                card.addEventListener('click', () => switchSubject(card.getAttribute('data-subject')));
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeDrawer();
+            });
+
+            document.getElementById('tab-practice').addEventListener('click', () => switchMode('practice'));
+            document.getElementById('tab-exam').addEventListener('click', () => switchMode('exam'));
+            document.getElementById('tab-flashcards').addEventListener('click', () => switchMode('flashcards'));
+            document.getElementById('tab-bookmarks').addEventListener('click', () => switchMode('bookmarks'));
+
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('chapterFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+            document.getElementById('prevBtn').addEventListener('click', () => changePage(-1));
+            document.getElementById('nextBtn').addEventListener('click', () => changePage(1));
+
+            document.getElementById('resetProgressBtn').addEventListener('click', resetAllProgress);
+
+            document.getElementById('openGridBtn').addEventListener('click', openGridModal);
+            document.getElementById('closeGridBtn').addEventListener('click', closeGridModal);
+            document.getElementById('gridModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('gridModal')) closeGridModal();
+            });
+
+            document.getElementById('startExamBtn').addEventListener('click', startMockExam);
+            document.getElementById('finishExamBtn').addEventListener('click', confirmSubmitExam);
+
+            document.getElementById('flashcardElement').addEventListener('click', flipFlashcard);
+            document.getElementById('prevFlashcardBtn').addEventListener('click', () => changeFlashcard(-1));
+            document.getElementById('nextFlashcardBtn').addEventListener('click', () => changeFlashcard(1));
+        }
+
+        function resetAllProgress() {
+            if (confirm("هل أنت متأكد من رغبتك في مسح كافة الإجابات السابقة والبدء من جديد؟")) {
+                userAnswers = {};
+                localStorage.removeItem(currentBank.ansKey);
+                applyFilters();
+                renderFullGridModal();
+                showToast('تم مسح جميع الإجابات بنجاح', 'success');
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            ['practice', 'exam', 'flashcards', 'bookmarks'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === mode) {
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm";
+                } else {
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700";
+                }
+            });
+
+            document.getElementById('practiceView').classList.add('hidden');
+            document.getElementById('examView').classList.add('hidden');
+            document.getElementById('flashcardsView').classList.add('hidden');
+            document.getElementById('bookmarksView').classList.add('hidden');
+            document.getElementById('filterControls').classList.remove('hidden');
+
+            if (mode === 'practice') {
+                document.getElementById('practiceView').classList.remove('hidden');
+                applyFilters();
+            } else if (mode === 'exam') {
+                document.getElementById('filterControls').classList.add('hidden');
+                document.getElementById('examView').classList.remove('hidden');
+            } else if (mode === 'flashcards') {
+                document.getElementById('flashcardsView').classList.remove('hidden');
+                initFlashcards();
+            } else if (mode === 'bookmarks') {
+                document.getElementById('bookmarksView').classList.remove('hidden');
+                renderBookmarks();
+            }
+        }
+
+        function toggleBookmark(qId) {
+            if (bookmarks.has(qId)) {
+                bookmarks.delete(qId);
+                showToast('Removed from Bookmarks', 'info');
+            } else {
+                bookmarks.add(qId);
+                showToast('Saved to Bookmarks', 'success');
+            }
+            localStorage.setItem(currentBank.bmKey, JSON.stringify([...bookmarks]));
+            updateBookmarkBadge();
+            renderFullGridModal();
+
+            if (currentMode === 'practice') renderPracticeQuestions();
+            else if (currentMode === 'bookmarks') renderBookmarks();
+        }
+
+        function updateBookmarkBadge() {
+            document.getElementById('bookmarkCountBadge').textContent = bookmarks.size;
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const chap = document.getElementById('chapterFilter').value;
+            const stat = document.getElementById('statusFilter').value;
+
+            filteredQuestions = questionsData.filter(q => {
+                const matchSearch = !search ||
+                    q.question.toLowerCase().includes(search) ||
+                    q.options.some(o => o.toLowerCase().includes(search)) ||
+                    q.explanation.toLowerCase().includes(search);
+
+                const matchChap = chap === 'all' || q.chapter === parseInt(chap);
+
+                let matchStat = true;
+                const isAns = userAnswers.hasOwnProperty(q.id);
+                if (stat === 'unanswered') matchStat = !isAns;
+                else if (stat === 'correct') matchStat = isAns && userAnswers[q.id] === q.answer;
+                else if (stat === 'incorrect') matchStat = isAns && userAnswers[q.id] !== q.answer;
+
+                return matchSearch && matchChap && matchStat;
+            });
+
+            currentPage = 1;
+            renderPracticeQuestions();
+            updateStats();
+        }
+
+        function renderPracticeQuestions() {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = '';
+
+            if (filteredQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600"></i>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No matching questions found</h3>
+                    </div>
+                `;
+                document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+
+            const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+            const startIdx = (currentPage - 1) * pageSize;
+            const pageItems = filteredQuestions.slice(startIdx, startIdx + pageSize);
+
+            pageItems.forEach(q => {
+                const card = createQuestionCard(q);
+                container.appendChild(card);
+            });
+
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function createQuestionCard(q) {
+            const card = document.createElement('div');
+            card.className = "bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4 transition";
+
+            const isBookmarked = bookmarks.has(q.id);
+            const isAnswered = userAnswers.hasOwnProperty(q.id);
+            const selectedOpt = userAnswers[q.id];
+
+            const modObj = currentBank.modules.find(m => m.id === q.chapter);
+            const modTitle = modObj ? modObj.title : '';
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                            Question #${q.id}
+                        </span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            Module ${q.chapter}: ${modTitle}
+                        </span>
+                    </div>
+                    <button class="bm-btn text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="Save to Bookmarks">
+                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                    </button>
+                </div>
+
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
+                    ${q.question}
+                </h3>
+
+                <div class="space-y-2">
+                    ${q.options.map((opt, optIdx) => {
+                        let btnClass = "w-full text-left p-3 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ";
+                        if (!isAnswered) {
+                            btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 cursor-pointer";
+                        } else {
+                            if (optIdx === q.answer) {
+                                btnClass += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 font-bold ring-1 ring-emerald-500";
+                            } else if (optIdx === selectedOpt) {
+                                btnClass += "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200 font-bold ring-1 ring-rose-500";
+                            } else {
+                                btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/20 text-slate-400 opacity-60";
+                            }
+                        }
+
+                        return `
+                            <button data-opt="${optIdx}" ${isAnswered ? 'disabled' : ''} class="opt-btn ${btnClass}">
+                                <span>${opt}</span>
+                                ${isAnswered && optIdx === q.answer ? '<i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-base"></i>' : ''}
+                                ${isAnswered && optIdx === selectedOpt && selectedOpt !== q.answer ? '<i class="fa-solid fa-circle-xmark text-rose-600 dark:text-rose-400 text-base"></i>' : ''}
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+
+                ${isAnswered ? `
+                    <div class="mt-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs leading-relaxed">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                            <span>Clinical Rationale & Explanation:</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300">${q.explanation}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            card.querySelector('.bm-btn').addEventListener('click', () => toggleBookmark(q.id));
+
+            card.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const optIdx = parseInt(btn.getAttribute('data-opt'));
+                    answerPracticeQuestion(q.id, optIdx);
+                });
+            });
+
+            return card;
+        }
+
+        function answerPracticeQuestion(qId, optIdx) {
+            userAnswers[qId] = optIdx;
+            localStorage.setItem(currentBank.ansKey, JSON.stringify(userAnswers));
+            renderPracticeQuestions();
+            updateStats();
+            renderFullGridModal();
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderPracticeQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateStats() {
+            const ansCount = Object.keys(userAnswers).length;
+            let correct = 0;
+            let incorrect = 0;
+
+            Object.keys(userAnswers).forEach(qId => {
+                const q = questionsData.find(item => item.id === parseInt(qId));
+                if (q && userAnswers[qId] === q.answer) correct++;
+                else incorrect++;
+            });
+
+            document.getElementById('statTotal').textContent = questionsData.length;
+            document.getElementById('statCorrect').textContent = correct;
+            document.getElementById('statIncorrect').textContent = incorrect;
+            const pct = Math.round((ansCount / questionsData.length) * 100);
+            document.getElementById('statProgress').textContent = `${pct}%`;
+        }
+
+        // Mock Exam Engine
+        function startMockExam() {
+            const count = Math.min(parseInt(document.getElementById('examCountSelect').value), questionsData.length);
+            const minutes = parseInt(document.getElementById('examTimeSelect').value);
+
+            const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
+            examQuestions = shuffled.slice(0, count);
+            examAnswers = {};
+            currentExamIndex = 0;
+            examTimeRemaining = minutes * 60;
+
+            document.getElementById('examSetupCard').classList.add('hidden');
+            document.getElementById('examActivePanel').classList.remove('hidden');
+            document.getElementById('examResultReport').classList.add('hidden');
+
+            startExamTimer();
+            renderExamQuestion();
+            renderExamGridMap();
+        }
+
+        function startExamTimer() {
+            clearInterval(examTimerInterval);
+            examTimerInterval = setInterval(() => {
+                examTimeRemaining--;
+                if (examTimeRemaining <= 0) {
+                    clearInterval(examTimerInterval);
+                    finishMockExam();
+                    showToast('Time expired! Exam auto-submitted.', 'info');
+                } else {
+                    updateTimerUI();
+                }
+            }, 1000);
+            updateTimerUI();
+        }
+
+        function updateTimerUI() {
+            const hrs = Math.floor(examTimeRemaining / 3600);
+            const mins = Math.floor((examTimeRemaining % 3600) / 60);
+            const secs = examTimeRemaining % 60;
+            const pad = (n) => n < 10 ? '0' + n : n;
+            document.getElementById('examTimer').textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+        }
+
+        function renderExamQuestion() {
+            const q = examQuestions[currentExamIndex];
+            const box = document.getElementById('examQuestionBox');
+            document.getElementById('examProgressText').textContent = `${currentExamIndex + 1} of ${examQuestions.length}`;
+
+            const selectedOpt = examAnswers[q.id];
+
+            box.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                        Exam Question #${currentExamIndex + 1}
+                    </span>
+                    <span class="text-xs font-semibold text-slate-500">Module ${q.chapter}</span>
+                </div>
+
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
+                    ${q.question}
+                </h3>
+
+                <div class="space-y-2.5 pt-2">
+                    ${q.options.map((opt, optIdx) => `
+                        <button data-opt="${optIdx}" class="exam-opt-btn w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ${selectedOpt === optIdx ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-900 dark:text-brand-200 font-bold ring-2 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}">
+                            <span>${opt}</span>
+                            ${selectedOpt === optIdx ? '<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400"></i>' : ''}
+                        </button>
+                    `).join('')}
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button id="prevExamQBtn" ${currentExamIndex === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-50 transition">
+                        Previous
+                    </button>
+                    <button id="nextExamQBtn" ${currentExamIndex === examQuestions.length - 1 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-bold disabled:opacity-50 transition">
+                        Next
+                    </button>
+                </div>
+            `;
+
+            box.querySelectorAll('.exam-opt-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const optIdx = parseInt(btn.getAttribute('data-opt'));
+                    examAnswers[q.id] = optIdx;
+                    renderExamQuestion();
+                    renderExamGridMap();
+                });
+            });
+
+            const prev = box.querySelector('#prevExamQBtn');
+            const next = box.querySelector('#nextExamQBtn');
+            if (prev) prev.addEventListener('click', () => { currentExamIndex--; renderExamQuestion(); });
+            if (next) next.addEventListener('click', () => { currentExamIndex++; renderExamQuestion(); });
+        }
+
+        function renderExamGridMap() {
+            const container = document.getElementById('examGridMap');
+            container.innerHTML = '';
+            examQuestions.forEach((q, idx) => {
+                const isAns = examAnswers.hasOwnProperty(q.id);
+                const isCur = idx === currentExamIndex;
+
+                const btn = document.createElement('button');
+                let cls = "w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition ";
+                if (isCur) cls += "ring-2 ring-brand-500 bg-brand-600 text-white shadow ";
+                else if (isAns) cls += "bg-emerald-500 text-white ";
+                else cls += "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 ";
+
+                btn.className = cls;
+                btn.textContent = idx + 1;
+                btn.addEventListener('click', () => {
+                    currentExamIndex = idx;
+                    renderExamQuestion();
+                    renderExamGridMap();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function confirmSubmitExam() {
+            const unanswered = examQuestions.length - Object.keys(examAnswers).length;
+            if (unanswered > 0) {
+                if (!confirm(`You have ${unanswered} unanswered questions! Submit exam anyway?`)) {
+                    return;
+                }
+            }
+            finishMockExam();
+        }
+
+        function finishMockExam() {
+            clearInterval(examTimerInterval);
+            document.getElementById('examActivePanel').classList.add('hidden');
+            const report = document.getElementById('examResultReport');
+            report.classList.remove('hidden');
+
+            let correct = 0;
+            examQuestions.forEach(q => {
+                if (examAnswers[q.id] === q.answer) correct++;
+            });
+
+            const scorePct = Math.round((correct / examQuestions.length) * 100);
+            const passed = scorePct >= 60;
+
+            report.innerHTML = `
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-center space-y-4 max-w-2xl mx-auto">
+                    <div class="w-24 h-24 rounded-full ${passed ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400'} flex items-center justify-center text-3xl font-extrabold mx-auto border-4 ${passed ? 'border-emerald-500' : 'border-rose-500'} shadow">
+                        ${scorePct}%
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                        ${passed ? 'Passed Mock Exam 🎓' : 'Did Not Pass (Pass Mark: 60%) 📖'}
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Scorecard Summary: Answered <strong>${correct}</strong> out of <strong>${examQuestions.length}</strong> questions correctly.
+                    </p>
+
+                    <div class="flex justify-center gap-3 pt-2">
+                        <button id="reStartExamBtn" class="px-5 py-2.5 rounded-lg bg-brand-600 text-white text-xs sm:text-sm font-bold shadow hover:bg-brand-700 transition">
+                            Retake Mock Exam
+                        </button>
+                        <button id="backToPracticeBtn" class="px-5 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-xs sm:text-sm font-bold hover:bg-slate-300 transition">
+                            Back to Practice Mode
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Full Exam Review & Rationales:</h3>
+                    ${examQuestions.map((q, idx) => {
+                        const userAns = examAnswers[q.id];
+                        const isCorr = userAns === q.answer;
+                        return `
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : 'border-rose-300 dark:border-rose-800'} space-y-2">
+                                <div class="flex items-center justify-between text-xs font-bold">
+                                    <span class="text-slate-500">Question #${idx + 1}</span>
+                                    <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                                        ${isCorr ? 'Correct ✓' : 'Incorrect ✗'}
+                                    </span>
+                                </div>
+                                <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+                                <div class="text-xs space-y-1 pt-1">
+                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">Correct Answer: ${q.options[q.answer]}</p>
+                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">Your Choice: ${userAns !== undefined ? q.options[userAns] : 'Not Answered'}</p>` : ''}
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700">Rationale: ${q.explanation}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            document.getElementById('reStartExamBtn').addEventListener('click', startMockExam);
+            document.getElementById('backToPracticeBtn').addEventListener('click', () => switchMode('practice'));
+        }
+
+        // Flashcards Engine
+        function initFlashcards() {
+            currentFlashcardIndex = 0;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            const q = questionsData[currentFlashcardIndex];
+            const elem = document.getElementById('flashcardElement');
+            elem.classList.remove('rotate-y-180');
+            isCardFlipped = false;
+
+            document.getElementById('flashcardCounter').textContent = `Card ${currentFlashcardIndex + 1} of ${questionsData.length}`;
+            document.getElementById('cardChapterBadge').textContent = `Module ${q.chapter}`;
+            document.getElementById('cardQuestionText').textContent = q.question;
+            document.getElementById('cardAnswerText').textContent = q.options[q.answer];
+            document.getElementById('cardExplanationText').textContent = q.explanation;
+        }
+
+        function flipFlashcard() {
+            const elem = document.getElementById('flashcardElement');
+            isCardFlipped = !isCardFlipped;
+            if (isCardFlipped) elem.classList.add('rotate-y-180');
+            else elem.classList.remove('rotate-y-180');
+        }
+
+        function changeFlashcard(dir) {
+            currentFlashcardIndex += dir;
+            if (currentFlashcardIndex < 0) currentFlashcardIndex = questionsData.length - 1;
+            if (currentFlashcardIndex >= questionsData.length) currentFlashcardIndex = 0;
+            renderFlashcard();
+        }
+
+        // Bookmarks View Engine
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksList');
+            container.innerHTML = '';
+
+            const list = questionsData.filter(q => bookmarks.has(q.id));
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
+                        <i class="fa-solid fa-bookmark text-4xl text-slate-300 dark:text-slate-600"></i>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No bookmarked questions yet</h3>
+                        <p class="text-xs text-slate-400">Click the bookmark icon on any question to save it for quick revision.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach(q => {
+                const card = createQuestionCard(q);
+                container.appendChild(card);
+            });
+        }
+
+        // MCQ Grid Navigator Modal
+        function openGridModal() {
+            renderFullGridModal();
+            document.getElementById('gridModal').classList.remove('hidden');
+            document.getElementById('gridModal').classList.add('flex');
+        }
+
+        function closeGridModal() {
+            document.getElementById('gridModal').classList.add('hidden');
+            document.getElementById('gridModal').classList.remove('flex');
+        }
+
+        function renderFullGridModal() {
+            const container = document.getElementById('fullGridContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach(q => {
+                const isAns = userAnswers.hasOwnProperty(q.id);
+                const isCorr = isAns && userAnswers[q.id] === q.answer;
+                const isBm = bookmarks.has(q.id);
+
+                const btn = document.createElement('button');
+                let cls = "h-9 rounded-lg text-xs font-bold transition flex items-center justify-center relative border ";
+
+                if (isAns) {
+                    if (isCorr) cls += "bg-emerald-500 border-emerald-600 text-white ";
+                    else cls += "bg-rose-500 border-rose-600 text-white ";
+                } else {
+                    cls += "bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-brand-50 hover:border-brand-300 ";
+                }
+
+                btn.className = cls;
+                btn.innerHTML = `
+                    <span>${q.id}</span>
+                    ${isBm ? '<span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-amber-400 ring-1 ring-white"></span>' : ''}
+                `;
+
+                btn.addEventListener('click', () => {
+                    closeGridModal();
+                    if (currentMode !== 'practice') switchMode('practice');
+
+                    const qIndex = filteredQuestions.findIndex(item => item.id === q.id);
+                    if (qIndex !== -1) {
+                        currentPage = Math.floor(qIndex / pageSize) + 1;
+                        renderPracticeQuestions();
+                    } else {
+                        document.getElementById('searchInput').value = '';
+                        document.getElementById('chapterFilter').value = 'all';
+                        document.getElementById('statusFilter').value = 'all';
+                        applyFilters();
+                        const newIdx = filteredQuestions.findIndex(item => item.id === q.id);
+                        if (newIdx !== -1) {
+                            currentPage = Math.floor(newIdx / pageSize) + 1;
+                            renderPracticeQuestions();
+                        }
+                    }
+
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                });
+
+                container.appendChild(btn);
+            });
+        }
+
+        // Toast Messages
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+            toastIcon.className = type === 'success' ? 'fa-solid fa-circle-check text-emerald-400 text-lg' : 'fa-solid fa-circle-info text-brand-400 text-lg';
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Multi-Trigger Guaranteed Execution
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(safeInitApp, 1);
+        }
+        document.addEventListener('DOMContentLoaded', safeInitApp);
+        window.addEventListener('load', safeInitApp);
+        setTimeout(safeInitApp, 300);
+    </script>
+
+    <!-- Welcome Splash -->
+    <div id="splash" role="dialog" aria-label="Welcome">
+        <div class="sp-blob sp-b1"></div><div class="sp-blob sp-b2"></div><div class="sp-blob sp-b3"></div>
+        <div class="sp-dots"></div>
+        <svg class="sp-ecg" viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="b" pathLength="100" d="M0 50 H110 L125 50 L135 20 L150 85 L165 35 L175 50 H400"/>
+            <path class="p" pathLength="100" d="M0 50 H110 L125 50 L135 20 L150 85 L165 35 L175 50 H400"/>
+        </svg>
+        <div class="sp-wrap">
+            <div class="sp-emblem sp-in"><div class="sp-emblem-in"><i class="fa-solid fa-heart-pulse"></i></div></div>
+            <h1 class="sp-title sp-in" style="animation-delay:.12s">Nursing Quiz</h1>
+            <div class="sp-sub sp-in" style="animation-delay:.2s">منصة أسئلة التمريض</div>
+            <div class="sp-uni sp-in" style="animation-delay:.28s"><i class="fa-solid fa-graduation-cap"></i> University of Mosul · College of Nursing · Stage 4</div>
+            <p class="sp-desc sp-in" style="animation-delay:.36s" dir="rtl">حلّ أسئلة <b>MCQ</b> بتصحيح فوري وشرح لكل إجابة، وجرّب <b>امتحانات تجريبية</b> و<b>بطاقات مراجعة</b>، وتقدّمك يُحفظ تلقائياً.</p>
+            <div class="sp-cta sp-in" style="animation-delay:.46s">اختر مادتك وابدأ</div>
+            <div class="sp-cards">
+                <button class="sp-card mental sp-in" data-go="mental" style="animation-delay:0.54s" aria-label="Mental Health Nursing">
+                    <div class="sp-card-top">
+                        <span class="sp-ico"><i class="fa-solid fa-brain"></i></span>
+                        <div class="sp-card-txt">
+                            <div class="sp-go-l">الانتقال إلى</div>
+                            <h3>أسئلة تمريض الصحة النفسية</h3>
+                            <p class="en">Mental Health Nursing · <span class="sp-count" data-bank="mental"></span></p>
+                        </div>
+                        <span class="sp-go"><i class="fa-solid fa-arrow-left"></i></span>
+                    </div>
+                    <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:5s">
+                        <path class="base" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                        <path class="pulse" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                    </svg>
+                </button>
+                <button class="sp-card critical sp-in" data-go="critical" style="animation-delay:0.66s" aria-label="Critical Care Nursing">
+                    <div class="sp-card-top">
+                        <span class="sp-ico"><i class="fa-solid fa-heart-pulse"></i></span>
+                        <div class="sp-card-txt">
+                            <div class="sp-go-l">الانتقال إلى</div>
+                            <h3>أسئلة تمريض الحالات الحرجة</h3>
+                            <p class="en">Critical Care Nursing · <span class="sp-count" data-bank="critical"></span></p>
+                        </div>
+                        <span class="sp-go"><i class="fa-solid fa-arrow-left"></i></span>
+                    </div>
+                    <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:2.4s">
+                        <path class="base" pathLength="100" d="M0 22 H48 L56 22 L62 8 L70 36 L78 16 L84 22 H124 L132 22 L138 8 L146 36 L154 16 L160 22 H200"/>
+                        <path class="pulse" pathLength="100" d="M0 22 H48 L56 22 L62 8 L70 36 L78 16 L84 22 H124 L132 22 L138 8 L146 36 L154 16 L160 22 H200"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="sp-foot sp-in" style="animation-delay:.8s">
+                <a class="sp-ig" href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i> <span>@m_d_l7</span></a>
+                <div class="sp-dev">Developed by salem mohammed</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var sp = document.getElementById('splash');
+            document.body.classList.add('sp-lock');
+            function fill() {
+                try {
+                    document.querySelectorAll('.sp-count').forEach(function (el) {
+                        var b = banks[el.getAttribute('data-bank')];
+                        if (b) el.textContent = b.data.length + ' سؤال';
+                    });
+                } catch (e) {}
+            }
+            fill(); window.addEventListener('load', fill);
+            document.querySelectorAll('.sp-card').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var key = btn.getAttribute('data-go');
+                    try { switchSubject(key); } catch (e) {}
+                    sp.classList.add('sp-out');
+                    document.body.classList.remove('sp-lock');
+                    window.scrollTo(0, 0);
+                    setTimeout(function () { sp.remove(); }, 800);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
