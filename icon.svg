@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Nursing Quiz">
+  <defs>
+    <linearGradient id="nqGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0369a1"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#nqGrad)"/>
+  <path d="M256 396S120 318 120 220a76 76 0 0 1 136-46 76 76 0 0 1 136 46c0 98-136 176-136 176z"
+        fill="none" stroke="#e0f2fe" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M128 268h56l20-44 30 92 26-60 16 12h108"
+        fill="none" stroke="#7dd3fc" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

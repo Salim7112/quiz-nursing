@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA: installable, offline-capable shell -->
+    <meta name="theme-color" content="#0369a1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Nursing Quiz">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <!-- Refactor note: this single HTML file is fine for now, but the question banks
+         should later move to JSON files and Tailwind should be built with the CLI. -->
     <title>Nursing Quiz Platform - University of Mosul</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +57,10 @@
         .transform-style-3d { transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; }
         .rotate-y-180 { transform: rotateY(180deg); }
-        button, select, input { pointer-events: auto !important; cursor: pointer; }
+        button, select { pointer-events: auto !important; cursor: pointer; }
+        input, textarea { pointer-events: auto !important; cursor: text; }
+        :focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
+        .nq-qcard:focus-visible, .nq-qcard.active-q { outline: 2px solid #0284c7; outline-offset: 3px; }
 
         /* ---------- Three-line menu button ---------- */
         .nq-burger { width: 44px; height: 44px; border-radius: 12px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; padding-left: 12px; border: 1px solid rgba(100,116,139,.35); background: transparent; flex-shrink: 0; transition: background .2s; }
@@ -84,13 +95,14 @@
         }
 
         /* ---------- Creative Instagram contact card ---------- */
-        .nq-ig { position:relative; display:block; text-decoration:none !important; border-radius:20px; padding:2px; background:linear-gradient(120deg,#f09433,#dc2743,#bc1888,#6a3df0,#f09433); background-size:300% 300%; animation:nq-ig-flow 6s linear infinite; box-shadow:0 8px 22px rgba(220,39,67,.3); transition:transform .2s; }
+        /* Instagram contact card: static gradient, no looping animation */
+        .nq-ig { position:relative; display:block; text-decoration:none !important; border-radius:20px; padding:2px; background:linear-gradient(120deg,#f09433,#dc2743,#bc1888,#6a3df0); box-shadow:0 8px 22px rgba(220,39,67,.3); transition:transform .2s; }
         .nq-ig:hover { transform:translateY(-2px); }
         .nq-ig:active { transform:scale(.98); }
         .nq-ig-inner { display:flex; align-items:center; gap:12px; border-radius:18px; padding:12px 14px; background:#fff; color:#1e293b; }
         .dark .nq-ig-inner { background:#0f172a; color:#f1f5f9; }
         .nq-ig-icon { position:relative; width:46px; height:46px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; background:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 55%,#cc2366 75%,#bc1888); }
-        .nq-ig-icon::after { content:""; position:absolute; inset:0; border-radius:14px; border:2px solid #dc2743; animation:nq-ig-ping 2s ease-out infinite; }
+        .nq-ig-icon::after { content:""; position:absolute; inset:0; border-radius:14px; border:2px solid rgba(220,39,67,.55); }
         .nq-ig-handle { font-weight:800; font-size:16px; direction:ltr; background:linear-gradient(90deg,#dc2743,#bc1888); -webkit-background-clip:text; background-clip:text; color:transparent; }
         .nq-ig-arrow { margin-left:auto; opacity:.5; transition:transform .2s, opacity .2s; }
         .nq-ig:hover .nq-ig-arrow { transform:translateX(-4px); opacity:1; }
@@ -154,6 +166,34 @@
         .sp-ig span { direction:ltr; }
         .sp-dev { font-size:11px; color:rgba(148,163,184,.9); font-family:'Inter',system-ui,sans-serif; }
         @media (prefers-reduced-motion: reduce) { #splash *, #splash *::before, #splash *::after { animation:none !important; } .sp-in { opacity:1; transform:none; } }
+
+        /* ================= Redesign utilities ================= */
+        /* Segmented progress bar: green = correct, red = wrong, grey = remaining */
+        .nq-seg { display:flex; height:8px; border-radius:999px; overflow:hidden; background:#e2e8f0; }
+        .dark .nq-seg { background:#334155; }
+        .nq-seg > span { display:block; height:100%; transition:width .35s ease; }
+
+        /* Collapsible explanation panel (smooth open/close) */
+        .nq-exp { display:grid; grid-template-rows:0fr; transition:grid-template-rows .28s ease; }
+        .nq-exp > div { overflow:hidden; }
+        .nq-exp.open { grid-template-rows:1fr; }
+
+        /* Bottom sheets (filters, settings) */
+        .nq-sheet { position:fixed; inset:0; z-index:60; display:flex; align-items:flex-end; justify-content:center; background:rgba(2,6,23,.55); backdrop-filter:blur(3px); opacity:0; visibility:hidden; transition:opacity .25s, visibility 0s .25s; }
+        .nq-sheet.open { opacity:1; visibility:visible; transition-delay:0s; }
+        .nq-sheet-panel { width:100%; max-width:560px; max-height:88vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:14px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(14px); transition:transform .25s ease; }
+        .nq-sheet.open .nq-sheet-panel { transform:none; }
+        @media (min-width: 768px) { .nq-sheet { align-items:center; } .nq-sheet-panel { border-radius:20px; } }
+
+        /* Mobile bottom navigation respects the device safe area */
+        .nq-bnav { padding-bottom: env(safe-area-inset-bottom); }
+        .nq-bnav-btn[aria-current="page"] { color:#0369a1; }
+        .dark .nq-bnav-btn[aria-current="page"] { color:#38bdf8; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .nq-exp, .nq-seg > span, .nq-sheet, .nq-sheet-panel, .nq-bnav-btn { transition:none !important; }
+            html { scroll-behavior:auto !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
@@ -204,6 +244,9 @@
         </div>
 
         <div class="p-5 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <button id="openSettingsBtn" type="button" class="w-full h-11 mb-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                <i class="fa-solid fa-gear"></i><span>Settings</span>
+            </button>
             <p class="font-ar text-center text-sm font-bold text-slate-600 dark:text-slate-300 mb-3" dir="rtl">💬 للتواصل والاقتراحات</p>
             <a href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer" class="nq-ig" aria-label="Instagram @m_d_l7">
                 <span class="nq-ig-inner">
@@ -218,137 +261,113 @@
         </div>
     </aside>
 
-    <!-- Header / Navbar -->
-    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex items-center space-x-3 min-w-0">
-                    <button id="menuBtn" class="nq-burger text-slate-700 dark:text-slate-200" aria-label="Open subject menu" aria-expanded="false">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <div id="headerLogo" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
-                        <i id="headerIcon" class="fa-solid fa-brain"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h1 class="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white leading-tight">
-                            Nursing Quiz
-                        </h1>
-                        <p class="text-xs font-bold text-brand-600 dark:text-brand-400 truncate">
-                            <span id="subjectLabel">Mental Health Nursing</span>
-                            <span id="subjectLabelAr" class="font-ar mx-1" dir="rtl">تمريض الصحة النفسية</span>
-                        </p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
-                            University of Mosul - College of Nursing | Stage 4 (2026-2027)
-                        </p>
-                    </div>
+    <!-- Header: one slim row (48px) on every breakpoint -->
+    <header class="bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+                <button id="menuBtn" class="nq-burger text-slate-700 dark:text-slate-200" aria-label="Open menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div id="headerLogo" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
+                    <i id="headerIcon" class="fa-solid fa-brain"></i>
                 </div>
-
-                <!-- Controls Right -->
-                <div class="flex items-center space-x-2">
-                    <button id="openGridBtn" class="px-3 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-table-cells"></i>
-                        <span id="paletteLabel" class="hidden sm:inline">200 MCQ Palette</span>
-                    </button>
-                    <button id="themeToggleBtn" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="Toggle Light/Dark Theme">
-                        <i class="fa-solid fa-moon dark:hidden"></i>
-                        <i class="fa-solid fa-sun hidden dark:inline"></i>
-                    </button>
-                </div>
+                <p class="min-w-0 text-sm sm:text-sm font-extrabold text-slate-900 dark:text-white leading-tight truncate">
+                    <span id="subjectLabel">Mental Health Nursing</span>
+                </p>
             </div>
-
-            <!-- Main Navigation Tabs -->
-            <div class="flex items-center space-x-2 mt-3 border-t border-slate-100 dark:border-slate-700/60 pt-2 overflow-x-auto custom-scrollbar">
-                <button id="tab-practice" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm">
-                    <i class="fa-solid fa-square-check"></i>
-                    <span>Practice Mode</span>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button id="openGridBtn" aria-label="Open the question palette" class="h-9 px-2.5 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span id="paletteLabel" class="hidden sm:inline">MCQ Palette</span>
                 </button>
-                <button id="tab-exam" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                    <i class="fa-solid fa-stopwatch"></i>
-                    <span>Timed Mock Exam</span>
-                </button>
-                <button id="tab-flashcards" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                    <i class="fa-solid fa-clone"></i>
-                    <span>Flashcards</span>
-                </button>
-                <button id="tab-bookmarks" class="mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                    <i class="fa-solid fa-bookmark text-amber-500"></i>
-                    <span>Bookmarks (<span id="bookmarkCountBadge">0</span>)</span>
+                <button id="themeToggleBtn" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition flex items-center justify-center" aria-label="Toggle light or dark theme" title="Toggle theme">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Desktop mode tabs (mobile uses the fixed bottom navigation) -->
+    <nav id="desktopTabs" class="hidden md:block bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700" aria-label="Study modes">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 py-2">
+            <button id="tab-practice" class="mode-tab px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm">
+                <i class="fa-solid fa-square-check"></i><span>Practice</span>
+            </button>
+            <button id="tab-exam" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                <i class="fa-solid fa-stopwatch"></i><span>Mock exam</span>
+            </button>
+            <button id="tab-flashcards" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                <i class="fa-solid fa-clone"></i><span>Flashcards</span>
+            </button>
+            <button id="tab-bookmarks" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                <i class="fa-solid fa-bookmark text-amber-500"></i>
+                <span>Bookmarks (<span id="bookmarkCountBadge">0</span>)</span>
+            </button>
+        </div>
+    </nav>
 
-        <!-- Stats Bar & Reset Button -->
-        <div class="flex flex-col md:flex-row gap-3 mb-6 items-stretch">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
-                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-list-ol"></i>
+    <!-- Main Container -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 pb-28 md:pb-8">
+
+        <!-- Compact stats strip. Tap the chevron for a per-chapter breakdown. -->
+        <section class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm px-3.5 py-3 mb-4" aria-live="polite">
+            <div class="flex items-center gap-3">
+                <div class="flex-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400" aria-hidden="true"></span><span id="statTotal">0</span> questions</span>
+                        <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span><span id="statCorrect">0</span> correct</span>
+                        <button id="wrongChip" type="button" class="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 hover:underline" aria-label="Review incorrect answers">
+                            <span class="w-2 h-2 rounded-full bg-rose-500" aria-hidden="true"></span><span id="statIncorrect">0</span> wrong
+                        </button>
+                        <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span><span id="statUnanswered">0</span> left</span>
+                        <span class="text-brand-600 dark:text-brand-400 font-bold" id="statProgress">0%</span>
                     </div>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Questions</span>
-                        <span class="text-base font-bold text-slate-900 dark:text-white" id="statTotal">200</span>
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Correct Answers</span>
-                        <span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="statCorrect">0</span>
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Incorrect Answers</span>
-                        <span class="text-base font-bold text-rose-600 dark:text-rose-400" id="statIncorrect">0</span>
+                    <div class="nq-seg mt-2" id="statsBar" role="img" aria-label="Progress: 0 correct, 0 wrong, 0 remaining">
+                        <span id="segCorrect" class="bg-emerald-500" style="width:0%"></span>
+                        <span id="segWrong" class="bg-rose-500" style="width:0%"></span>
+                        <span id="segLeft" class="bg-slate-200 dark:bg-slate-600" style="width:100%"></span>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Overall Progress</span>
-                        <span class="text-base font-bold text-brand-600 dark:text-brand-400" id="statProgress">0%</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Reset Button Box -->
-            <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center">
-                <button id="resetProgressBtn" class="w-full md:w-auto px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-bold border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-2 transition">
-                    <i class="fa-solid fa-rotate-right"></i>
-                    <span>مسح الإجابات للبدء من جديد</span>
+                <button id="statsToggle" type="button" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition" aria-expanded="false" aria-controls="chapterBreakdown" aria-label="Show per-chapter breakdown">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
                 </button>
             </div>
+            <div id="chapterBreakdown" class="hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 space-y-1.5"></div>
+        </section>
+
+        <!-- Filters: only the search box and one Filter button are always visible -->
+        <div id="filterControls" class="flex items-center gap-2 mb-4">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true"></i>
+                <input type="text" id="searchInput" placeholder="Search keywords..." aria-label="Search questions" class="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <button id="filterBtn" type="button" class="h-11 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition" aria-expanded="false" aria-controls="filterSheet">
+                <i class="fa-solid fa-sliders"></i><span>Filter</span>
+                <span id="filterBadge" class="hidden min-w-5 h-5 px-1.5 rounded-full bg-brand-600 text-white text-[11px] font-bold items-center justify-center">0</span>
+            </button>
         </div>
 
-        <!-- Filters Box -->
-        <div id="filterControls" class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6">
-            <div class="flex flex-col md:flex-row gap-3">
-                <div class="flex-1 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search keywords..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        <!-- Filter bottom sheet (chapter + status) -->
+        <div id="filterSheet" class="nq-sheet" aria-hidden="true">
+            <div class="nq-sheet-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="filterSheetTitle">
+                <div class="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 id="filterSheetTitle" class="text-base font-bold text-slate-900 dark:text-white">Filters</h3>
+                    <button id="closeFilterBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="Close filters"><i class="fa-solid fa-xmark text-lg"></i></button>
                 </div>
-                <div class="w-full md:w-80">
-                    <select id="chapterFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <!-- Filled from the selected subject -->
-                    </select>
-                </div>
-                <div class="w-full md:w-48">
-                    <select id="statusFilter" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <option value="all">All Statuses</option>
-                        <option value="unanswered">Unanswered</option>
-                        <option value="correct">Correct</option>
-                        <option value="incorrect">Incorrect</option>
-                    </select>
+                <label for="chapterFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Module</label>
+                <select id="chapterFilter" class="w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
+                <label for="statusFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mt-4 mb-1">Status</label>
+                <select id="statusFilter" class="w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <option value="all">All statuses</option>
+                    <option value="unanswered">Unanswered</option>
+                    <option value="correct">Correct</option>
+                    <option value="incorrect">Incorrect</option>
+                </select>
+                <div class="flex gap-2 mt-5">
+                    <button id="clearFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Clear filters</button>
+                    <button id="applyFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition">Show results</button>
                 </div>
             </div>
         </div>
@@ -359,16 +378,17 @@
                 <!-- Dynamic Question Cards -->
             </div>
 
-            <!-- Pagination Bar -->
-            <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2 transition">
+            <!-- Sticky pager (sits above the mobile bottom nav) -->
+            <div class="sticky bottom-20 md:bottom-3 z-20 flex items-center justify-between gap-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+                <button id="prevBtn" class="h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-40 flex items-center gap-2 transition">
                     <i class="fa-solid fa-chevron-left"></i> Previous
                 </button>
-                <span id="pageIndicator" class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">Page 1 of 20</span>
-                <button id="nextBtn" class="px-4 py-2 rounded-lg bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 disabled:opacity-50 flex items-center gap-2 transition">
+                <span id="pageIndicator" class="text-sm font-bold text-slate-600 dark:text-slate-300">Page 1 of 1</span>
+                <button id="nextBtn" class="h-11 px-4 rounded-lg bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 disabled:opacity-40 flex items-center gap-2 transition">
                     Next <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
+            <p class="hidden md:block text-[11px] text-slate-400 dark:text-slate-500 text-center">Keyboard: press A–D to answer, ← / → to move between questions.</p>
         </div>
 
         <!-- MODE 2: MOCK EXAM VIEW -->
@@ -406,19 +426,24 @@
 
             <!-- Active Exam Screen -->
             <div id="examActivePanel" class="hidden space-y-6">
-                <!-- Top Exam Bar -->
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
-                    <div>
-                        <span class="text-xs text-slate-400 block font-semibold">Time Remaining:</span>
-                        <span id="examTimer" class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400">00:00:00</span>
+                <!-- Top Exam Bar: progress + timer + submit -->
+                <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2.5 sticky top-12 z-20">
+                    <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="Exam progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="examProgressWrap">
+                        <div id="examProgressFill" class="h-full bg-brand-600 transition-all duration-300" style="width:0%"></div>
                     </div>
-                    <div class="text-center">
-                        <span class="text-xs text-slate-400 block font-semibold">Question Position:</span>
-                        <span id="examProgressText" class="text-base font-bold text-slate-800 dark:text-slate-100">1 of 50</span>
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[11px] text-slate-400 block font-semibold">Time remaining</span>
+                            <span id="examTimer" class="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">00:00:00</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-[11px] text-slate-400 block font-semibold">Question</span>
+                            <span id="examProgressText" class="text-sm font-bold text-slate-800 dark:text-slate-100">1 of 50</span>
+                        </div>
+                        <button id="finishExamBtn" class="h-11 px-3 sm:px-4 rounded-lg bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 transition shadow">
+                            Submit
+                        </button>
                     </div>
-                    <button id="finishExamBtn" class="px-4 py-2 rounded-lg bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 transition shadow">
-                        Submit & Finish Exam
-                    </button>
                 </div>
 
                 <!-- Active Exam Question Box -->
@@ -480,13 +505,27 @@
                 </div>
             </div>
 
+            <!-- Self-rating: marks the card and moves on -->
+            <div class="grid grid-cols-2 gap-3">
+                <button id="flashUnknownBtn" class="h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-xmark"></i> Didn't know
+                </button>
+                <button id="flashKnownBtn" class="h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> I knew it
+                </button>
+            </div>
+            <p id="flashScoreLine" class="text-center text-sm font-semibold text-slate-500 dark:text-slate-400">
+                Known: <span id="flashKnownCount" class="text-emerald-600 dark:text-emerald-400">0</span> ·
+                To review: <span id="flashUnknownCount" class="text-rose-600 dark:text-rose-400">0</span>
+            </p>
+
             <!-- Flashcard Nav Buttons -->
             <div class="flex items-center justify-between gap-4">
-                <button id="prevFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs sm:text-sm hover:bg-slate-300 transition flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> Previous Card
+                <button id="prevFlashcardBtn" class="h-11 px-5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-sm hover:bg-slate-300 transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Previous
                 </button>
-                <button id="nextFlashcardBtn" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs sm:text-sm hover:bg-brand-700 transition flex items-center gap-2">
-                    Next Card <i class="fa-solid fa-arrow-right"></i>
+                <button id="nextFlashcardBtn" class="h-11 px-5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition flex items-center gap-2">
+                    Next <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
@@ -499,6 +538,53 @@
         </div>
 
     </main>
+
+    <!-- Footer: keeps the university line off the header -->
+    <footer class="w-full max-w-7xl mx-auto px-4 pb-28 md:pb-6 text-center space-y-1">
+        <p class="text-[11px] text-slate-400 dark:text-slate-500">University of Mosul · College of Nursing · Stage 4 (2026-2027)</p>
+        <p class="text-[11px] text-slate-400 dark:text-slate-500">Developed by salem mohammed</p>
+    </footer>
+
+    <!-- Mobile bottom navigation (hidden on md and up) -->
+    <nav id="bottomNav" class="nq-bnav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-t border-slate-200 dark:border-slate-700" aria-label="Study modes">
+        <div class="grid grid-cols-4">
+            <button type="button" data-mode="practice" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Practice mode">
+                <i class="fa-solid fa-square-check text-lg"></i><span>Practice</span>
+            </button>
+            <button type="button" data-mode="exam" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Mock exam">
+                <i class="fa-solid fa-stopwatch text-lg"></i><span>Exam</span>
+            </button>
+            <button type="button" data-mode="flashcards" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Flashcards">
+                <i class="fa-solid fa-clone text-lg"></i><span>Cards</span>
+            </button>
+            <button type="button" data-mode="bookmarks" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Bookmarks">
+                <span class="relative">
+                    <i class="fa-solid fa-bookmark text-lg"></i>
+                    <span id="bnavBookmarkCount" class="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+                </span>
+                <span>Saved</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Settings bottom sheet (reset progress lives here, not on the main screen) -->
+    <div id="settingsSheet" class="nq-sheet" aria-hidden="true">
+        <div class="nq-sheet-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+            <div class="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+            <div class="flex items-center justify-between mb-3">
+                <h3 id="settingsTitle" class="text-base font-bold text-slate-900 dark:text-white">Settings</h3>
+                <button id="closeSettingsBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="Close settings"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Subject: <span id="settingsSubject" class="font-bold text-slate-700 dark:text-slate-200">Mental Health Nursing</span>
+            </p>
+            <p id="settingsAnswerCount" class="text-sm text-slate-500 dark:text-slate-400 mt-1">0 answers saved for this subject.</p>
+            <button id="resetProgressBtn" type="button" class="w-full h-12 mt-5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i><span>Reset progress for this subject</span>
+            </button>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-3 leading-relaxed">Your answers and bookmarks are stored only in this browser.</p>
+        </div>
+    </div>
 
     <!-- MCQ GRID MODAL -->
     <div id="gridModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -523,6 +609,27 @@
             <!-- Grid Container -->
             <div id="fullGridContainer" class="p-4 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
                 <!-- Dynamic Buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- INCORRECT ANSWERS REVIEW MODAL -->
+    <div id="wrongReviewModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-600 text-lg"></i>
+                    <h3 id="wrongReviewTitle" class="font-bold text-slate-900 dark:text-white text-base">Incorrect Answers Review</h3>
+                    <span id="wrongReviewCount" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">0 questions</span>
+                </div>
+                <button id="closeWrongReviewBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white transition" aria-label="Close incorrect answers review">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <!-- Wrong Answer Cards -->
+            <div id="wrongReviewList" class="p-4 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+                <!-- Dynamic Wrong Answer Cards -->
             </div>
         </div>
     </div>
@@ -752,6 +859,8 @@
             });
         })(mentalQuestions.filter(q => q.chapter <= 2));
 
+        /* Refactor note: the question banks below are inline for a single-file build.
+           Move them to JSON files (loaded with fetch) when the project grows. */
         // ================= SUBJECT 2: CRITICAL CARE NURSING =================
         const criticalQuestions = [
             // ---- Module 1: Acid-Base Imbalances ----
@@ -848,6 +957,17 @@
             H(1, "An anxious patient has RR 34, SpO2 88%, pH 7.52 and PaCO2 28. What is the best action?", ["Paper bag rebreathing", "Sedation", "Treat hypoxemia first", "Reassurance only"], 2, "Rebreathing is unsafe when hypoxia or a heart or lung emergency is possible; hypoxemia drives the hyperventilation."),
             H(1, "Which ABG pH is the most immediately life-threatening?", ["pH 6.95", "pH 7.30", "pH 7.48", "pH 7.56"], 0, "Life is threatened when pH falls below 7.0 or rises above 7.8."),
             H(1, "ABG: pH 7.43, PaCO2 49, HCO3 31. What is the interpretation?", ["Fully compensated respiratory acidosis", "Normal ABG", "Uncompensated metabolic acidosis", "Fully compensated metabolic alkalosis"], 3, "The pH is normal but above 7.40, so the primary problem is alkalosis; high HCO3 is primary and the raised PaCO2 is compensation."),
+            // ---- Module 1: Acid-Base Imbalances (advanced academic batch) ----
+            H(1, "A patient with septic shock has ABG pH 7.26, PaCO2 30, HCO3 13, Na+ 136, Cl- 104 and serum albumin 1.6 g/dL. How should the anion gap be interpreted?", ["Anion gap 19 is normal for this pH, so no added acid is present", "Anion gap 19 is falsely high because albumin binds bicarbonate", "The gap underestimates the acidosis; the albumin-corrected gap of about 25 confirms a high-anion-gap acidosis", "The gap cannot be used when lactate is elevated"], 2, "Anion gap is 136 - 104 - 13 = 19, but each 1 g/dL fall in albumin lowers the gap by about 2.5. Corrected gap = 19 + 2.5(4.0 - 1.6) = about 25, so hypoalbuminemia masked a high-anion-gap acidosis; always correct the gap for albumin before interpreting it."),
+            H(1, "A patient with DKA and ongoing diarrhea has ABG pH 7.15, PaCO2 24, HCO3 8, Na+ 140, Cl- 112 and lactate 4 mmol/L. Which analysis is correct?", ["Anion gap 32 with a delta ratio of 2.0, indicating a coexisting metabolic alkalosis", "Anion gap 20 with a delta ratio of 0.5, indicating a coexisting normal-anion-gap acidosis", "Anion gap 12 with a delta ratio of 1.0, indicating a pure high-anion-gap acidosis", "Anion gap 20 with a delta ratio of 0.5, indicating appropriate respiratory compensation"], 1, "Anion gap = 140 - 112 - 8 = 20, so the delta gap = 20 - 12 = 8 while bicarbonate fell by 24 - 8 = 16. Delta ratio = 8/16 = 0.5; a ratio below 1 means a second, hyperchloremic (normal-anion-gap) acidosis is present alongside the high-anion-gap acidosis."),
+            H(1, "ABG: pH 7.35, PaCO2 28, HCO3 15, Na+ 140, Cl- 93 with a normal albumin. Which interpretation is correct?", ["Anion gap of 23 and delta ratio of 1.0, a pure high-anion-gap acidosis", "Anion gap of 32 and delta ratio of 0.45, a coexisting hyperchloremic acidosis", "Anion gap of 32 and delta ratio of 2.2, a coexisting respiratory acidosis", "Anion gap of 32 and delta ratio of 2.2, a coexisting metabolic alkalosis"], 3, "Anion gap = 140 - 93 - 15 = 32; delta gap = 20 and the bicarbonate fall = 9, so the delta ratio is about 2.2. A ratio above 2 means bicarbonate is higher than the added acid alone would predict, indicating a concurrent metabolic alkalosis (for example vomiting or diuretic use)."),
+            H(1, "ABG: pH 7.44, PaCO2 20, HCO3 13. Using Winter's formula (expected PaCO2 = 1.5 x HCO3 + 8, plus or minus 2), which interpretation is correct?", ["Metabolic acidosis with a superimposed respiratory alkalosis", "Pure metabolic acidosis with appropriate respiratory compensation", "Pure respiratory alkalosis with renal compensation", "Metabolic acidosis with inadequate respiratory compensation"], 0, "Winter's formula predicts a PaCO2 of 1.5 x 13 + 8 = 27.5, plus or minus 2 (about 25.5-29.5). A PaCO2 of 20 is well below the expected range, so the patient is hyperventilating more than the acidosis explains: a mixed metabolic acidosis plus respiratory alkalosis."),
+            H(1, "ABG: pH 7.45, PaCO2 56, HCO3 38 in a patient with emphysema and several days of vomiting. Using expected PaCO2 = 0.7 x HCO3 + 21 (plus or minus 2), what is the conclusion?", ["Appropriate renal compensation for chronic respiratory acidosis", "Metabolic alkalosis with an additional respiratory acidosis", "Metabolic alkalosis with an additional respiratory alkalosis", "Acute respiratory acidosis with appropriate metabolic compensation"], 1, "Expected PaCO2 is 0.7 x 38 + 21 = 47.6, plus or minus 2, so up to about 50 mmHg. The actual 56 mmHg is higher than predicted, meaning ventilation is worse than the alkalosis alone would cause: a metabolic alkalosis with a superimposed respiratory acidosis."),
+            H(1, "A patient with profuse diarrhea has pH 7.28, PaCO2 30, HCO3 14, Na+ 138, Cl- 114, K+ 3.2; urine Na+ 30, K+ 12, Cl- 78 mEq/L. What does the urine anion gap indicate?", ["Urine anion gap +36, indicating a distal renal tubular acidosis", "Urine anion gap of zero, indicating no renal response", "Urine anion gap -36, indicating appropriate renal acidification and gastrointestinal bicarbonate loss", "Urine anion gap -36, indicating a proximal renal tubular acidosis"], 2, "Urine anion gap = urine Na+ + K+ - Cl- = 30 + 12 - 78 = -36. A negative urine anion gap means ammonium (an unmeasured cation) excretion is high, an appropriate renal response that points to gastrointestinal bicarbonate loss; a positive gap in a normal-anion-gap acidosis suggests a renal tubular acidosis."),
+            H(1, "After 8 L of 0.9% saline for a bowel obstruction, a patient has pH 7.29, PaCO2 33, HCO3 16, Na+ 142, Cl- 124 and lactate 1.2 mmol/L. What is the mechanism and the best action?", ["Hyperchloremic normal-anion-gap acidosis from the chloride load; review the fluid strategy rather than give bicarbonate", "High-anion-gap lactic acidosis; give sodium bicarbonate immediately", "Dilutional metabolic alkalosis; restrict all chloride", "Respiratory acidosis from hypoventilation; increase minute ventilation"], 0, "Anion gap = 142 - 124 - 16 = 2, so this is a normal-anion-gap (hyperchloremic) acidosis produced by large chloride loads in 0.9% saline. Treatment is to stop the chloride load and use a balanced crystalloid if more volume is needed; bicarbonate is not indicated at this pH."),
+            H(1, "A patient found beside empty solvent bottles has pH 7.22, HCO3 11, PaCO2 25, Na+ 138, Cl- 99, measured osmolality 330 mOsm/kg and calculated osmolality 290 mOsm/kg. What is the best interpretation and priority?", ["Isolated lactic acidosis; fluid resuscitation alone is sufficient", "Normal-anion-gap acidosis; the osmolar gap is unrelated to the acidosis", "Alcoholic ketoacidosis; thiamine alone will close the anion gap", "High-anion-gap acidosis with an osmolar gap suggesting toxic alcohol ingestion; give fomepizole and plan hemodialysis"], 3, "Anion gap = 138 - 99 - 11 = 28 and the osmolar gap is 330 - 290 = 40 mOsm/kg. A high-anion-gap acidosis with a raised osmolar gap points to methanol or ethylene glycol: block alcohol dehydrogenase with fomepizole (or ethanol) and arrange hemodialysis for severe acidosis or end-organ damage."),
+            H(1, "After an aspirin overdose a patient has pH 7.46, PaCO2 20, HCO3 14 and an anion gap of 24 mEq/L. Which interpretation and treatment are correct?", ["Pure respiratory alkalosis; reassure the patient and coach slow breathing", "Pure high-anion-gap metabolic acidosis; give bicarbonate until the pH is 7.40", "Mixed high-anion-gap metabolic acidosis and respiratory alkalosis; alkalinize the urine with bicarbonate and consider hemodialysis", "Mixed acidosis; increase minute ventilation and give acetazolamide"], 2, "Salicylate poisoning characteristically causes a high-anion-gap metabolic acidosis plus direct medullary stimulation with respiratory alkalosis, so the pH may be near normal or even alkalemic despite a low bicarbonate. Treatment is urinary alkalinization to enhance salicylate clearance, plus hemodialysis for severe toxicity; the pH itself is not the target."),
+            H(1, "In DKA with pH 7.14, HCO3 8 and K+ 5.4 mEq/L, why is sodium bicarbonate not given routinely?", ["Bicarbonate would worsen the anion gap by generating ketones", "It can cause hypokalemia, a leftward shift of the oxyhemoglobin curve, paradoxical CSF acidosis and overshoot alkalosis; it is reserved for a pH below about 6.9", "It is contraindicated at every pH because it always causes hypernatremia", "It inactivates insulin, so the insulin infusion must be stopped first"], 1, "Bicarbonate is reserved for severe acidaemia (about pH below 6.9) because it shifts potassium into cells, impairs oxygen unloading, worsens intracellular and CSF acidosis while CO2 diffuses in, and can produce a post-treatment alkalosis. Insulin, fluids and potassium replacement treat the cause."),
             H(2, "Shortly after central line insertion a patient develops sudden dyspnea and chest pain. What should the nurse do?", ["Start heparin", "Assess RR, SpO2, breath sounds and report", "Remove the catheter and continue care", "Apply a heating pad"], 1, "Central venous catheter insertion is a recognized iatrogenic cause; assessment and prompt reporting are the priority."),
             H(2, "A patient with a chest tube has spreading crackling under the skin around the insertion site. What is this and what should the nurse do?", ["Normal healing; ignore it", "Allergic reaction; give an antihistamine", "Wound infection; swab only", "Subcutaneous emphysema; mark it and report"], 3, "Subcutaneous emphysema is a complication to be observed for and reported."),
             H(2, "Which diagnostic test is useful in emergency settings for suspected pneumothorax?", ["Bedside ultrasound", "Lumbar puncture", "ECG only", "Spirometry"], 0, "Diagnosis uses examination, chest X-ray, CT if needed, and ultrasound in emergencies."),
@@ -1006,6 +1126,15 @@
         let currentFlashcardIndex = 0;
         let isCardFlipped = false;
 
+        // ---- Redesign state ----
+        let examFlags = new Set();          // questions flagged for review in the current exam
+        let examStartedAt = 0;              // timestamp used for "time taken"
+        let examElapsedSeconds = 0;
+        let flashKnown = 0;                 // flashcard self-rating counters (per session)
+        let flashUnknown = 0;
+        let activeQuestionIndex = 0;        // keyboard-focused question on the current page
+        let statsExpanded = false;
+
         // Robust Safe Initialization Function
         function safeInitApp() {
             if (window.__quizAppInitialized) return;
@@ -1068,7 +1197,8 @@
             const n = questionsData.length;
 
             document.getElementById('subjectLabel').textContent = b.nameEn;
-            document.getElementById('subjectLabelAr').textContent = b.nameAr;
+            document.getElementById('settingsSubject').textContent = b.nameEn;
+            document.title = b.nameEn + ' - Nursing Quiz';
 
             const logo = document.getElementById('headerLogo');
             Object.values(banks).forEach(x => x.grad.split(' ').forEach(c => logo.classList.remove(c)));
@@ -1097,6 +1227,9 @@
                 const el = document.querySelector(`.nq-count[data-bank="${k}"]`);
                 if (el) el.textContent = `${banks[k].data.length} questions`;
             });
+
+            // Refresh the stats strip even when the current mode is not practice
+            updateStats();
         }
 
         function switchSubject(key) {
@@ -1139,7 +1272,11 @@
                 card.addEventListener('click', () => switchSubject(card.getAttribute('data-subject')));
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeDrawer();
+                if (e.key !== 'Escape') return;
+                closeDrawer();
+                closeFilterSheet();
+                closeSettingsSheet();
+                closeWrongReview();
             });
 
             document.getElementById('tab-practice').addEventListener('click', () => switchMode('practice'));
@@ -1155,6 +1292,48 @@
             document.getElementById('nextBtn').addEventListener('click', () => changePage(1));
 
             document.getElementById('resetProgressBtn').addEventListener('click', resetAllProgress);
+            document.getElementById('closeWrongReviewBtn').addEventListener('click', closeWrongReview);
+            document.getElementById('wrongReviewModal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeWrongReview();
+            });
+
+            // Stats strip: wrong chip + per-chapter breakdown
+            document.getElementById('wrongChip').addEventListener('click', () => openWrongReview());
+            document.getElementById('statsToggle').addEventListener('click', toggleStatsPanel);
+
+            // Filter bottom sheet
+            document.getElementById('filterBtn').addEventListener('click', openFilterSheet);
+            document.getElementById('closeFilterBtn').addEventListener('click', closeFilterSheet);
+            document.getElementById('filterSheet').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeFilterSheet();
+            });
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+            document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+                applyFilters();
+                closeFilterSheet();
+            });
+
+            // Settings bottom sheet (holds reset progress)
+            document.getElementById('openSettingsBtn').addEventListener('click', () => {
+                closeDrawer();
+                openSettingsSheet();
+            });
+            document.getElementById('closeSettingsBtn').addEventListener('click', closeSettingsSheet);
+            document.getElementById('settingsSheet').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeSettingsSheet();
+            });
+
+            // Mobile bottom navigation
+            document.querySelectorAll('.nq-bnav-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchMode(btn.getAttribute('data-mode')));
+            });
+
+            // Flashcards self-rating
+            document.getElementById('flashKnownBtn').addEventListener('click', () => rateFlashcard(true));
+            document.getElementById('flashUnknownBtn').addEventListener('click', () => rateFlashcard(false));
+
+            // Desktop keyboard shortcuts (A-D / arrows) in practice mode
+            document.addEventListener('keydown', handlePracticeShortcuts);
 
             document.getElementById('openGridBtn').addEventListener('click', openGridModal);
             document.getElementById('closeGridBtn').addEventListener('click', closeGridModal);
@@ -1171,24 +1350,40 @@
         }
 
         function resetAllProgress() {
-            if (confirm("هل أنت متأكد من رغبتك في مسح كافة الإجابات السابقة والبدء من جديد؟")) {
-                userAnswers = {};
-                localStorage.removeItem(currentBank.ansKey);
-                applyFilters();
-                renderFullGridModal();
-                showToast('تم مسح جميع الإجابات بنجاح', 'success');
+            const n = Object.keys(userAnswers).length;
+            if (n === 0) {
+                showToast('There are no saved answers to reset', 'info');
+                return;
             }
+            const msg = `Reset progress for ${currentBank.nameEn}?\n\nThis deletes ${n} saved answer${n === 1 ? '' : 's'}. Bookmarks are kept.`;
+            if (!confirm(msg)) return;
+
+            userAnswers = {};
+            localStorage.removeItem(currentBank.ansKey);
+            applyFilters();
+            renderFullGridModal();
+            updateStats();
+            showToast(`Deleted ${n} saved answer${n === 1 ? '' : 's'}`, 'success');
         }
 
         function switchMode(mode) {
             currentMode = mode;
+
+            // Desktop tabs (mobile uses the fixed bottom nav)
             ['practice', 'exam', 'flashcards', 'bookmarks'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
+                if (!btn) return;
                 if (t === mode) {
-                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm";
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm";
                 } else {
-                    btn.className = "mode-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700";
+                    btn.className = "mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700";
                 }
+            });
+
+            // Bottom navigation highlight
+            document.querySelectorAll('.nq-bnav-btn').forEach(btn => {
+                if (btn.getAttribute('data-mode') === mode) btn.setAttribute('aria-current', 'page');
+                else btn.removeAttribute('aria-current');
             });
 
             document.getElementById('practiceView').classList.add('hidden');
@@ -1230,6 +1425,8 @@
 
         function updateBookmarkBadge() {
             document.getElementById('bookmarkCountBadge').textContent = bookmarks.size;
+            const mobileBadge = document.getElementById('bnavBookmarkCount');
+            if (mobileBadge) mobileBadge.textContent = bookmarks.size;
         }
 
         function applyFilters() {
@@ -1255,8 +1452,74 @@
             });
 
             currentPage = 1;
+            activeQuestionIndex = 0;
             renderPracticeQuestions();
             updateStats();
+            updateFilterBadge();
+        }
+
+        // Badge on the Filter button: how many filters are active
+        function updateFilterBadge() {
+            const chap = document.getElementById('chapterFilter').value;
+            const stat = document.getElementById('statusFilter').value;
+            let n = 0;
+            if (chap !== 'all') n++;
+            if (stat !== 'all') n++;
+            const badge = document.getElementById('filterBadge');
+            if (!badge) return;
+            badge.textContent = n;
+            badge.classList.toggle('hidden', n === 0);
+            badge.classList.toggle('flex', n > 0);
+        }
+
+        // ---- Filter bottom sheet ----
+        function openFilterSheet() {
+            const sheet = document.getElementById('filterSheet');
+            sheet.classList.add('open');
+            sheet.setAttribute('aria-hidden', 'false');
+            document.getElementById('filterBtn').setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFilterSheet() {
+            const sheet = document.getElementById('filterSheet');
+            sheet.classList.remove('open');
+            sheet.setAttribute('aria-hidden', 'true');
+            document.getElementById('filterBtn').setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('chapterFilter').value = 'all';
+            document.getElementById('statusFilter').value = 'all';
+            applyFilters();
+            showToast('Filters cleared', 'info');
+        }
+
+        // ---- Settings bottom sheet ----
+        function openSettingsSheet() {
+            updateSettingsMeta();
+            const sheet = document.getElementById('settingsSheet');
+            sheet.classList.add('open');
+            sheet.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSettingsSheet() {
+            const sheet = document.getElementById('settingsSheet');
+            sheet.classList.remove('open');
+            sheet.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        // ---- Stats strip: expandable per-chapter breakdown ----
+        function toggleStatsPanel() {
+            statsExpanded = !statsExpanded;
+            document.getElementById('chapterBreakdown').classList.toggle('hidden', !statsExpanded);
+            document.getElementById('statsToggle').setAttribute('aria-expanded', statsExpanded ? 'true' : 'false');
+            const icon = document.querySelector('#statsToggle i');
+            if (icon) icon.className = statsExpanded ? 'fa-solid fa-chevron-up text-xs' : 'fa-solid fa-chevron-down text-xs';
         }
 
         function renderPracticeQuestions() {
@@ -1280,80 +1543,93 @@
             const startIdx = (currentPage - 1) * pageSize;
             const pageItems = filteredQuestions.slice(startIdx, startIdx + pageSize);
 
-            pageItems.forEach(q => {
-                const card = createQuestionCard(q);
+            pageItems.forEach((q, i) => {
+                const card = createQuestionCard(q, startIdx + i + 1, filteredQuestions.length);
                 container.appendChild(card);
             });
+            if (activeQuestionIndex >= pageItems.length) activeQuestionIndex = 0;
+            applyActiveCard(false);
 
             document.getElementById('pageIndicator').textContent = `Page ${currentPage} of ${totalPages}`;
             document.getElementById('prevBtn').disabled = currentPage === 1;
             document.getElementById('nextBtn').disabled = currentPage === totalPages;
         }
 
-        function createQuestionCard(q) {
-            const card = document.createElement('div');
-            card.className = "bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4 transition";
+        function createQuestionCard(q, position, total) {
+            const card = document.createElement('article');
+            card.className = "nq-qcard bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4 transition";
+            card.setAttribute('data-qid', q.id);
+            card.dataset.answered = userAnswers.hasOwnProperty(q.id) ? '1' : '0';
+            card.tabIndex = -1;
 
             const isBookmarked = bookmarks.has(q.id);
             const isAnswered = userAnswers.hasOwnProperty(q.id);
             const selectedOpt = userAnswers[q.id];
+            const isCorrect = isAnswered && selectedOpt === q.answer;
 
             const modObj = currentBank.modules.find(m => m.id === q.chapter);
             const modTitle = modObj ? modObj.title : '';
+            const positionLabel = position ? `Question ${position} of ${total}` : `Question #${q.id}`;
+            const letters = ['A', 'B', 'C', 'D'];
+
+            const optionButtons = q.options.map((opt, optIdx) => {
+                const text = opt.replace(/^[A-D]\)\s*/, '');
+                let cls = "opt-btn w-full min-h-[48px] text-left px-3 py-3 rounded-xl border text-sm font-medium transition flex items-center gap-3 ";
+                let icon = '';
+                let stateLabel = '';
+                let letterCls = "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200";
+
+                if (!isAnswered) {
+                    cls += "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 cursor-pointer";
+                } else if (optIdx === q.answer) {
+                    cls += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-100 font-bold ring-1 ring-emerald-500";
+                    icon = '<i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400" aria-hidden="true"></i>';
+                    stateLabel = '<span class="sr-only">Correct answer</span>';
+                    letterCls = "bg-emerald-600 text-white";
+                } else if (optIdx === selectedOpt) {
+                    cls += "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-100 font-bold ring-1 ring-rose-500";
+                    icon = '<i class="fa-solid fa-circle-xmark text-rose-600 dark:text-rose-400" aria-hidden="true"></i>';
+                    stateLabel = '<span class="sr-only">Your incorrect answer</span>';
+                    letterCls = "bg-rose-600 text-white";
+                } else {
+                    cls += "border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/20 text-slate-400 opacity-60";
+                }
+
+                return `
+                    <button type="button" data-opt="${optIdx}" ${isAnswered ? 'disabled' : ''} class="${cls}">
+                        <span class="w-7 h-7 rounded-lg ${letterCls} text-xs font-extrabold flex items-center justify-center flex-shrink-0" aria-hidden="true">${letters[optIdx]}</span>
+                        <span class="flex-1">${text}</span>
+                        ${icon}${stateLabel}
+                    </button>`;
+            }).join('');
+
+            // Explanation is collapsed by default and opens with a smooth animation
+            const explanationPanel = isAnswered ? `
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 overflow-hidden">
+                    <button type="button" class="exp-toggle w-full min-h-[44px] px-3 py-2.5 flex items-center justify-between gap-2 text-sm font-bold text-slate-700 dark:text-slate-200" aria-expanded="false" aria-controls="exp-${q.id}">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i>Why this is the correct answer</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform" aria-hidden="true"></i>
+                    </button>
+                    <div class="nq-exp" id="exp-${q.id}"><div><p class="px-3 pb-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">${q.explanation}</p></div></div>
+                </div>` : '';
 
             card.innerHTML = `
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
-                            Question #${q.id}
-                        </span>
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                            Module ${q.chapter}: ${modTitle}
-                        </span>
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">${positionLabel}</span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Module ${q.chapter}: ${modTitle}</span>
+                        ${isAnswered ? `<span class="text-xs font-bold px-2 py-1 rounded-md ${isCorrect ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">${isCorrect ? '✓ Correct' : '✗ Incorrect'}</span>` : ''}
                     </div>
-                    <button class="bm-btn text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="Save to Bookmarks">
+                    <button type="button" class="bm-btn w-11 h-11 -mr-2 flex items-center justify-center text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="Save to bookmarks" aria-label="${isBookmarked ? 'Remove bookmark' : 'Save bookmark'}" aria-pressed="${isBookmarked}">
                         <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
                     </button>
                 </div>
 
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
-                    ${q.question}
-                </h3>
+                <h3 class="text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
 
-                <div class="space-y-2">
-                    ${q.options.map((opt, optIdx) => {
-                        let btnClass = "w-full text-left p-3 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ";
-                        if (!isAnswered) {
-                            btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 cursor-pointer";
-                        } else {
-                            if (optIdx === q.answer) {
-                                btnClass += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 font-bold ring-1 ring-emerald-500";
-                            } else if (optIdx === selectedOpt) {
-                                btnClass += "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200 font-bold ring-1 ring-rose-500";
-                            } else {
-                                btnClass += "border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/20 text-slate-400 opacity-60";
-                            }
-                        }
+                <div class="space-y-3">${optionButtons}</div>
 
-                        return `
-                            <button data-opt="${optIdx}" ${isAnswered ? 'disabled' : ''} class="opt-btn ${btnClass}">
-                                <span>${opt}</span>
-                                ${isAnswered && optIdx === q.answer ? '<i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-base"></i>' : ''}
-                                ${isAnswered && optIdx === selectedOpt && selectedOpt !== q.answer ? '<i class="fa-solid fa-circle-xmark text-rose-600 dark:text-rose-400 text-base"></i>' : ''}
-                            </button>
-                        `;
-                    }).join('')}
-                </div>
-
-                ${isAnswered ? `
-                    <div class="mt-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs leading-relaxed">
-                        <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 text-xs">
-                            <i class="fa-solid fa-lightbulb text-amber-500"></i>
-                            <span>Clinical Rationale & Explanation:</span>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-300">${q.explanation}</p>
-                    </div>
-                ` : ''}
+                ${explanationPanel}
             `;
 
             card.querySelector('.bm-btn').addEventListener('click', () => toggleBookmark(q.id));
@@ -1365,7 +1641,58 @@
                 });
             });
 
+            const expToggle = card.querySelector('.exp-toggle');
+            if (expToggle) {
+                expToggle.addEventListener('click', () => {
+                    const panel = card.querySelector('.nq-exp');
+                    const open = panel.classList.toggle('open');
+                    expToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    const chev = expToggle.querySelector('.fa-chevron-down');
+                    if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+                });
+            }
+
             return card;
+        }
+
+        // Highlight the question the keyboard shortcuts act on
+        function applyActiveCard(scrollIntoView) {
+            const cards = document.querySelectorAll('#questionsList .nq-qcard');
+            cards.forEach((c, i) => c.classList.toggle('active-q', i === activeQuestionIndex));
+            if (scrollIntoView && cards[activeQuestionIndex]) {
+                cards[activeQuestionIndex].scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }
+        }
+
+        // Desktop shortcuts: A-D answers the active card, arrows move between cards
+        function handlePracticeShortcuts(e) {
+            if (currentMode !== 'practice') return;
+            const tag = (e.target.tagName || '').toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.metaKey || e.ctrlKey || e.altKey) return;
+            if (document.querySelector('.nq-sheet.open')) return;
+            if (!document.getElementById('gridModal').classList.contains('hidden')) return;
+
+            const cards = document.querySelectorAll('#questionsList .nq-qcard');
+            if (!cards.length) return;
+
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeQuestionIndex = Math.min(activeQuestionIndex + 1, cards.length - 1);
+                applyActiveCard(true);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeQuestionIndex = Math.max(activeQuestionIndex - 1, 0);
+                applyActiveCard(true);
+            } else if (/^[a-dA-D]$/.test(e.key)) {
+                const card = cards[activeQuestionIndex];
+                if (!card || card.dataset.answered === '1') return;
+                const idx = 'abcd'.indexOf(e.key.toLowerCase());
+                const btn = card.querySelector(`.opt-btn[data-opt="${idx}"]`);
+                if (btn && !btn.disabled) {
+                    e.preventDefault();
+                    btn.click();
+                }
+            }
         }
 
         function answerPracticeQuestion(qId, optIdx) {
@@ -1383,21 +1710,78 @@
         }
 
         function updateStats() {
-            const ansCount = Object.keys(userAnswers).length;
+            const total = questionsData.length;
             let correct = 0;
             let incorrect = 0;
 
             Object.keys(userAnswers).forEach(qId => {
                 const q = questionsData.find(item => item.id === parseInt(qId));
-                if (q && userAnswers[qId] === q.answer) correct++;
+                if (!q) return;
+                if (userAnswers[qId] === q.answer) correct++;
                 else incorrect++;
             });
 
-            document.getElementById('statTotal').textContent = questionsData.length;
+            const answered = correct + incorrect;
+            const remaining = Math.max(total - answered, 0);
+            const pct = total ? Math.round((answered / total) * 100) : 0;
+
+            // Kept IDs so existing behaviour still works: statTotal / statCorrect / statIncorrect / statProgress
+            document.getElementById('statTotal').textContent = total;
             document.getElementById('statCorrect').textContent = correct;
             document.getElementById('statIncorrect').textContent = incorrect;
-            const pct = Math.round((ansCount / questionsData.length) * 100);
-            document.getElementById('statProgress').textContent = `${pct}%`;
+            document.getElementById('statUnanswered').textContent = remaining;
+            document.getElementById('statProgress').textContent = pct + '%';
+
+            const per = total ? 100 / total : 0;
+            document.getElementById('segCorrect').style.width = (correct * per) + '%';
+            document.getElementById('segWrong').style.width = (incorrect * per) + '%';
+            document.getElementById('segLeft').style.width = (remaining * per) + '%';
+            document.getElementById('statsBar').setAttribute('aria-label',
+                `Progress: ${correct} correct, ${incorrect} wrong, ${remaining} remaining of ${total}`);
+
+            renderChapterBreakdown();
+            updateSettingsMeta();
+        }
+
+        // One row per module with correct / wrong counts
+        function renderChapterBreakdown() {
+            const box = document.getElementById('chapterBreakdown');
+            if (!box) return;
+
+            const rows = currentBank.modules.map(m => {
+                const qs = questionsData.filter(q => q.chapter === m.id);
+                let c = 0;
+                let w = 0;
+                qs.forEach(q => {
+                    if (!userAnswers.hasOwnProperty(q.id)) return;
+                    if (userAnswers[q.id] === q.answer) c++;
+                    else w++;
+                });
+                return { title: m.title, total: qs.length, c, w };
+            });
+
+            box.innerHTML = rows.map(r => `
+                <div class="flex items-center justify-between gap-3 text-sm">
+                    <span class="text-slate-600 dark:text-slate-300 truncate">${r.title}</span>
+                    <span class="flex items-center gap-4 flex-shrink-0 tabular-nums">
+                        <span class="text-slate-400">${r.total} Q</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">${r.c}</span>
+                        <span class="font-bold text-rose-600 dark:text-rose-400">${r.w}</span>
+                    </span>
+                </div>`).join('') + `
+                <div class="flex items-center justify-end gap-4 text-[11px] text-slate-400 pt-1">
+                    <span class="w-10 text-right">total</span>
+                    <span class="w-4 text-right">✓</span>
+                    <span class="w-4 text-right">✗</span>
+                </div>`;
+        }
+
+        function updateSettingsMeta() {
+            const count = document.getElementById('settingsAnswerCount');
+            if (!count) return;
+            const n = Object.keys(userAnswers).length;
+            count.textContent = `${n} answer${n === 1 ? '' : 's'} saved for this subject.`;
+            document.getElementById('settingsSubject').textContent = currentBank.nameEn;
         }
 
         // Mock Exam Engine
@@ -1408,6 +1792,9 @@
             const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
             examQuestions = shuffled.slice(0, count);
             examAnswers = {};
+            examFlags = new Set();
+            examStartedAt = Date.now();
+            examElapsedSeconds = 0;
             currentExamIndex = 0;
             examTimeRemaining = minutes * 60;
 
@@ -1446,37 +1833,46 @@
         function renderExamQuestion() {
             const q = examQuestions[currentExamIndex];
             const box = document.getElementById('examQuestionBox');
+            const selectedOpt = examAnswers[q.id];
+            const flagged = examFlags.has(q.id);
+
             document.getElementById('examProgressText').textContent = `${currentExamIndex + 1} of ${examQuestions.length}`;
 
-            const selectedOpt = examAnswers[q.id];
+            // Answered-progress bar
+            const answeredCount = Object.keys(examAnswers).length;
+            const pct = examQuestions.length ? Math.round((answeredCount / examQuestions.length) * 100) : 0;
+            document.getElementById('examProgressFill').style.width = pct + '%';
+            document.getElementById('examProgressWrap').setAttribute('aria-valuenow', pct);
 
             box.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
-                        Exam Question #${currentExamIndex + 1}
-                    </span>
-                    <span class="text-xs font-semibold text-slate-500">Module ${q.chapter}</span>
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">Question ${currentExamIndex + 1} of ${examQuestions.length}</span>
+                        <span class="text-xs font-semibold text-slate-500">Module ${q.chapter}</span>
+                    </div>
+                    <button id="flagExamQBtn" type="button" aria-pressed="${flagged}" class="h-9 px-3 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition ${flagged ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 dark:border-amber-700 text-amber-800 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}">
+                        <i class="fa-${flagged ? 'solid' : 'regular'} fa-flag" aria-hidden="true"></i>${flagged ? 'Flagged' : 'Flag for review'}
+                    </button>
                 </div>
 
-                <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-relaxed">
-                    ${q.question}
-                </h3>
+                <h3 class="text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
 
-                <div class="space-y-2.5 pt-2">
+                <div class="space-y-3 pt-1">
                     ${q.options.map((opt, optIdx) => `
-                        <button data-opt="${optIdx}" class="exam-opt-btn w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition flex items-center justify-between ${selectedOpt === optIdx ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-900 dark:text-brand-200 font-bold ring-2 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}">
-                            <span>${opt}</span>
-                            ${selectedOpt === optIdx ? '<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400"></i>' : ''}
+                        <button type="button" data-opt="${optIdx}" class="exam-opt-btn w-full min-h-[48px] text-left px-3 py-3 rounded-xl border text-sm font-medium transition flex items-center gap-3 ${selectedOpt === optIdx ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-900 dark:text-brand-200 font-bold ring-2 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}">
+                            <span class="w-7 h-7 rounded-lg ${selectedOpt === optIdx ? 'bg-brand-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} text-xs font-extrabold flex items-center justify-center flex-shrink-0" aria-hidden="true">${'ABCD'[optIdx]}</span>
+                            <span class="flex-1">${opt.replace(/^[A-D]\)\s*/, '')}</span>
+                            ${selectedOpt === optIdx ? '<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400" aria-hidden="true"></i><span class="sr-only">Selected</span>' : ''}
                         </button>
                     `).join('')}
                 </div>
 
-                <div class="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-700">
-                    <button id="prevExamQBtn" ${currentExamIndex === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-50 transition">
-                        Previous
+                <div class="flex justify-between items-center gap-2 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button id="prevExamQBtn" ${currentExamIndex === 0 ? 'disabled' : ''} class="h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold disabled:opacity-40 transition">
+                        <i class="fa-solid fa-chevron-left mr-1"></i>Previous
                     </button>
-                    <button id="nextExamQBtn" ${currentExamIndex === examQuestions.length - 1 ? 'disabled' : ''} class="px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-bold disabled:opacity-50 transition">
-                        Next
+                    <button id="nextExamQBtn" ${currentExamIndex === examQuestions.length - 1 ? 'disabled' : ''} class="h-11 px-4 rounded-lg bg-brand-600 text-white text-sm font-bold disabled:opacity-40 transition">
+                        Next<i class="fa-solid fa-chevron-right ml-1"></i>
                     </button>
                 </div>
             `;
@@ -1490,6 +1886,16 @@
                 });
             });
 
+            const flagBtn = box.querySelector('#flagExamQBtn');
+            if (flagBtn) {
+                flagBtn.addEventListener('click', () => {
+                    if (examFlags.has(q.id)) examFlags.delete(q.id);
+                    else examFlags.add(q.id);
+                    renderExamQuestion();
+                    renderExamGridMap();
+                });
+            }
+
             const prev = box.querySelector('#prevExamQBtn');
             const next = box.querySelector('#nextExamQBtn');
             if (prev) prev.addEventListener('click', () => { currentExamIndex--; renderExamQuestion(); });
@@ -1499,18 +1905,25 @@
         function renderExamGridMap() {
             const container = document.getElementById('examGridMap');
             container.innerHTML = '';
+
             examQuestions.forEach((q, idx) => {
                 const isAns = examAnswers.hasOwnProperty(q.id);
                 const isCur = idx === currentExamIndex;
+                const isFlag = examFlags.has(q.id);
 
                 const btn = document.createElement('button');
-                let cls = "w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition ";
-                if (isCur) cls += "ring-2 ring-brand-500 bg-brand-600 text-white shadow ";
-                else if (isAns) cls += "bg-emerald-500 text-white ";
-                else cls += "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 ";
+                btn.type = 'button';
+
+                let cls = "w-9 h-9 rounded-lg text-xs font-bold flex items-center justify-center relative border transition ";
+                if (isCur) cls += "ring-2 ring-brand-500 bg-brand-600 border-brand-600 text-white ";
+                else if (isAns) cls += "bg-emerald-500 border-emerald-600 text-white ";
+                else cls += "bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 ";
+                if (isFlag) cls += "outline outline-2 outline-amber-400 outline-offset-1 ";
 
                 btn.className = cls;
-                btn.textContent = idx + 1;
+                btn.innerHTML = `${idx + 1}${isFlag ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border border-white dark:border-slate-800"></span>' : ''}`;
+                btn.setAttribute('aria-label', `Question ${idx + 1}${isAns ? ', answered' : ', unanswered'}${isFlag ? ', flagged' : ''}${isCur ? ', current' : ''}`);
+
                 btn.addEventListener('click', () => {
                     currentExamIndex = idx;
                     renderExamQuestion();
@@ -1522,12 +1935,11 @@
 
         function confirmSubmitExam() {
             const unanswered = examQuestions.length - Object.keys(examAnswers).length;
-            if (unanswered > 0) {
-                if (!confirm(`You have ${unanswered} unanswered questions! Submit exam anyway?`)) {
-                    return;
-                }
-            }
-            finishMockExam();
+            const flagged = examFlags.size;
+            let msg = `Submit the exam now?\n\n${unanswered} unanswered`;
+            if (flagged) msg += `\n${flagged} flagged for review`;
+            if (unanswered > 0) msg += '\n\nUnanswered questions will be counted as skipped.';
+            if (confirm(msg)) finishMockExam();
         }
 
         function finishMockExam() {
@@ -1536,13 +1948,43 @@
             const report = document.getElementById('examResultReport');
             report.classList.remove('hidden');
 
+            const total = examQuestions.length;
+            const answeredCount = Object.keys(examAnswers).length;
             let correct = 0;
             examQuestions.forEach(q => {
                 if (examAnswers[q.id] === q.answer) correct++;
             });
-
-            const scorePct = Math.round((correct / examQuestions.length) * 100);
+            const wrong = answeredCount - correct;
+            const skipped = total - answeredCount;
+            const scorePct = total ? Math.round((correct / total) * 100) : 0;
             const passed = scorePct >= 60;
+
+            examElapsedSeconds = examStartedAt ? Math.round((Date.now() - examStartedAt) / 1000) : examElapsedSeconds;
+            const elapsed = Math.max(examElapsedSeconds, 0);
+            const timeTaken = [Math.floor(elapsed / 3600), Math.floor((elapsed % 3600) / 60), elapsed % 60]
+                .map(v => String(v).padStart(2, '0')).join(':');
+
+            // Per-chapter breakdown of this exam attempt
+            const chapterRows = currentBank.modules.map(m => {
+                const qs = examQuestions.filter(q => q.chapter === m.id);
+                if (!qs.length) return '';
+                let c = 0, w = 0, sk = 0;
+                qs.forEach(q => {
+                    if (examAnswers[q.id] === undefined) sk++;
+                    else if (examAnswers[q.id] === q.answer) c++;
+                    else w++;
+                });
+                return `
+                    <div class="flex items-center justify-between gap-3 text-sm py-1.5 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                        <span class="text-slate-600 dark:text-slate-300 truncate">${m.title}</span>
+                        <span class="flex items-center gap-3 flex-shrink-0 tabular-nums">
+                            <span class="text-slate-400">${qs.length} Q</span>
+                            <span class="text-emerald-600 dark:text-emerald-400 font-bold">${c}</span>
+                            <span class="text-rose-600 dark:text-rose-400 font-bold">${w}</span>
+                            <span class="text-slate-400">${sk}</span>
+                        </span>
+                    </div>`;
+            }).join('');
 
             report.innerHTML = `
                 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-center space-y-4 max-w-2xl mx-auto">
@@ -1552,45 +1994,79 @@
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">
                         ${passed ? 'Passed Mock Exam 🎓' : 'Did Not Pass (Pass Mark: 60%) 📖'}
                     </h2>
-                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Scorecard Summary: Answered <strong>${correct}</strong> out of <strong>${examQuestions.length}</strong> questions correctly.
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        ${correct} of ${total} correct · time taken ${timeTaken}
                     </p>
 
-                    <div class="flex justify-center gap-3 pt-2">
-                        <button id="reStartExamBtn" class="px-5 py-2.5 rounded-lg bg-brand-600 text-white text-xs sm:text-sm font-bold shadow hover:bg-brand-700 transition">
-                            Retake Mock Exam
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-2.5">
+                            <span class="block text-[11px] text-slate-500">Total</span>
+                            <span class="text-base font-bold text-slate-900 dark:text-white">${total}</span>
+                        </div>
+                        <div class="rounded-xl border border-emerald-200 dark:border-emerald-800 p-2.5">
+                            <span class="block text-[11px] text-slate-500">Correct</span>
+                            <span class="text-base font-bold text-emerald-600 dark:text-emerald-400">${correct}</span>
+                        </div>
+                        <div class="rounded-xl border border-rose-200 dark:border-rose-800 p-2.5">
+                            <span class="block text-[11px] text-slate-500">Wrong</span>
+                            <span class="text-base font-bold text-rose-600 dark:text-rose-400">${wrong}</span>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-2.5">
+                            <span class="block text-[11px] text-slate-500">Skipped</span>
+                            <span class="text-base font-bold text-slate-500">${skipped}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                        <button id="reviewMistakesBtn" class="h-11 px-5 rounded-xl bg-rose-600 text-white text-sm font-bold shadow hover:bg-rose-700 transition">
+                            <i class="fa-solid fa-circle-xmark mr-1.5"></i>Review my mistakes
                         </button>
-                        <button id="backToPracticeBtn" class="px-5 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-xs sm:text-sm font-bold hover:bg-slate-300 transition">
-                            Back to Practice Mode
+                        <button id="reStartExamBtn" class="h-11 px-5 rounded-xl bg-brand-600 text-white text-sm font-bold shadow hover:bg-brand-700 transition">
+                            <i class="fa-solid fa-rotate-right mr-1.5"></i>Retry
+                        </button>
+                        <button id="backToPracticeBtn" class="h-11 px-5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                            Back to practice
                         </button>
                     </div>
                 </div>
 
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 max-w-4xl mx-auto">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Per-chapter breakdown</h3>
+                    <div class="flex items-center justify-end gap-3 text-[11px] text-slate-400 pb-1">
+                        <span>total</span><span>✓</span><span>✗</span><span>skipped</span>
+                    </div>
+                    ${chapterRows}
+                </div>
+
                 <div class="space-y-4 max-w-4xl mx-auto">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Full Exam Review & Rationales:</h3>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Full Exam Review &amp; Rationales:</h3>
                     ${examQuestions.map((q, idx) => {
                         const userAns = examAnswers[q.id];
                         const isCorr = userAns === q.answer;
+                        const isSkipped = userAns === undefined;
                         return `
-                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : 'border-rose-300 dark:border-rose-800'} space-y-2">
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : isSkipped ? 'border-slate-300 dark:border-slate-600' : 'border-rose-300 dark:border-rose-800'} space-y-2">
                                 <div class="flex items-center justify-between text-xs font-bold">
                                     <span class="text-slate-500">Question #${idx + 1}</span>
-                                    <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
-                                        ${isCorr ? 'Correct ✓' : 'Incorrect ✗'}
+                                    <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : isSkipped ? 'text-slate-500' : 'text-rose-600 dark:text-rose-400'}">
+                                        ${isCorr ? 'Correct ✓' : isSkipped ? 'Skipped' : 'Incorrect ✗'}
                                     </span>
                                 </div>
-                                <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
-                                <div class="text-xs space-y-1 pt-1">
-                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">Correct Answer: ${q.options[q.answer]}</p>
-                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">Your Choice: ${userAns !== undefined ? q.options[userAns] : 'Not Answered'}</p>` : ''}
+                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+                                <div class="text-sm space-y-1 pt-1">
+                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">Correct answer: ${q.options[q.answer]}</p>
+                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">Your choice: ${isSkipped ? 'Not answered' : q.options[userAns]}</p>` : ''}
                                 </div>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700">Rationale: ${q.explanation}</p>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700 leading-relaxed">Rationale: ${q.explanation}</p>
                             </div>
                         `;
                     }).join('')}
                 </div>
             `;
 
+            document.getElementById('reviewMistakesBtn').addEventListener('click', () => {
+                openWrongReview(examMistakes(), 'Mistakes in this Exam');
+            });
             document.getElementById('reStartExamBtn').addEventListener('click', startMockExam);
             document.getElementById('backToPracticeBtn').addEventListener('click', () => switchMode('practice'));
         }
@@ -1599,7 +2075,23 @@
         function initFlashcards() {
             currentFlashcardIndex = 0;
             isCardFlipped = false;
+            flashKnown = 0;
+            flashUnknown = 0;
             renderFlashcard();
+        }
+
+        // "I knew it" / "Didn't know": counts the card, then moves on
+        function rateFlashcard(knew) {
+            if (knew) flashKnown++;
+            else flashUnknown++;
+            updateFlashScore();
+            changeFlashcard(1);
+            showToast(knew ? 'Card marked as known' : 'Card added to your review list', 'success');
+        }
+
+        function updateFlashScore() {
+            document.getElementById('flashKnownCount').textContent = flashKnown;
+            document.getElementById('flashUnknownCount').textContent = flashUnknown;
         }
 
         function renderFlashcard() {
@@ -1613,6 +2105,7 @@
             document.getElementById('cardQuestionText').textContent = q.question;
             document.getElementById('cardAnswerText').textContent = q.options[q.answer];
             document.getElementById('cardExplanationText').textContent = q.explanation;
+            updateFlashScore();
         }
 
         function flipFlashcard() {
@@ -1651,6 +2144,77 @@
                 const card = createQuestionCard(q);
                 container.appendChild(card);
             });
+        }
+
+        // Incorrect Answers Review (opened from the stats strip or the exam report)
+        function practiceMistakes() {
+            return questionsData
+                .filter(q => userAnswers.hasOwnProperty(q.id) && userAnswers[q.id] !== q.answer)
+                .map(q => ({ q, chosen: userAnswers[q.id] }));
+        }
+
+        function examMistakes() {
+            return examQuestions
+                .filter(q => examAnswers[q.id] !== q.answer)
+                .map(q => ({ q, chosen: examAnswers[q.id] }));
+        }
+
+        function renderWrongReview(items, titleText) {
+            const container = document.getElementById('wrongReviewList');
+            const countBadge = document.getElementById('wrongReviewCount');
+            const heading = document.getElementById('wrongReviewTitle');
+            const list = items || practiceMistakes();
+
+            countBadge.textContent = `${list.length} question${list.length === 1 ? '' : 's'}`;
+            heading.textContent = titleText || 'Incorrect Answers Review';
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
+                        <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No incorrect answers here</h3>
+                        <p class="text-xs text-slate-400">Answer some questions and every mistake will be collected here with the correct answer and the reason.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(({ q, chosen }) => {
+                const modObj = currentBank.modules.find(m => m.id === q.chapter);
+                const chosenText = chosen === undefined ? 'Not answered' : q.options[chosen];
+                return `
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-rose-200 dark:border-rose-900/70 space-y-2">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">Question #${q.id}</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Module ${q.chapter}: ${modObj ? modObj.title : ''}</span>
+                            </div>
+                            <span class="text-xs font-bold text-rose-600 dark:text-rose-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Incorrect</span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+                        <div class="space-y-1 text-sm pt-1">
+                            <p class="text-rose-700 dark:text-rose-300"><span class="font-bold">Your answer:</span> ${chosenText}</p>
+                            <p class="text-emerald-700 dark:text-emerald-300"><span class="font-bold">Correct answer:</span> ${q.options[q.answer]}</p>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-slate-700 leading-relaxed">
+                            <span class="font-bold text-slate-800 dark:text-slate-200">Why your answer is wrong:</span> ${q.explanation}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openWrongReview(items, titleText) {
+            renderWrongReview(items, titleText);
+            const modal = document.getElementById('wrongReviewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeWrongReview() {
+            const modal = document.getElementById('wrongReviewModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         // MCQ Grid Navigator Modal
@@ -1788,6 +2352,9 @@
                     </svg>
                 </button>
             </div>
+            <button id="continueBtn" type="button" class="sp-in mt-6 w-full h-12 rounded-2xl bg-white/10 border border-white/25 text-white font-ar font-bold text-base hover:bg-white/20 transition flex items-center justify-center gap-2" style="animation-delay:.74s">
+                <i class="fa-solid fa-arrow-left"></i> متابعة من حيث توقفت
+            </button>
             <div class="sp-foot sp-in" style="animation-delay:.8s">
                 <a class="sp-ig" href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i> <span>@m_d_l7</span></a>
                 <div class="sp-dev">Developed by salem mohammed</div>
@@ -1843,6 +2410,12 @@
                 });
             });
 
+            var cont = document.getElementById('continueBtn');
+            if (cont) cont.addEventListener('click', function () {
+                try { history.pushState({ nqPage: 'app' }, ''); } catch (e) {}
+                hideSplash();
+            });
+
             // Back button returns to the splash instead of leaving the site
             window.addEventListener('popstate', function (e) {
                 var page = e.state && e.state.nqPage;
@@ -1850,6 +2423,15 @@
                 else if (page === 'app') hideSplash();
             });
         })();
+    </script>
+    <script>
+        /* PWA: register the service worker so the installed app works offline.
+           Note: keep this file small; a future refactor should move data to JSON. */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('sw.js').catch(function () {});
+            });
+        }
     </script>
 </body>
 </html>
