@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@
     <style>
         html.sp-skip #splash { display:none; }
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+        body { font-family: 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
         .font-ar { font-family: 'Tajawal', 'Inter', system-ui, sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
@@ -74,7 +74,7 @@
         /* ---------- Slide-in subject drawer ---------- */
         .nq-overlay { position: fixed; inset: 0; z-index: 40; background: rgba(2,6,23,.55); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
         .nq-overlay.open { opacity: 1; visibility: visible; transition-delay: 0s; }
-        .nq-drawer { position: fixed; top: 0; left: 0; bottom: 0; z-index: 45; width: min(88vw, 380px); display: flex; flex-direction: column; transform: translateX(-102%); visibility: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), visibility 0s .35s; }
+        .nq-drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 45; width: min(88vw, 380px); display: flex; flex-direction: column; transform: translateX(102%); visibility: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), visibility 0s .35s; }
         .nq-drawer.open { transform: none; visibility: visible; transition-delay: 0s; }
 
         /* ---------- Subject cards ---------- */
@@ -194,6 +194,16 @@
             .nq-exp, .nq-seg > span, .nq-sheet, .nq-sheet-panel, .nq-bnav-btn { transition:none !important; }
             html { scroll-behavior:auto !important; }
         }
+
+        /* Bilingual content: English questions stay LTR inside the Arabic RTL page */
+        .en-block { direction: ltr; text-align: left; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .ar-block { direction: rtl; text-align: right; font-family: 'Tajawal', 'Inter', system-ui, sans-serif; line-height: 1.95; }
+        /* Mirror directional icons in RTL */
+        [dir="rtl"] .fa-chevron-left, [dir="rtl"] .fa-chevron-right,
+        [dir="rtl"] .fa-arrow-left, [dir="rtl"] .fa-arrow-right { transform: rotate(180deg); }
+        /* Translate button active state */
+        .tx-lang-btn[aria-pressed="true"] { background: #e0f2fe; border-color: #0284c7; color: #075985; }
+        .dark .tx-lang-btn[aria-pressed="true"] { background: #0c4a6e; border-color: #38bdf8; color: #e0f2fe; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
@@ -216,7 +226,7 @@
             <button class="nq-card mental" data-subject="mental">
                 <div class="flex items-center justify-between">
                     <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-brain"></i></span>
-                    <span class="nq-badge text-xs font-bold bg-white text-indigo-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>Open now</span>
+                    <span class="nq-badge text-xs font-bold bg-white text-indigo-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>متاحة الآن</span>
                 </div>
                 <h3 class="mt-3 text-lg font-extrabold leading-tight">Mental Health Nursing</h3>
                 <p class="font-ar text-base font-bold opacity-95" dir="rtl">تمريض الصحة النفسية</p>
@@ -231,7 +241,7 @@
             <button class="nq-card critical" data-subject="critical">
                 <div class="flex items-center justify-between">
                     <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-heart-pulse"></i></span>
-                    <span class="nq-badge text-xs font-bold bg-white text-rose-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>Open now</span>
+                    <span class="nq-badge text-xs font-bold bg-white text-rose-700 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>متاحة الآن</span>
                 </div>
                 <h3 class="mt-3 text-lg font-extrabold leading-tight">Critical Care Nursing</h3>
                 <p class="font-ar text-base font-bold opacity-95" dir="rtl">تمريض الحالات الحرجة</p>
@@ -245,7 +255,7 @@
 
         <div class="p-5 pt-4 border-t border-slate-200 dark:border-slate-700">
             <button id="openSettingsBtn" type="button" class="w-full h-11 mb-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-                <i class="fa-solid fa-gear"></i><span>Settings</span>
+                <i class="fa-solid fa-gear"></i><span>الإعدادات</span>
             </button>
             <p class="font-ar text-center text-sm font-bold text-slate-600 dark:text-slate-300 mb-3" dir="rtl">💬 للتواصل والاقتراحات</p>
             <a href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer" class="nq-ig" aria-label="Instagram @m_d_l7">
@@ -265,7 +275,7 @@
     <header class="bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 min-w-0">
-                <button id="menuBtn" class="nq-burger text-slate-700 dark:text-slate-200" aria-label="Open menu" aria-expanded="false">
+                <button id="menuBtn" class="nq-burger text-slate-700 dark:text-slate-200" aria-label="فتح القائمة" aria-expanded="false">
                     <span></span><span></span><span></span>
                 </button>
                 <div id="headerLogo" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
@@ -276,11 +286,11 @@
                 </p>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button id="openGridBtn" aria-label="Open the question palette" class="h-9 px-2.5 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
+                <button id="openGridBtn" aria-label="فتح لوحة الأسئلة" class="h-9 px-2.5 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-table-cells"></i>
-                    <span id="paletteLabel" class="hidden sm:inline">MCQ Palette</span>
+                    <span id="paletteLabel" class="hidden sm:inline">لوحة الأسئلة</span>
                 </button>
-                <button id="themeToggleBtn" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition flex items-center justify-center" aria-label="Toggle light or dark theme" title="Toggle theme">
+                <button id="themeToggleBtn" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition flex items-center justify-center" aria-label="تبديل المظهر الفاتح والداكن" title="تبديل المظهر">
                     <i class="fa-solid fa-moon dark:hidden"></i>
                     <i class="fa-solid fa-sun hidden dark:inline"></i>
                 </button>
@@ -292,17 +302,17 @@
     <nav id="desktopTabs" class="hidden md:block bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700" aria-label="Study modes">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 py-2">
             <button id="tab-practice" class="mode-tab px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition whitespace-nowrap bg-brand-600 text-white shadow-sm">
-                <i class="fa-solid fa-square-check"></i><span>Practice</span>
+                <i class="fa-solid fa-square-check"></i><span>تدريب</span>
             </button>
             <button id="tab-exam" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                <i class="fa-solid fa-stopwatch"></i><span>Mock exam</span>
+                <i class="fa-solid fa-stopwatch"></i><span>امتحان</span>
             </button>
             <button id="tab-flashcards" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                <i class="fa-solid fa-clone"></i><span>Flashcards</span>
+                <i class="fa-solid fa-clone"></i><span>بطاقات</span>
             </button>
             <button id="tab-bookmarks" class="mode-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
                 <i class="fa-solid fa-bookmark text-amber-500"></i>
-                <span>Bookmarks (<span id="bookmarkCountBadge">0</span>)</span>
+                <span>المحفوظات (<span id="bookmarkCountBadge">0</span>)</span>
             </button>
         </div>
     </nav>
@@ -315,12 +325,12 @@
             <div class="flex items-center gap-3">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400" aria-hidden="true"></span><span id="statTotal">0</span> questions</span>
-                        <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span><span id="statCorrect">0</span> correct</span>
-                        <button id="wrongChip" type="button" class="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 hover:underline" aria-label="Review incorrect answers">
-                            <span class="w-2 h-2 rounded-full bg-rose-500" aria-hidden="true"></span><span id="statIncorrect">0</span> wrong
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400" aria-hidden="true"></span><span id="statTotal">0</span> سؤال</span>
+                        <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span><span id="statCorrect">0</span> صحيحة</span>
+                        <button id="wrongChip" type="button" class="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 hover:underline" aria-label="مراجعة الإجابات الخاطئة">
+                            <span class="w-2 h-2 rounded-full bg-rose-500" aria-hidden="true"></span><span id="statIncorrect">0</span> خاطئة
                         </button>
-                        <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span><span id="statUnanswered">0</span> left</span>
+                        <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span><span id="statUnanswered">0</span> متبقية</span>
                         <span class="text-brand-600 dark:text-brand-400 font-bold" id="statProgress">0%</span>
                     </div>
                     <div class="nq-seg mt-2" id="statsBar" role="img" aria-label="Progress: 0 correct, 0 wrong, 0 remaining">
@@ -329,7 +339,7 @@
                         <span id="segLeft" class="bg-slate-200 dark:bg-slate-600" style="width:100%"></span>
                     </div>
                 </div>
-                <button id="statsToggle" type="button" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition" aria-expanded="false" aria-controls="chapterBreakdown" aria-label="Show per-chapter breakdown">
+                <button id="statsToggle" type="button" class="h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition" aria-expanded="false" aria-controls="chapterBreakdown" aria-label="عرض تفصيل الوحدات">
                     <i class="fa-solid fa-chevron-down text-xs"></i>
                 </button>
             </div>
@@ -339,11 +349,11 @@
         <!-- Filters: only the search box and one Filter button are always visible -->
         <div id="filterControls" class="flex items-center gap-2 mb-4">
             <div class="relative flex-1">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true"></i>
-                <input type="text" id="searchInput" placeholder="Search keywords..." aria-label="Search questions" class="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <i class="fa-solid fa-magnifying-glass absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true"></i>
+                <input type="text" id="searchInput" placeholder="ابحث بالكلمات المفتاحية" aria-label="ابحث في الأسئلة" class="w-full h-11 ps-10 pe-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
             <button id="filterBtn" type="button" class="h-11 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition" aria-expanded="false" aria-controls="filterSheet">
-                <i class="fa-solid fa-sliders"></i><span>Filter</span>
+                <i class="fa-solid fa-sliders"></i><span>تصفية</span>
                 <span id="filterBadge" class="hidden min-w-5 h-5 px-1.5 rounded-full bg-brand-600 text-white text-[11px] font-bold items-center justify-center">0</span>
             </button>
         </div>
@@ -353,21 +363,21 @@
             <div class="nq-sheet-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="filterSheetTitle">
                 <div class="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                 <div class="flex items-center justify-between mb-3">
-                    <h3 id="filterSheetTitle" class="text-base font-bold text-slate-900 dark:text-white">Filters</h3>
-                    <button id="closeFilterBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="Close filters"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    <h3 id="filterSheetTitle" class="text-base font-bold text-slate-900 dark:text-white">تصفية</h3>
+                    <button id="closeFilterBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="إغلاق التصفية"><i class="fa-solid fa-xmark text-lg"></i></button>
                 </div>
-                <label for="chapterFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Module</label>
+                <label for="chapterFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">الوحدة</label>
                 <select id="chapterFilter" class="w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
-                <label for="statusFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mt-4 mb-1">Status</label>
+                <label for="statusFilter" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mt-4 mb-1">الحالة</label>
                 <select id="statusFilter" class="w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    <option value="all">All statuses</option>
-                    <option value="unanswered">Unanswered</option>
-                    <option value="correct">Correct</option>
-                    <option value="incorrect">Incorrect</option>
+                    <option value="all">الكل</option>
+                    <option value="unanswered">غير مجابة</option>
+                    <option value="correct">صحيحة</option>
+                    <option value="incorrect">خاطئة</option>
                 </select>
                 <div class="flex gap-2 mt-5">
-                    <button id="clearFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Clear filters</button>
-                    <button id="applyFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition">Show results</button>
+                    <button id="clearFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition">مسح التصفية</button>
+                    <button id="applyFiltersBtn" type="button" class="flex-1 h-11 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition">عرض النتائج</button>
                 </div>
             </div>
         </div>
@@ -381,14 +391,14 @@
             <!-- Sticky pager (sits above the mobile bottom nav) -->
             <div class="sticky bottom-20 md:bottom-3 z-20 flex items-center justify-between gap-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
                 <button id="prevBtn" class="h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-40 flex items-center gap-2 transition">
-                    <i class="fa-solid fa-chevron-left"></i> Previous
+                    <i class="fa-solid fa-chevron-left"></i> السابق
                 </button>
-                <span id="pageIndicator" class="text-sm font-bold text-slate-600 dark:text-slate-300">Page 1 of 1</span>
+                <span id="pageIndicator" class="text-sm font-bold text-slate-600 dark:text-slate-300">صفحة 1 من 1</span>
                 <button id="nextBtn" class="h-11 px-4 rounded-lg bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 disabled:opacity-40 flex items-center gap-2 transition">
-                    Next <i class="fa-solid fa-chevron-right"></i>
+                    التالي <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
-            <p class="hidden md:block text-[11px] text-slate-400 dark:text-slate-500 text-center">Keyboard: press A–D to answer, ← / → to move between questions.</p>
+            <p class="hidden md:block text-[11px] text-slate-400 dark:text-slate-500 text-center">اختصارات لوحة المفاتيح: A–D للإجابة، والأسهم للتنقل بين الأسئلة.</p>
         </div>
 
         <!-- MODE 2: MOCK EXAM VIEW -->
@@ -398,29 +408,29 @@
                 <div class="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center text-3xl mx-auto">
                     <i class="fa-solid fa-stopwatch"></i>
                 </div>
-                <h2 id="examSetupTitle" class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Mock Exam Setup</h2>
+                <h2 id="examSetupTitle" class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">إعداد الامتحان التجريبي</h2>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Simulates academic university & licensing board exams. Answers and rationales are revealed only after final submission.
+                    يحاكي امتحانات الجامعات وامتحانات الترخيص. لا تظهر الإجابات والشرح إلا بعد التسليم النهائي.
                 </p>
                 <div class="grid grid-cols-2 gap-4 text-left pt-2">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Question Count:</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">عدد الأسئلة:</label>
                         <select id="examCountSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
                             <!-- Filled from the selected subject -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Time Limit:</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">مدة الامتحان:</label>
                         <select id="examTimeSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs sm:text-sm font-semibold">
-                            <option value="30">30 Minutes</option>
-                            <option value="60" selected>60 Minutes</option>
-                            <option value="120">120 Minutes (2 Hours)</option>
-                            <option value="180">180 Minutes (3 Hours)</option>
+                            <option value="30">30 دقيقة</option>
+                            <option value="60" selected>60 دقيقة</option>
+                            <option value="120">120 دقيقة (ساعتان)</option>
+                            <option value="180">180 دقيقة (3 ساعات)</option>
                         </select>
                     </div>
                 </div>
                 <button id="startExamBtn" class="w-full py-3 rounded-lg bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 shadow transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-play"></i> Start Timed Mock Exam Now
+                    <i class="fa-solid fa-play"></i> ابدأ الامتحان التجريبي الموقوت
                 </button>
             </div>
 
@@ -428,20 +438,20 @@
             <div id="examActivePanel" class="hidden space-y-6">
                 <!-- Top Exam Bar: progress + timer + submit -->
                 <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2.5 sticky top-12 z-20">
-                    <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="Exam progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="examProgressWrap">
+                    <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="تقدم الامتحان" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="examProgressWrap">
                         <div id="examProgressFill" class="h-full bg-brand-600 transition-all duration-300" style="width:0%"></div>
                     </div>
                     <div class="flex items-center justify-between gap-2">
                         <div>
-                            <span class="text-[11px] text-slate-400 block font-semibold">Time remaining</span>
+                            <span class="text-[11px] text-slate-400 block font-semibold">الوقت المتبقي</span>
                             <span id="examTimer" class="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">00:00:00</span>
                         </div>
                         <div class="text-center">
-                            <span class="text-[11px] text-slate-400 block font-semibold">Question</span>
+                            <span class="text-[11px] text-slate-400 block font-semibold">السؤال</span>
                             <span id="examProgressText" class="text-sm font-bold text-slate-800 dark:text-slate-100">1 of 50</span>
                         </div>
                         <button id="finishExamBtn" class="h-11 px-3 sm:px-4 rounded-lg bg-rose-600 text-white font-bold text-xs sm:text-sm hover:bg-rose-700 transition shadow">
-                            Submit
+                            إنهاء الامتحان
                         </button>
                     </div>
                 </div>
@@ -453,7 +463,7 @@
 
                 <!-- Quick Exam Navigation Grid -->
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <h4 class="text-xs font-bold text-slate-500 mb-3">Quick Navigation Map:</h4>
+                    <h4 class="text-xs font-bold text-slate-500 mb-3">خريطة التنقل السريع:</h4>
                     <div id="examGridMap" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar">
                         <!-- Dynamic Buttons -->
                     </div>
@@ -469,8 +479,8 @@
         <!-- MODE 3: FLASHCARDS VIEW -->
         <div id="flashcardsView" class="hidden space-y-6 max-w-2xl mx-auto">
             <div class="text-center space-y-2">
-                <span id="flashcardCounter" class="text-xs font-bold px-3 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 rounded-full">Card 1 of 200</span>
-                <p class="text-xs text-slate-500">Click card to flip and reveal correct answer and clinical rationale</p>
+                <span id="flashcardCounter" class="text-xs font-bold px-3 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 rounded-full">بطاقة 1 من 200</span>
+                <p class="text-xs text-slate-500">اضغط على البطاقة لعرض الإجابة الصحيحة والشرح</p>
             </div>
 
             <!-- 3D Card Container -->
@@ -479,27 +489,38 @@
                     <!-- Front Side -->
                     <div id="cardFront" class="backface-hidden w-full h-full flex flex-col justify-between space-y-4">
                         <div class="flex justify-between items-center">
-                            <span id="cardChapterBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">Module 1</span>
-                            <i class="fa-solid fa-rotate text-slate-400"></i>
+                            <span id="cardChapterBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">الوحدة 1</span>
+                            <span class="flex items-center gap-4">
+                                <button type="button" class="flash-lang-btn tx-lang-btn w-11 h-11 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 flex flex-col items-center justify-center gap-0.5" aria-label="ترجمة" title="ترجمة" aria-pressed="false">
+                                    <i class="fa-solid fa-language text-base" aria-hidden="true"></i>
+                                    <span class="tx-lang-label text-[10px] font-extrabold leading-none">EN</span>
+                                </button>
+                                <i class="fa-solid fa-rotate text-slate-400"></i>
+                            </span>
                         </div>
                         <div class="my-auto text-center py-6">
-                            <h3 id="cardQuestionText" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed"></h3>
+                            <h3 id="cardQuestionText" class="tx-question en-block text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed"></h3>
                         </div>
                         <div class="text-center text-xs text-brand-600 dark:text-brand-400 font-bold">
-                            Click to reveal answer & rationale <i class="fa-solid fa-hand-pointer ml-1"></i>
+                            اضغط لعرض الإجابة والشرح <i class="fa-solid fa-hand-pointer ms-1"></i>
                         </div>
                     </div>
 
                     <!-- Back Side -->
                     <div id="cardBack" class="backface-hidden rotate-y-180 absolute inset-0 p-6 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 flex flex-col justify-between space-y-4 overflow-y-auto custom-scrollbar">
                         <div>
-                            <span class="text-xs text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> Correct Answer:</span>
-                            <p id="cardAnswerText" class="text-sm sm:text-base font-bold text-emerald-300 mb-4"></p>
-                            <span class="text-xs text-slate-400 font-bold block mb-1">Academic Rationale:</span>
-                            <p id="cardExplanationText" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                            <div class="flex justify-end mb-2">
+                                <button type="button" class="flash-lang-btn tx-lang-btn h-9 px-2 rounded-lg border border-slate-700 text-slate-300 flex items-center gap-1 text-[11px] font-extrabold" aria-label="ترجمة" title="ترجمة" aria-pressed="false">
+                                    <i class="fa-solid fa-language text-sm" aria-hidden="true"></i><span class="tx-lang-label">EN</span>
+                                </button>
+                            </div>
+                            <span class="text-xs text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> الإجابة الصحيحة:</span>
+                            <p id="cardAnswerText" class="tx-answer en-block text-sm sm:text-base font-bold text-emerald-300 mb-4"></p>
+                            <span class="text-xs text-slate-400 font-bold block mb-1">الشرح الأكاديمي:</span>
+                            <p id="cardExplanationText" class="tx-explanation en-block text-sm text-slate-300 leading-relaxed"></p>
                         </div>
                         <div class="text-center text-xs text-slate-400 pt-2 border-t border-slate-800">
-                            Click again to flip back
+                            اضغط مرة أخرى للعودة
                         </div>
                     </div>
                 </div>
@@ -508,24 +529,24 @@
             <!-- Self-rating: marks the card and moves on -->
             <div class="grid grid-cols-2 gap-3">
                 <button id="flashUnknownBtn" class="h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-xmark"></i> Didn't know
+                    <i class="fa-solid fa-circle-xmark"></i> لم أعرفها
                 </button>
                 <button id="flashKnownBtn" class="h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> I knew it
+                    <i class="fa-solid fa-circle-check"></i> عرفتها
                 </button>
             </div>
             <p id="flashScoreLine" class="text-center text-sm font-semibold text-slate-500 dark:text-slate-400">
-                Known: <span id="flashKnownCount" class="text-emerald-600 dark:text-emerald-400">0</span> ·
-                To review: <span id="flashUnknownCount" class="text-rose-600 dark:text-rose-400">0</span>
+                عرفتها: <span id="flashKnownCount" class="text-emerald-600 dark:text-emerald-400">0</span> ·
+                لم أعرفها: <span id="flashUnknownCount" class="text-rose-600 dark:text-rose-400">0</span>
             </p>
 
             <!-- Flashcard Nav Buttons -->
             <div class="flex items-center justify-between gap-4">
                 <button id="prevFlashcardBtn" class="h-11 px-5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-sm hover:bg-slate-300 transition flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> Previous
+                    <i class="fa-solid fa-arrow-right"></i> السابق
                 </button>
                 <button id="nextFlashcardBtn" class="h-11 px-5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition flex items-center gap-2">
-                    Next <i class="fa-solid fa-arrow-right"></i>
+                    التالي <i class="fa-solid fa-arrow-left"></i>
                 </button>
             </div>
         </div>
@@ -541,28 +562,28 @@
 
     <!-- Footer: keeps the university line off the header -->
     <footer class="w-full max-w-7xl mx-auto px-4 pb-28 md:pb-6 text-center space-y-1">
-        <p class="text-[11px] text-slate-400 dark:text-slate-500">University of Mosul · College of Nursing · Stage 4 (2026-2027)</p>
-        <p class="text-[11px] text-slate-400 dark:text-slate-500">Developed by salem mohammed</p>
+        <p class="text-[11px] text-slate-400 dark:text-slate-500">جامعة الموصل · كلية التمريض · المرحلة الرابعة (2026-2027)</p>
+        <p class="text-[11px] text-slate-400 dark:text-slate-500">تطوير: سالم محمد</p>
     </footer>
 
     <!-- Mobile bottom navigation (hidden on md and up) -->
     <nav id="bottomNav" class="nq-bnav md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-t border-slate-200 dark:border-slate-700" aria-label="Study modes">
         <div class="grid grid-cols-4">
             <button type="button" data-mode="practice" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Practice mode">
-                <i class="fa-solid fa-square-check text-lg"></i><span>Practice</span>
+                <i class="fa-solid fa-square-check text-lg"></i><span>تدريب</span>
             </button>
             <button type="button" data-mode="exam" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Mock exam">
-                <i class="fa-solid fa-stopwatch text-lg"></i><span>Exam</span>
+                <i class="fa-solid fa-stopwatch text-lg"></i><span>امتحان</span>
             </button>
             <button type="button" data-mode="flashcards" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Flashcards">
-                <i class="fa-solid fa-clone text-lg"></i><span>Cards</span>
+                <i class="fa-solid fa-clone text-lg"></i><span>بطاقات</span>
             </button>
             <button type="button" data-mode="bookmarks" class="nq-bnav-btn flex flex-col items-center justify-center gap-1 h-16 text-[11px] font-bold text-slate-500 dark:text-slate-400" aria-label="Bookmarks">
                 <span class="relative">
                     <i class="fa-solid fa-bookmark text-lg"></i>
                     <span id="bnavBookmarkCount" class="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
                 </span>
-                <span>Saved</span>
+                <span>المحفوظات</span>
             </button>
         </div>
     </nav>
@@ -572,17 +593,17 @@
         <div class="nq-sheet-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
             <div class="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300 dark:bg-slate-600"></div>
             <div class="flex items-center justify-between mb-3">
-                <h3 id="settingsTitle" class="text-base font-bold text-slate-900 dark:text-white">Settings</h3>
-                <button id="closeSettingsBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="Close settings"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 id="settingsTitle" class="text-base font-bold text-slate-900 dark:text-white">الإعدادات</h3>
+                <button id="closeSettingsBtn" type="button" class="h-9 w-9 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="إغلاق الإعدادات"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <p class="text-sm text-slate-500 dark:text-slate-400">
-                Subject: <span id="settingsSubject" class="font-bold text-slate-700 dark:text-slate-200">Mental Health Nursing</span>
+                المادة: <span id="settingsSubject" class="font-bold text-slate-700 dark:text-slate-200">Mental Health Nursing</span>
             </p>
             <p id="settingsAnswerCount" class="text-sm text-slate-500 dark:text-slate-400 mt-1">0 answers saved for this subject.</p>
             <button id="resetProgressBtn" type="button" class="w-full h-12 mt-5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-rotate-right"></i><span>Reset progress for this subject</span>
+                <i class="fa-solid fa-rotate-right"></i><span>مسح التقدم لهذه المادة</span>
             </button>
-            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-3 leading-relaxed">Your answers and bookmarks are stored only in this browser.</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-3 leading-relaxed">تُحفظ إجاباتك والمحفوظات في هذا المتصفح فقط.</p>
         </div>
     </div>
 
@@ -593,7 +614,7 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-table-cells text-brand-600 text-lg"></i>
-                    <h3 id="gridTitle" class="font-bold text-slate-900 dark:text-white text-base">Full MCQ Palette Navigator</h3>
+                    <h3 id="gridTitle" class="font-bold text-slate-900 dark:text-white text-base">مستعرض الأسئلة الكامل</h3>
                 </div>
                 <button id="closeGridBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -601,10 +622,10 @@
             </div>
             <!-- Legend -->
             <div class="p-3 bg-slate-100 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 text-xs font-semibold justify-center">
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600"></span> Unanswered</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Correct</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Incorrect</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Bookmarked</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600"></span> غير مجابة</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> صحيحة</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> خاطئة</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> محفوظة</span>
             </div>
             <!-- Grid Container -->
             <div id="fullGridContainer" class="p-4 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
@@ -620,7 +641,7 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-triangle-exclamation text-rose-600 text-lg"></i>
-                    <h3 id="wrongReviewTitle" class="font-bold text-slate-900 dark:text-white text-base">Incorrect Answers Review</h3>
+                    <h3 id="wrongReviewTitle" class="font-bold text-slate-900 dark:text-white text-base">مراجعة الإجابات الخاطئة</h3>
                     <span id="wrongReviewCount" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">0 questions</span>
                 </div>
                 <button id="closeWrongReviewBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white transition" aria-label="Close incorrect answers review">
@@ -635,7 +656,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+    <div id="toast" class="fixed bottom-24 md:bottom-5 right-5 z-50 max-w-[calc(100vw-2.5rem)] bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
         <i id="toastIcon" class="fa-solid fa-circle-info text-brand-400 text-lg"></i>
         <span id="toastMsg" class="text-xs sm:text-sm font-semibold"></span>
     </div>
@@ -1057,10 +1078,11 @@
                 nameAr: 'تمريض الصحة النفسية',
                 icon: 'fa-brain',
                 grad: 'from-brand-600 to-indigo-600',
-                examTitle: 'Mental Health Nursing Mock Exam Setup',
-                placeholder: 'Search keywords (e.g., Delusion, Dopamine, Peplau, Autonomy)...',
+                examTitle: 'إعداد الامتحان التجريبي — تمريض الصحة النفسية',
+                placeholder: 'ابحث بالكلمات المفتاحية...',
                 ansKey: 'psych_saved_user_answers_v3',
                 bmKey: 'psych_bm_en_v2',
+                translationFile: 'mental-health.json',
                 data: mentalQuestions,
                 modules: [
                     { id: 1, title: 'Concept, History &amp; Scope', label: 'Chap 1-1: Concept, History &amp; Scope' },
@@ -1077,10 +1099,11 @@
                 nameAr: 'تمريض الحالات الحرجة',
                 icon: 'fa-heart-pulse',
                 grad: 'from-rose-600 to-orange-500',
-                examTitle: 'Critical Care Nursing Mock Exam Setup',
-                placeholder: 'Search keywords (e.g., ABG, tension, rtPA, IABP, Kussmaul)...',
+                examTitle: 'إعداد الامتحان التجريبي — تمريض الحالات الحرجة',
+                placeholder: 'ابحث بالكلمات المفتاحية...',
                 ansKey: 'nq_critical_answers_v5',
                 bmKey: 'nq_critical_bm_v5',
+                translationFile: 'critical-care.json',
                 data: criticalQuestions,
                 modules: [
                     { id: 1, title: 'Acid-Base Imbalances', label: 'Module 1: Acid-Base Imbalances' },
@@ -1125,6 +1148,84 @@
 
         let currentFlashcardIndex = 0;
         let isCardFlipped = false;
+
+        // ---- Bilingual content: Arabic translations are pre-generated and loaded on demand ----
+        const translations = {};        // bankKey -> { questionId: { q, options[], explanation } }
+        const translationState = {};    // bankKey -> 'loading' | 'ready' | 'missing'
+        const arabicOn = new Set();     // question ids currently displayed in Arabic
+
+        function translationReady() {
+            return !!translations[currentBank.key];
+        }
+
+        async function loadTranslations() {
+            const key = currentBank.key;
+            if (translations[key] || translationState[key] === 'loading') return;
+            translationState[key] = 'loading';
+            try {
+                const file = currentBank.translationFile || `${key}.json`;
+                const res = await fetch(`translations/${file}`);
+                if (!res.ok) throw new Error('no translations');
+                translations[key] = await res.json();
+                translationState[key] = 'ready';
+            } catch (e) {
+                translations[key] = {};
+                translationState[key] = 'missing';
+            }
+        }
+
+        function getTranslation(q) {
+            const bank = translations[currentBank.key];
+            return bank ? bank[q.id] : null;
+        }
+
+        function findQuestionById(qId) {
+            return questionsData.find(item => item.id === qId);
+        }
+
+        // Swap one text node between English and Arabic without re-rendering the card
+        function swapText(node, arText, arabic) {
+            if (!node) return;
+            if (node.dataset.en === undefined) node.dataset.en = node.textContent;
+            node.textContent = arabic && arText ? arText : node.dataset.en;
+            node.classList.toggle('ar-block', !!arabic);
+            node.classList.toggle('en-block', !arabic);
+        }
+
+        function applyTranslationToCard(card, q, arabic) {
+            const tr = getTranslation(q);
+            swapText(card.querySelector('.tx-question'), tr && tr.q, arabic);
+            card.querySelectorAll('.tx-option').forEach(node => {
+                const idx = parseInt(node.getAttribute('data-opt'));
+                swapText(node, tr && tr.options ? tr.options[idx] : null, arabic);
+            });
+            swapText(card.querySelector('.tx-explanation'), tr && tr.explanation, arabic);
+
+            const btn = card.querySelector('.tx-lang-btn');
+            if (btn) {
+                btn.setAttribute('aria-pressed', arabic ? 'true' : 'false');
+                const label = btn.querySelector('.tx-lang-label');
+                if (label) label.textContent = arabic ? 'ع' : 'EN';
+            }
+        }
+
+        async function toggleTranslation(qId, card) {
+            const q = findQuestionById(qId);
+            if (!q) return;
+
+            if (!translationReady()) await loadTranslations();
+            const tr = getTranslation(q);
+            if (!tr) {
+                showToast('الترجمة غير متوفرة لهذا السؤال بعد', 'info');
+                return;
+            }
+
+            const arabic = !arabicOn.has(qId);
+            if (arabic) arabicOn.add(qId);
+            else arabicOn.delete(qId);
+            applyTranslationToCard(card, q, arabic);
+        }
+
 
         // ---- Redesign state ----
         let examFlags = new Set();          // questions flagged for review in the current exam
@@ -1196,8 +1297,8 @@
             const b = currentBank;
             const n = questionsData.length;
 
-            document.getElementById('subjectLabel').textContent = b.nameEn;
-            document.getElementById('settingsSubject').textContent = b.nameEn;
+            document.getElementById('subjectLabel').textContent = b.nameAr;
+            document.getElementById('settingsSubject').textContent = b.nameAr;
             document.title = b.nameEn + ' - Nursing Quiz';
 
             const logo = document.getElementById('headerLogo');
@@ -1205,19 +1306,19 @@
             b.grad.split(' ').forEach(c => logo.classList.add(c));
             document.getElementById('headerIcon').className = 'fa-solid ' + b.icon;
 
-            document.getElementById('paletteLabel').textContent = `${n} MCQ Palette`;
-            document.getElementById('gridTitle').textContent = `Full ${n} MCQ Palette Navigator`;
+            document.getElementById('paletteLabel').textContent = `${n} سؤال`;
+            document.getElementById('gridTitle').textContent = `لوحة الأسئلة (${n})`;
             document.getElementById('examSetupTitle').textContent = b.examTitle;
             document.getElementById('searchInput').placeholder = b.placeholder;
 
             document.getElementById('chapterFilter').innerHTML =
-                `<option value="all">All Modules (${n} MCQs)</option>` +
+                `<option value="all">كل الوحدات (${n} سؤال)</option>` +
                 b.modules.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
 
             const counts = [20, 50, 100, 200].filter(c => c < n);
             counts.push(n);
             const examSel = document.getElementById('examCountSelect');
-            examSel.innerHTML = counts.map(c => `<option value="${c}">${c} Questions${c === n ? ' (Full Bank)' : ''}</option>`).join('');
+            examSel.innerHTML = counts.map(c => `<option value="${c}">${c} سؤال${c === n ? ' (كامل البنك)' : ''}</option>`).join('');
             examSel.value = counts.includes(50) ? '50' : String(n);
 
             document.querySelectorAll('.nq-card').forEach(card => {
@@ -1239,6 +1340,7 @@
             currentBankKey = key;
             currentBank = banks[key];
             questionsData = currentBank.data;
+            arabicOn.clear();
             localStorage.setItem('nq_subject', key);
 
             userAnswers = loadJSON(currentBank.ansKey, {});
@@ -1259,7 +1361,7 @@
             renderFullGridModal();
             switchMode(currentMode);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast('Switched to ' + currentBank.nameEn, 'success');
+            showToast('تم التبديل إلى ' + currentBank.nameAr, 'success');
         }
 
         function bindEvents() {
@@ -1331,6 +1433,12 @@
             // Flashcards self-rating
             document.getElementById('flashKnownBtn').addEventListener('click', () => rateFlashcard(true));
             document.getElementById('flashUnknownBtn').addEventListener('click', () => rateFlashcard(false));
+            document.querySelectorAll('.flash-lang-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFlashcardTranslation();
+                });
+            });
 
             // Desktop keyboard shortcuts (A-D / arrows) in practice mode
             document.addEventListener('keydown', handlePracticeShortcuts);
@@ -1352,10 +1460,10 @@
         function resetAllProgress() {
             const n = Object.keys(userAnswers).length;
             if (n === 0) {
-                showToast('There are no saved answers to reset', 'info');
+                showToast('لا توجد إجابات محفوظة لمسحها', 'info');
                 return;
             }
-            const msg = `Reset progress for ${currentBank.nameEn}?\n\nThis deletes ${n} saved answer${n === 1 ? '' : 's'}. Bookmarks are kept.`;
+            const msg = `مسح التقدم في ${currentBank.nameAr}؟\n\nسيُحذف ${n} إجابة محفوظة. ستبقى المحفوظات كما هي.`;
             if (!confirm(msg)) return;
 
             userAnswers = {};
@@ -1363,10 +1471,11 @@
             applyFilters();
             renderFullGridModal();
             updateStats();
-            showToast(`Deleted ${n} saved answer${n === 1 ? '' : 's'}`, 'success');
+            showToast(`تم حذف ${n} إجابة محفوظة`, 'success');
         }
 
         function switchMode(mode) {
+            if (currentMode !== mode) arabicOn.clear();
             currentMode = mode;
 
             // Desktop tabs (mobile uses the fixed bottom nav)
@@ -1410,10 +1519,10 @@
         function toggleBookmark(qId) {
             if (bookmarks.has(qId)) {
                 bookmarks.delete(qId);
-                showToast('Removed from Bookmarks', 'info');
+                showToast('أُزيل من المحفوظات', 'info');
             } else {
                 bookmarks.add(qId);
-                showToast('Saved to Bookmarks', 'success');
+                showToast('أُضيف إلى المحفوظات', 'success');
             }
             localStorage.setItem(currentBank.bmKey, JSON.stringify([...bookmarks]));
             updateBookmarkBadge();
@@ -1494,7 +1603,7 @@
             document.getElementById('chapterFilter').value = 'all';
             document.getElementById('statusFilter').value = 'all';
             applyFilters();
-            showToast('Filters cleared', 'info');
+            showToast('تم مسح التصفية', 'info');
         }
 
         // ---- Settings bottom sheet ----
@@ -1530,10 +1639,10 @@
                 container.innerHTML = `
                     <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
                         <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600"></i>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No matching questions found</h3>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">لا توجد أسئلة مطابقة</h3>
                     </div>
                 `;
-                document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
+                document.getElementById('pageIndicator').textContent = 'صفحة 0 من 0';
                 document.getElementById('prevBtn').disabled = true;
                 document.getElementById('nextBtn').disabled = true;
                 return;
@@ -1550,7 +1659,7 @@
             if (activeQuestionIndex >= pageItems.length) activeQuestionIndex = 0;
             applyActiveCard(false);
 
-            document.getElementById('pageIndicator').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('pageIndicator').textContent = `صفحة ${currentPage} من ${totalPages}`;
             document.getElementById('prevBtn').disabled = currentPage === 1;
             document.getElementById('nextBtn').disabled = currentPage === totalPages;
         }
@@ -1569,7 +1678,7 @@
 
             const modObj = currentBank.modules.find(m => m.id === q.chapter);
             const modTitle = modObj ? modObj.title : '';
-            const positionLabel = position ? `Question ${position} of ${total}` : `Question #${q.id}`;
+            const positionLabel = position ? `السؤال ${position} من ${total}` : `السؤال #${q.id}`;
             const letters = ['A', 'B', 'C', 'D'];
 
             const optionButtons = q.options.map((opt, optIdx) => {
@@ -1584,12 +1693,12 @@
                 } else if (optIdx === q.answer) {
                     cls += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-100 font-bold ring-1 ring-emerald-500";
                     icon = '<i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400" aria-hidden="true"></i>';
-                    stateLabel = '<span class="sr-only">Correct answer</span>';
+                    stateLabel = '<span class="sr-only">الإجابة الصحيحة</span>';
                     letterCls = "bg-emerald-600 text-white";
                 } else if (optIdx === selectedOpt) {
                     cls += "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-100 font-bold ring-1 ring-rose-500";
                     icon = '<i class="fa-solid fa-circle-xmark text-rose-600 dark:text-rose-400" aria-hidden="true"></i>';
-                    stateLabel = '<span class="sr-only">Your incorrect answer</span>';
+                    stateLabel = '<span class="sr-only">إجابتك الخاطئة</span>';
                     letterCls = "bg-rose-600 text-white";
                 } else {
                     cls += "border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/20 text-slate-400 opacity-60";
@@ -1598,7 +1707,7 @@
                 return `
                     <button type="button" data-opt="${optIdx}" ${isAnswered ? 'disabled' : ''} class="${cls}">
                         <span class="w-7 h-7 rounded-lg ${letterCls} text-xs font-extrabold flex items-center justify-center flex-shrink-0" aria-hidden="true">${letters[optIdx]}</span>
-                        <span class="flex-1">${text}</span>
+                        <span class="flex-1 tx-option en-block" data-opt="${optIdx}">${text}</span>
                         ${icon}${stateLabel}
                     </button>`;
             }).join('');
@@ -1607,25 +1716,31 @@
             const explanationPanel = isAnswered ? `
                 <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 overflow-hidden">
                     <button type="button" class="exp-toggle w-full min-h-[44px] px-3 py-2.5 flex items-center justify-between gap-2 text-sm font-bold text-slate-700 dark:text-slate-200" aria-expanded="false" aria-controls="exp-${q.id}">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i>Why this is the correct answer</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-lightbulb text-amber-500" aria-hidden="true"></i>لماذا هذه الإجابة صحيحة</span>
                         <i class="fa-solid fa-chevron-down text-xs transition-transform" aria-hidden="true"></i>
                     </button>
-                    <div class="nq-exp" id="exp-${q.id}"><div><p class="px-3 pb-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">${q.explanation}</p></div></div>
+                    <div class="nq-exp" id="exp-${q.id}"><div><p class="tx-explanation en-block px-3 pb-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">${q.explanation}</p></div></div>
                 </div>` : '';
 
             card.innerHTML = `
-                <div class="flex items-center justify-between gap-2 flex-wrap">
-                    <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-center gap-2 flex-wrap min-w-0">
                         <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">${positionLabel}</span>
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Module ${q.chapter}: ${modTitle}</span>
-                        ${isAnswered ? `<span class="text-xs font-bold px-2 py-1 rounded-md ${isCorrect ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">${isCorrect ? '✓ Correct' : '✗ Incorrect'}</span>` : ''}
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 truncate max-w-[13rem] hidden sm:inline-block">الوحدة ${q.chapter}: ${modTitle}</span>
+                        ${isAnswered ? `<span class="text-xs font-bold px-2 py-1 rounded-md ${isCorrect ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'}">${isCorrect ? '✓ صحيحة' : '✗ خاطئة'}</span>` : ''}
                     </div>
-                    <button type="button" class="bm-btn w-11 h-11 -mr-2 flex items-center justify-center text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="Save to bookmarks" aria-label="${isBookmarked ? 'Remove bookmark' : 'Save bookmark'}" aria-pressed="${isBookmarked}">
-                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
-                    </button>
+                    <div class="flex items-center gap-1 -me-2">
+                        <button type="button" class="tx-lang-btn w-11 h-11 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 flex flex-col items-center justify-center gap-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition" aria-label="ترجمة" title="ترجمة" aria-pressed="false">
+                            <i class="fa-solid fa-language text-base" aria-hidden="true"></i>
+                            <span class="tx-lang-label text-[10px] font-extrabold leading-none">EN</span>
+                        </button>
+                        <button type="button" class="bm-btn w-11 h-11 flex items-center justify-center text-lg text-slate-300 dark:text-slate-600 hover:text-amber-500 transition ${isBookmarked ? 'text-amber-500 dark:text-amber-400' : ''}" title="حفظ في المحفوظات" aria-label="${isBookmarked ? 'إزالة من المحفوظات' : 'حفظ في المحفوظات'}" aria-pressed="${isBookmarked}">
+                            <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <h3 class="text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
+                <h3 class="tx-question en-block text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
 
                 <div class="space-y-3">${optionButtons}</div>
 
@@ -1633,6 +1748,12 @@
             `;
 
             card.querySelector('.bm-btn').addEventListener('click', () => toggleBookmark(q.id));
+
+            const langBtn = card.querySelector('.tx-lang-btn');
+            if (langBtn) langBtn.addEventListener('click', () => toggleTranslation(q.id, card));
+
+            // Keep a question in Arabic across re-renders (answers, bookmarks)
+            if (arabicOn.has(q.id) && getTranslation(q)) applyTranslationToCard(card, q, true);
 
             card.querySelectorAll('.opt-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1705,6 +1826,7 @@
 
         function changePage(direction) {
             currentPage += direction;
+            arabicOn.clear();
             renderPracticeQuestions();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1737,7 +1859,7 @@
             document.getElementById('segWrong').style.width = (incorrect * per) + '%';
             document.getElementById('segLeft').style.width = (remaining * per) + '%';
             document.getElementById('statsBar').setAttribute('aria-label',
-                `Progress: ${correct} correct, ${incorrect} wrong, ${remaining} remaining of ${total}`);
+                `التقدم: ${correct} صحيحة، ${incorrect} خاطئة، ${remaining} متبقية من أصل ${total}`);
 
             renderChapterBreakdown();
             updateSettingsMeta();
@@ -1780,7 +1902,7 @@
             const count = document.getElementById('settingsAnswerCount');
             if (!count) return;
             const n = Object.keys(userAnswers).length;
-            count.textContent = `${n} answer${n === 1 ? '' : 's'} saved for this subject.`;
+            count.textContent = `${n} إجابة محفوظة لهذه المادة.`;
             document.getElementById('settingsSubject').textContent = currentBank.nameEn;
         }
 
@@ -1814,7 +1936,7 @@
                 if (examTimeRemaining <= 0) {
                     clearInterval(examTimerInterval);
                     finishMockExam();
-                    showToast('Time expired! Exam auto-submitted.', 'info');
+                    showToast('انتهى الوقت! تم تسليم الامتحان تلقائياً.', 'info');
                 } else {
                     updateTimerUI();
                 }
@@ -1836,7 +1958,7 @@
             const selectedOpt = examAnswers[q.id];
             const flagged = examFlags.has(q.id);
 
-            document.getElementById('examProgressText').textContent = `${currentExamIndex + 1} of ${examQuestions.length}`;
+            document.getElementById('examProgressText').textContent = `${currentExamIndex + 1} من ${examQuestions.length}`;
 
             // Answered-progress bar
             const answeredCount = Object.keys(examAnswers).length;
@@ -1847,21 +1969,26 @@
             box.innerHTML = `
                 <div class="flex items-center justify-between gap-2 flex-wrap">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">Question ${currentExamIndex + 1} of ${examQuestions.length}</span>
-                        <span class="text-xs font-semibold text-slate-500">Module ${q.chapter}</span>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">السؤال ${currentExamIndex + 1} من ${examQuestions.length}</span>
+                        <span class="text-xs font-semibold text-slate-500">الوحدة ${q.chapter}</span>
                     </div>
-                    <button id="flagExamQBtn" type="button" aria-pressed="${flagged}" class="h-9 px-3 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition ${flagged ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 dark:border-amber-700 text-amber-800 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}">
-                        <i class="fa-${flagged ? 'solid' : 'regular'} fa-flag" aria-hidden="true"></i>${flagged ? 'Flagged' : 'Flag for review'}
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                        <button id="examLangBtn" type="button" class="tx-lang-btn h-9 px-2 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 flex items-center gap-1 text-[11px] font-extrabold" aria-label="ترجمة" title="ترجمة" aria-pressed="false">
+                            <i class="fa-solid fa-language text-sm" aria-hidden="true"></i><span class="tx-lang-label">EN</span>
+                        </button>
+                        <button id="flagExamQBtn" type="button" aria-pressed="${flagged}" class="h-9 px-3 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition ${flagged ? 'bg-amber-100 dark:bg-amber-950/60 border-amber-400 dark:border-amber-700 text-amber-800 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}">
+                            <i class="fa-${flagged ? 'solid' : 'regular'} fa-flag" aria-hidden="true"></i>${flagged ? 'معلَّم للمراجعة' : 'تعليم للمراجعة'}
+                        </button>
+                    </div>
                 </div>
 
-                <h3 class="text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
+                <h3 class="tx-question en-block text-base sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h3>
 
                 <div class="space-y-3 pt-1">
                     ${q.options.map((opt, optIdx) => `
                         <button type="button" data-opt="${optIdx}" class="exam-opt-btn w-full min-h-[48px] text-left px-3 py-3 rounded-xl border text-sm font-medium transition flex items-center gap-3 ${selectedOpt === optIdx ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-900 dark:text-brand-200 font-bold ring-2 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}">
                             <span class="w-7 h-7 rounded-lg ${selectedOpt === optIdx ? 'bg-brand-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} text-xs font-extrabold flex items-center justify-center flex-shrink-0" aria-hidden="true">${'ABCD'[optIdx]}</span>
-                            <span class="flex-1">${opt.replace(/^[A-D]\)\s*/, '')}</span>
+                            <span class="flex-1 tx-option en-block" data-opt="${optIdx}">${opt.replace(/^[A-D]\)\s*/, '')}</span>
                             ${selectedOpt === optIdx ? '<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400" aria-hidden="true"></i><span class="sr-only">Selected</span>' : ''}
                         </button>
                     `).join('')}
@@ -1869,10 +1996,10 @@
 
                 <div class="flex justify-between items-center gap-2 pt-4 border-t border-slate-100 dark:border-slate-700">
                     <button id="prevExamQBtn" ${currentExamIndex === 0 ? 'disabled' : ''} class="h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold disabled:opacity-40 transition">
-                        <i class="fa-solid fa-chevron-left mr-1"></i>Previous
+                        <i class="fa-solid fa-chevron-left ms-1"></i>السابق
                     </button>
                     <button id="nextExamQBtn" ${currentExamIndex === examQuestions.length - 1 ? 'disabled' : ''} class="h-11 px-4 rounded-lg bg-brand-600 text-white text-sm font-bold disabled:opacity-40 transition">
-                        Next<i class="fa-solid fa-chevron-right ml-1"></i>
+                        التالي<i class="fa-solid fa-chevron-right ms-1"></i>
                     </button>
                 </div>
             `;
@@ -1886,6 +2013,11 @@
                 });
             });
 
+            const examLangBtn = box.querySelector('#examLangBtn');
+            if (examLangBtn) examLangBtn.addEventListener('click', () => toggleTranslation(q.id, box));
+
+            if (arabicOn.has(q.id) && getTranslation(q)) applyTranslationToCard(box, q, true);
+
             const flagBtn = box.querySelector('#flagExamQBtn');
             if (flagBtn) {
                 flagBtn.addEventListener('click', () => {
@@ -1898,8 +2030,8 @@
 
             const prev = box.querySelector('#prevExamQBtn');
             const next = box.querySelector('#nextExamQBtn');
-            if (prev) prev.addEventListener('click', () => { currentExamIndex--; renderExamQuestion(); });
-            if (next) next.addEventListener('click', () => { currentExamIndex++; renderExamQuestion(); });
+            if (prev) prev.addEventListener('click', () => { arabicOn.clear(); currentExamIndex--; renderExamQuestion(); });
+            if (next) next.addEventListener('click', () => { arabicOn.clear(); currentExamIndex++; renderExamQuestion(); });
         }
 
         function renderExamGridMap() {
@@ -1922,9 +2054,10 @@
 
                 btn.className = cls;
                 btn.innerHTML = `${idx + 1}${isFlag ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border border-white dark:border-slate-800"></span>' : ''}`;
-                btn.setAttribute('aria-label', `Question ${idx + 1}${isAns ? ', answered' : ', unanswered'}${isFlag ? ', flagged' : ''}${isCur ? ', current' : ''}`);
+                btn.setAttribute('aria-label', `السؤال ${idx + 1}${isAns ? '، مُجابة' : '، غير مُجابة'}${isFlag ? '، معلَّم' : ''}${isCur ? '، الحالي' : ''}`);
 
                 btn.addEventListener('click', () => {
+                    arabicOn.clear();
                     currentExamIndex = idx;
                     renderExamQuestion();
                     renderExamGridMap();
@@ -1936,9 +2069,9 @@
         function confirmSubmitExam() {
             const unanswered = examQuestions.length - Object.keys(examAnswers).length;
             const flagged = examFlags.size;
-            let msg = `Submit the exam now?\n\n${unanswered} unanswered`;
-            if (flagged) msg += `\n${flagged} flagged for review`;
-            if (unanswered > 0) msg += '\n\nUnanswered questions will be counted as skipped.';
+            let msg = `هل تريد تسليم الامتحان الآن؟\n\n${unanswered} سؤال غير مُجاب`;
+            if (flagged) msg += `\n${flagged} سؤال معلَّم للمراجعة`;
+            if (unanswered > 0) msg += '\n\nستُحتسب الأسئلة غير المُجابة كأسئلة متروكة.';
             if (confirm(msg)) finishMockExam();
         }
 
@@ -1992,72 +2125,77 @@
                         ${scorePct}%
                     </div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-                        ${passed ? 'Passed Mock Exam 🎓' : 'Did Not Pass (Pass Mark: 60%) 📖'}
+                        ${passed ? 'نجحت في الامتحان التجريبي 🎓' : 'لم تنجح (درجة النجاح 60%) 📖'}
                     </h2>
                     <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                        ${correct} of ${total} correct · time taken ${timeTaken}
+                        ${correct} صحيحة من ${total} · الزمن المستغرق ${timeTaken}
                     </p>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
                         <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-2.5">
-                            <span class="block text-[11px] text-slate-500">Total</span>
+                            <span class="block text-[11px] text-slate-500">الإجمالي</span>
                             <span class="text-base font-bold text-slate-900 dark:text-white">${total}</span>
                         </div>
                         <div class="rounded-xl border border-emerald-200 dark:border-emerald-800 p-2.5">
-                            <span class="block text-[11px] text-slate-500">Correct</span>
+                            <span class="block text-[11px] text-slate-500">صحيحة</span>
                             <span class="text-base font-bold text-emerald-600 dark:text-emerald-400">${correct}</span>
                         </div>
                         <div class="rounded-xl border border-rose-200 dark:border-rose-800 p-2.5">
-                            <span class="block text-[11px] text-slate-500">Wrong</span>
+                            <span class="block text-[11px] text-slate-500">خاطئة</span>
                             <span class="text-base font-bold text-rose-600 dark:text-rose-400">${wrong}</span>
                         </div>
                         <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-2.5">
-                            <span class="block text-[11px] text-slate-500">Skipped</span>
+                            <span class="block text-[11px] text-slate-500">متروكة</span>
                             <span class="text-base font-bold text-slate-500">${skipped}</span>
                         </div>
                     </div>
 
                     <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
                         <button id="reviewMistakesBtn" class="h-11 px-5 rounded-xl bg-rose-600 text-white text-sm font-bold shadow hover:bg-rose-700 transition">
-                            <i class="fa-solid fa-circle-xmark mr-1.5"></i>Review my mistakes
+                            <i class="fa-solid fa-circle-xmark me-1.5"></i>مراجعة أخطائي
                         </button>
                         <button id="reStartExamBtn" class="h-11 px-5 rounded-xl bg-brand-600 text-white text-sm font-bold shadow hover:bg-brand-700 transition">
-                            <i class="fa-solid fa-rotate-right mr-1.5"></i>Retry
+                            <i class="fa-solid fa-rotate-right me-1.5"></i>إعادة المحاولة
                         </button>
                         <button id="backToPracticeBtn" class="h-11 px-5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">
-                            Back to practice
+                            العودة إلى التدريب
                         </button>
                     </div>
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 max-w-4xl mx-auto">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Per-chapter breakdown</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">التفصيل حسب الوحدة</h3>
                     <div class="flex items-center justify-end gap-3 text-[11px] text-slate-400 pb-1">
-                        <span>total</span><span>✓</span><span>✗</span><span>skipped</span>
+                        <span>الإجمالي</span><span>✓</span><span>✗</span><span>متروكة</span>
                     </div>
                     ${chapterRows}
                 </div>
 
                 <div class="space-y-4 max-w-4xl mx-auto">
-                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Full Exam Review &amp; Rationales:</h3>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">المراجعة الكاملة والشرح:</h3>
                     ${examQuestions.map((q, idx) => {
                         const userAns = examAnswers[q.id];
                         const isCorr = userAns === q.answer;
                         const isSkipped = userAns === undefined;
                         return `
-                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : isSkipped ? 'border-slate-300 dark:border-slate-600' : 'border-rose-300 dark:border-rose-800'} space-y-2">
-                                <div class="flex items-center justify-between text-xs font-bold">
-                                    <span class="text-slate-500">Question #${idx + 1}</span>
-                                    <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : isSkipped ? 'text-slate-500' : 'text-rose-600 dark:text-rose-400'}">
-                                        ${isCorr ? 'Correct ✓' : isSkipped ? 'Skipped' : 'Incorrect ✗'}
-                                    </span>
+                            <div class="review-card bg-white dark:bg-slate-800 p-4 rounded-xl border ${isCorr ? 'border-emerald-300 dark:border-emerald-800' : isSkipped ? 'border-slate-300 dark:border-slate-600' : 'border-rose-300 dark:border-rose-800'} space-y-2">
+                                <div class="flex items-center justify-between gap-2 text-xs font-bold">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-slate-500">السؤال #${idx + 1}</span>
+                                        <span class="${isCorr ? 'text-emerald-600 dark:text-emerald-400' : isSkipped ? 'text-slate-500' : 'text-rose-600 dark:text-rose-400'}">
+                                            ${isCorr ? 'صحيحة ✓' : isSkipped ? 'متروكة' : 'خاطئة ✗'}
+                                        </span>
+                                    </div>
+                                    <button type="button" class="review-lang-btn tx-lang-btn h-9 px-2 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 flex items-center gap-1 text-[11px] font-extrabold" data-qid="${q.id}" aria-label="ترجمة" title="ترجمة" aria-pressed="false">
+                                        <i class="fa-solid fa-language text-sm" aria-hidden="true"></i><span class="tx-lang-label">EN</span>
+                                    </button>
                                 </div>
-                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+                                <h4 class="tx-question en-block text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
                                 <div class="text-sm space-y-1 pt-1">
-                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">Correct answer: ${q.options[q.answer]}</p>
-                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">Your choice: ${isSkipped ? 'Not answered' : q.options[userAns]}</p>` : ''}
+                                    <p class="text-emerald-600 dark:text-emerald-400 font-bold">الإجابة الصحيحة: <span class="tx-option en-block" data-opt="${q.answer}">${q.options[q.answer]}</span></p>
+                                    ${!isCorr ? `<p class="text-rose-600 dark:text-rose-400 font-bold">اختيارك: <span class="tx-option en-block" data-opt="${isSkipped ? '' : userAns}">${isSkipped ? 'غير مُجابة' : q.options[userAns]}</span></p>` : ''}
                                 </div>
-                                <p class="text-sm text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700 leading-relaxed">Rationale: ${q.explanation}</p>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700 leading-relaxed">الشرح: <span class="tx-explanation en-block">${q.explanation}</span></p>
                             </div>
                         `;
                     }).join('')}
@@ -2065,7 +2203,14 @@
             `;
 
             document.getElementById('reviewMistakesBtn').addEventListener('click', () => {
-                openWrongReview(examMistakes(), 'Mistakes in this Exam');
+                openWrongReview(examMistakes(), 'أخطاء هذا الامتحان');
+            });
+            report.querySelectorAll('.review-lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cardEl = btn.closest('.review-card');
+                    const q = findQuestionById(parseInt(btn.getAttribute('data-qid')));
+                    if (cardEl && q) toggleTranslation(q.id, cardEl);
+                });
             });
             document.getElementById('reStartExamBtn').addEventListener('click', startMockExam);
             document.getElementById('backToPracticeBtn').addEventListener('click', () => switchMode('practice'));
@@ -2086,7 +2231,7 @@
             else flashUnknown++;
             updateFlashScore();
             changeFlashcard(1);
-            showToast(knew ? 'Card marked as known' : 'Card added to your review list', 'success');
+            showToast(knew ? 'تم وسم البطاقة كمعروفة' : 'أُضيفت البطاقة إلى قائمة المراجعة', 'success');
         }
 
         function updateFlashScore() {
@@ -2100,11 +2245,12 @@
             elem.classList.remove('rotate-y-180');
             isCardFlipped = false;
 
-            document.getElementById('flashcardCounter').textContent = `Card ${currentFlashcardIndex + 1} of ${questionsData.length}`;
-            document.getElementById('cardChapterBadge').textContent = `Module ${q.chapter}`;
+            document.getElementById('flashcardCounter').textContent = `بطاقة ${currentFlashcardIndex + 1} من ${questionsData.length}`;
+            document.getElementById('cardChapterBadge').textContent = `الوحدة ${q.chapter}`;
             document.getElementById('cardQuestionText').textContent = q.question;
             document.getElementById('cardAnswerText').textContent = q.options[q.answer];
             document.getElementById('cardExplanationText').textContent = q.explanation;
+            applyFlashcardLang(arabicOn.has(q.id));
             updateFlashScore();
         }
 
@@ -2115,7 +2261,46 @@
             else elem.classList.remove('rotate-y-180');
         }
 
+        // Arabic/English switch for the current flashcard (front + back)
+        function applyFlashcardLang(arabic) {
+            const q = questionsData[currentFlashcardIndex];
+            const tr = getTranslation(q);
+            const useArabic = !!(arabic && tr);
+
+            const qNode = document.getElementById('cardQuestionText');
+            const aNode = document.getElementById('cardAnswerText');
+            const eNode = document.getElementById('cardExplanationText');
+
+            qNode.textContent = useArabic ? tr.q : q.question;
+            aNode.textContent = useArabic ? `${'ABCD'[q.answer]}) ${tr.options[q.answer]}` : q.options[q.answer];
+            eNode.textContent = useArabic ? tr.explanation : q.explanation;
+
+            [qNode, aNode, eNode].forEach(n => {
+                n.classList.toggle('ar-block', useArabic);
+                n.classList.toggle('en-block', !useArabic);
+            });
+            document.querySelectorAll('.flash-lang-btn').forEach(btn => {
+                btn.setAttribute('aria-pressed', useArabic ? 'true' : 'false');
+                const label = btn.querySelector('.tx-lang-label');
+                if (label) label.textContent = useArabic ? 'ع' : 'EN';
+            });
+        }
+
+        async function toggleFlashcardTranslation() {
+            const q = questionsData[currentFlashcardIndex];
+            if (!translationReady()) await loadTranslations();
+            if (!getTranslation(q)) {
+                showToast('الترجمة غير متوفرة لهذا السؤال بعد', 'info');
+                return;
+            }
+            const arabic = !arabicOn.has(q.id);
+            if (arabic) arabicOn.add(q.id);
+            else arabicOn.delete(q.id);
+            applyFlashcardLang(arabic);
+        }
+
         function changeFlashcard(dir) {
+            arabicOn.clear();
             currentFlashcardIndex += dir;
             if (currentFlashcardIndex < 0) currentFlashcardIndex = questionsData.length - 1;
             if (currentFlashcardIndex >= questionsData.length) currentFlashcardIndex = 0;
@@ -2133,8 +2318,8 @@
                 container.innerHTML = `
                     <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
                         <i class="fa-solid fa-bookmark text-4xl text-slate-300 dark:text-slate-600"></i>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No bookmarked questions yet</h3>
-                        <p class="text-xs text-slate-400">Click the bookmark icon on any question to save it for quick revision.</p>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">لا توجد أسئلة محفوظة بعد</h3>
+                        <p class="text-xs text-slate-400">اضغط على أيقونة الحفظ في أي سؤال لإضافته إلى المراجعة السريعة.</p>
                     </div>
                 `;
                 return;
@@ -2165,15 +2350,15 @@
             const heading = document.getElementById('wrongReviewTitle');
             const list = items || practiceMistakes();
 
-            countBadge.textContent = `${list.length} question${list.length === 1 ? '' : 's'}`;
-            heading.textContent = titleText || 'Incorrect Answers Review';
+            countBadge.textContent = `${list.length} سؤال`;
+            heading.textContent = titleText || 'مراجعة الإجابات الخاطئة';
 
             if (list.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center border border-slate-200 dark:border-slate-700 space-y-2">
                         <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">No incorrect answers here</h3>
-                        <p class="text-xs text-slate-400">Answer some questions and every mistake will be collected here with the correct answer and the reason.</p>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">لا توجد إجابات خاطئة هنا</h3>
+                        <p class="text-xs text-slate-400">أجب عن بعض الأسئلة وستُجمع كل الأخطاء هنا مع الإجابة الصحيحة والسبب.</p>
                     </div>
                 `;
                 return;
@@ -2181,23 +2366,23 @@
 
             container.innerHTML = list.map(({ q, chosen }) => {
                 const modObj = currentBank.modules.find(m => m.id === q.chapter);
-                const chosenText = chosen === undefined ? 'Not answered' : q.options[chosen];
+                const chosenText = chosen === undefined ? 'غير مُجابة' : q.options[chosen];
                 return `
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-rose-200 dark:border-rose-900/70 space-y-2">
                         <div class="flex items-center justify-between gap-2 flex-wrap">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">Question #${q.id}</span>
-                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Module ${q.chapter}: ${modObj ? modObj.title : ''}</span>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">السؤال #${q.id}</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">الوحدة ${q.chapter}: ${modObj ? modObj.title : ''}</span>
                             </div>
-                            <span class="text-xs font-bold text-rose-600 dark:text-rose-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Incorrect</span>
+                            <span class="text-xs font-bold text-rose-600 dark:text-rose-400"><i class="fa-solid fa-circle-xmark mr-1"></i>خاطئة</span>
                         </div>
                         <h4 class="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
                         <div class="space-y-1 text-sm pt-1">
-                            <p class="text-rose-700 dark:text-rose-300"><span class="font-bold">Your answer:</span> ${chosenText}</p>
-                            <p class="text-emerald-700 dark:text-emerald-300"><span class="font-bold">Correct answer:</span> ${q.options[q.answer]}</p>
+                            <p class="text-rose-700 dark:text-rose-300"><span class="font-bold">إجابتك:</span> ${chosenText}</p>
+                            <p class="text-emerald-700 dark:text-emerald-300"><span class="font-bold">الإجابة الصحيحة:</span> ${q.options[q.answer]}</p>
                         </div>
                         <p class="text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-slate-700 leading-relaxed">
-                            <span class="font-bold text-slate-800 dark:text-slate-200">Why your answer is wrong:</span> ${q.explanation}
+                            <span class="font-bold text-slate-800 dark:text-slate-200">لماذا إجابتك خاطئة:</span> ${q.explanation}
                         </p>
                     </div>
                 `;
@@ -2357,7 +2542,7 @@
             </button>
             <div class="sp-foot sp-in" style="animation-delay:.8s">
                 <a class="sp-ig" href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i> <span>@m_d_l7</span></a>
-                <div class="sp-dev">Developed by salem mohammed</div>
+                <div class="sp-dev">تطوير: سالم محمد</div>
             </div>
         </div>
     </div>
