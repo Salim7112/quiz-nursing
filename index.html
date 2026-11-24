@@ -261,7 +261,7 @@
                 </div>
                 <h3 class="mt-3 text-lg font-extrabold leading-tight">Psychology</h3>
                 <p class="font-ar text-base font-bold opacity-95" dir="rtl">علم النفس</p>
-                <p class="mt-1 text-xs font-semibold opacity-85">الأسئلة قريباً</p>
+                <p class="mt-1 text-xs font-semibold opacity-85"><span class="nq-count" data-bank="psych"></span></p>
                 <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:3.6s">
                     <path class="base" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
                     <path class="pulse" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
@@ -302,6 +302,10 @@
                 </p>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button id="psychShortcut" type="button" class="h-9 px-2.5 rounded-lg bg-teal-50 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-700 text-xs font-bold flex items-center gap-1.5 hover:bg-teal-100 dark:hover:bg-teal-800 transition" aria-label="الانتقال إلى مادة علم النفس" title="Psychology">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                    <span class="hidden sm:inline">Psychology</span>
+                </button>
                 <button id="openGridBtn" aria-label="فتح لوحة الأسئلة" class="h-9 px-2.5 rounded-lg bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-800 text-xs font-bold border border-brand-200 dark:border-brand-700 flex items-center gap-1.5 transition">
                     <i class="fa-solid fa-table-cells"></i>
                     <span id="paletteLabel" class="hidden sm:inline">لوحة الأسئلة</span>
@@ -1086,6 +1090,31 @@
             H(8, "How should the nurse involve the family of a GBS patient?", ["Involve family; teach basic rehabilitation", "Limit all family visits to protect the patient", "Delay all teaching until the discharge day itself", "Exclude relatives from planning and bedside care"], 0, "Families should be encouraged to participate in care and learn basic rehabilitation techniques.")
         ].sort((a, b) => a.chapter - b.chapter).map((q, i) => ({ id: i + 1, ...q }));
 
+
+        // ================= SUBJECT 3: PSYCHOLOGY (Chapter 1) =================
+        const psychologyQuestions = [
+            H(1, "A researcher records a patient's elevated heart rate during a stressful interview while simultaneously asking the patient to rate their subjective anxiety on a scale of 1 to 10. According to the foundational definitions in Chapter 1, how are these two data points classified?", ["Both represent direct behavioral responses because they are recorded during a clinical session.", "The heart rate is a mental process, whereas the anxiety rating is an observable behavior.", "The heart rate is an observable behavior, whereas the anxiety rating measures a private mental process.", "Both represent systematic mental processes that cannot be measured directly or privately."], 2, "Heart rate is an observable physiological behaviour, whereas a subjective anxiety rating is a report of a private mental process."),
+            H(1, "In the sequence of the five central goals of psychology, what must occur immediately before a psychologist can ethically and effectively “influence behaviour through the control of its causes”?", ["Applying psychological knowledge to enhance human welfare", "Predicting how people will behave under certain conditions", "Describing how people and other species behave", "Establishing a multidimensional health care delivery system"], 1, "The goals run describe, explain, predict, then influence or control, and finally apply knowledge for human welfare; prediction comes immediately before influencing behaviour."),
+            H(1, "A nurse notices that a post-operative patient is refusing physical therapy, stating, “I am useless now and will never recover.” Integrating the “Nurse's Four Reminders” with the sub-fields of psychology, which principle is most directly illustrated by this scenario?", ["Illness lowers patients' self-esteem, requiring an individualized and human approach.", "Public opinion and crowd behavior dictate how patients adapt to hospital settings.", "Physical malfunctions in the brain are the sole cause of post-operative non-compliance.", "Educational placement and testing are necessary to restore the patient's coping skills."], 0, "The first reminder is that illness lowers patients' self-esteem, so care must be individualized and humane."),
+            H(1, "Compare the mind-body perspectives of Hippocrates and Aristotle as presented in Chapter 4. Which statement accurately captures the philosophical shift between the two thinkers?", ["Hippocrates viewed mental illness as demonic, whereas Aristotle localized the mind strictly within the brain.", "Hippocrates argued that the mind and body are identical, whereas Aristotle proposed they are separate entities connected via the heart.", "Hippocrates emphasized a close connection with the mind residing in the brain, whereas Aristotle argued that mind and body are one and the same.", "Hippocrates founded empirical research methods, whereas Aristotle focused exclusively on the hidden (sirr) powers of the soul."], 2, "Hippocrates stressed the close link between mind and body and placed the mind in the brain, while Aristotle regarded mind and body as one and the same."),
+            H(1, "A university department is hiring a specialist to redesign hospital ward layouts to reduce patient disorientation, improve cognitive recovery, and minimize stress caused by artificial lighting and noise. Which sub-field of psychology aligns best with this role?", ["Industrial and organizational psychology", "Environmental psychology", "Community psychology", "Clinical and counselling psychology"], 1, "Environmental psychology studies the transactions between people and their physical surroundings, including ward design, lighting and noise."),
+            H(1, "According to Freud's Iceberg Model of the mind, which structural component operates primarily in the conscious realm to mediate between unconscious energy and internalized ideals?", ["The Id", "The Superego", "The Ego", "The unconscious conflict"], 2, "In Freud's iceberg model the ego is largely conscious and mediates between id impulses and superego ideals."),
+            H(1, "If a psychological study relies on “systematic methods,” which methodological characteristic is explicitly excluded according to the text?", ["Careful and precise planning of research studies", "Describing the behavior of many different individuals", "Observing, describing, predicting, and explaining behavior", "Conducting inquiries in a casual or haphazard manner"], 3, "Systematic method excludes casual or haphazard inquiry; it requires planned, precise procedures."),
+            H(1, "How does Ibn Sina's conceptualization of the human being differ in terminology and structure from Aristotle's view?", ["Ibn Sina divided the human into hidden mental powers (sirr) and the open physical body (alin), whereas Aristotle viewed mind and body as unified and inseparable.", "Ibn Sina argued that the mind resides exclusively in the brain, whereas Aristotle proposed a dualistic separation of soul and organs.", "Ibn Sina focused solely on unconscious conflicts, whereas Aristotle emphasized systematic behavioral observation.", "Ibn Sina rejected medical explanations for illness, whereas Aristotle attributed mental disorders to physical malfunctions."], 0, "Ibn Sina spoke of sirr, the hidden mental powers, and alin, the open physical body; Aristotle saw mind and body as one."),
+            H(1, "A psychologist conducts research at a university on teaching methodologies and learning strategies, while a colleague works in an elementary school testing students for educational placement. Which sub-field encompasses both of these professionals?", ["Developmental psychology", "Personality psychology", "School and Educational psychology", "Community psychology"], 2, "School and educational psychology covers teaching methods, learning strategies and educational placement testing."),
+            H(1, "Health psychology is described as a “multidimensional approach” situated at the meeting point of three specific domains. Which combination accurately represents these domains?", ["Physiology, Philosophy, and Behavior", "Body, Mind, and Society", "Id, Ego, and Superego", "Description, Prediction, and Control"], 1, "Health psychology is multidimensional and meets at the intersection of body, mind and society."),
+            H(1, "Which distinction accurately separates the scope of Personality Psychology from Social Psychology based on the unit's definitions?", ["Personality psychology examines crowd behavior and public opinion, whereas social psychology studies self-concept and gender roles.", "Personality psychology focuses on individual characteristics like moral development and aggression, whereas social psychology examines mutual influence between individuals and groups.", "Personality psychology treats severe psychological disorders, whereas social psychology focuses on human resource management.", "Personality psychology studies behavior across the lifespan, whereas social psychology studies transactions with the physical environment."], 1, "Personality psychology studies the individual's characteristics, while social psychology studies mutual influence between individuals and groups."),
+            H(1, "In the etymological breakdown of the word “psychology,” the Greek roots “psyche” and “logy” translate respectively to:", ["Behavior and measurement", "Brain and physiology", "Mind/soul and study", "Conscious and unconscious"], 2, "Psyche means mind or soul and logos means study, so psychology is the study of the mind or soul."),
+            H(1, "A nursing intervention aims to help psychiatric patients manage everyday stress, strain, and tension by fostering assertive skills and adjustment techniques. Which specialized domain does this describe?", ["Nursing psychology", "Industrial psychology", "Developmental psychology", "Environmental psychology"], 0, "Nursing psychology applies psychology to help patients cope with stress, strain and tension through assertiveness and adjustment techniques."),
+            H(1, "Which pair of disciplines is identified in Chapter 4 as the two foundational roots from which psychology emerged?", ["Sociology and Anthropology", "Physiology and Philosophy", "Medicine and Theology", "Biology and Education"], 1, "Psychology emerged as a science from the two roots of physiology and philosophy."),
+            H(1, "When comparing the overview list of sub-fields on page 6 with the detailed breakdown on pages 7–11, what structural discrepancy exists in the source material?", ["Clinical psychology is omitted from the detailed breakdown.", "Behavioural psychology appears in the initial 8-item list, while Personality and Social psychology are added in the detailed 9-item section.", "Health psychology is replaced by Nursing psychology in the detailed slides.", "Industrial psychology is merged with Environmental psychology in the final summary table."], 1, "The opening 8-item list includes behavioural psychology, while the detailed section expands to nine sub-fields, adding personality and social psychology."),
+            H(1, "Why is Clinical and Counselling Psychology highlighted as unique among the sub-fields in Chapter 3?", ["It is the only sub-field that utilizes empirical research methods.", "It is the most widely practiced specialization in psychology, focusing on diagnosing and treating psychological disorders.", "It deals exclusively with children's educational placement and school adjustment.", "It is increasingly referred to as personal psychology within corporate settings."], 1, "Clinical and counselling psychology is the most widely practised specialisation and is devoted to diagnosing and treating psychological disorders."),
+            H(1, "A researcher tracks how an individual's moral reasoning and aggressive tendencies evolve from early childhood through late adulthood. Which two sub-fields intersect most directly in this investigation?", ["Industrial psychology and Health psychology", "Developmental psychology and Personality psychology", "Social psychology and Environmental psychology", "Community psychology and Clinical psychology"], 1, "Change across the lifespan belongs to developmental psychology, while moral development and aggression belong to personality psychology."),
+            H(1, "According to the flowchart of psychology's central goals, what is the ultimate culmination of understanding causes, predicting behavior, and influencing behavior?", ["Controlling unconscious conflicts", "Diagnosing physical malfunctions", "Applying psychological knowledge to enhance human welfare", "Measuring private mental processes directly"], 2, "The chain of goals culminates in applying psychological knowledge to enhance human welfare."),
+            H(1, "In Industrial and Organizational Psychology, what alternative term is increasingly used to describe the branch focusing on personnel and human resource management?", ["Personal psychology", "Adjustment psychology", "Behavioural psychology", "Welfare psychology"], 0, "The personnel and human-resource branch is increasingly called personal psychology."),
+            H(1, "According to Sigmund Freud's theory, what serves as a primary driver motivating human behavior, and how is the Superego characterized within his model?", ["Conscious rational planning drives behavior; the Superego represents raw unconscious energy.", "Inner or unconscious conflicts motivate behavior; the Superego represents internalized ideals.", "Physical brain malfunctions drive behavior; the Superego mediates between the conscious and the body.", "Social public opinion motivates behavior; the Superego is entirely conscious and observable."], 1, "Freud regarded unconscious or inner conflict as the main motivator of behaviour, and the superego as the seat of internalized ideals.")
+        ].sort((a, b) => a.chapter - b.chapter).map((q, i) => ({ id: i + 1, ...q }));
+
         // ================= SUBJECT SETTINGS =================
         const banks = {
             mental: {
@@ -1131,6 +1160,22 @@
                     { id: 7, title: 'Coma', label: 'Module 7: Coma' },
                     { id: 8, title: 'Guillain-Barr\u00e9 Syndrome', label: 'Module 8: Guillain-Barr\u00e9 Syndrome' }
                 ]
+            },
+            psych: {
+                key: 'psych',
+                nameEn: 'Psychology',
+                nameAr: 'علم النفس',
+                icon: 'fa-puzzle-piece',
+                grad: 'from-teal-600 to-sky-600',
+                examTitle: 'إعداد الامتحان التجريبي — علم النفس',
+                placeholder: 'ابحث بالكلمات المفتاحية...',
+                ansKey: 'nq_psych_answers_v1',
+                bmKey: 'nq_psych_bm_v1',
+                translationFile: 'psychology.json',
+                data: psychologyQuestions,
+                modules: [
+                    { id: 1, title: 'Psychology Introduction', label: 'Psychology Introduction' }
+                ]
             }
         };
 
@@ -1144,7 +1189,7 @@
         }
 
         // Global State with LocalStorage Loading
-        let currentBankKey = localStorage.getItem('nq_subject') === 'critical' ? 'critical' : 'mental';
+        let currentBankKey = banks[localStorage.getItem('nq_subject')] ? localStorage.getItem('nq_subject') : 'mental';
         let currentBank = banks[currentBankKey];
         let questionsData = currentBank.data;
 
@@ -1384,13 +1429,11 @@
             document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
 
             document.getElementById('menuBtn').addEventListener('click', toggleDrawer);
+            document.getElementById('psychShortcut').addEventListener('click', () => switchSubject('psych'));
             document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
             document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
             document.querySelectorAll('.nq-card').forEach(card => {
                 card.addEventListener('click', () => switchSubject(card.getAttribute('data-subject')));
-            });
-            document.getElementById('psychCard').addEventListener('click', () => {
-                showToast('أسئلة علم النفس ستُضاف قريباً', 'info');
             });
             document.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
