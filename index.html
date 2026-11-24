@@ -147,15 +147,17 @@
         .sp-card { position:relative; overflow:hidden; width:100%; border:0; border-radius:22px; padding:18px 18px 54px; color:#fff; text-align:right; cursor:pointer; font-family:inherit; box-shadow:0 14px 34px rgba(0,0,0,.45); transition:transform .25s, box-shadow .25s; }
         .sp-card.mental { background:linear-gradient(135deg,#4338ca,#7c3aed); box-shadow:0 14px 34px rgba(99,70,230,.45); }
         .sp-card.critical { background:linear-gradient(135deg,#be123c,#ea580c); box-shadow:0 14px 34px rgba(225,29,72,.4); }
+        .sp-card.psych { background:linear-gradient(135deg,#0f766e,#0ea5e9); box-shadow:0 14px 34px rgba(14,165,233,.4); }
         .sp-card:hover { transform:translateY(-4px) scale(1.012); }
         .sp-card:active { transform:scale(.97); }
         .sp-card::after { content:""; position:absolute; top:0; bottom:0; width:60px; left:-90px; background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-20deg); animation:sp-glint 3.8s ease-in-out infinite; pointer-events:none; }
         .sp-card.critical::after { animation-delay:1.9s; }
+        .sp-card.psych::after { animation-delay:2.7s; }
         @keyframes sp-glint { 0% { left:-90px; } 45%,100% { left:130%; } }
         .sp-card-top { display:flex; align-items:center; justify-content:space-between; gap:10px; direction:rtl; }
         .sp-ico { width:50px; height:50px; border-radius:15px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
         .sp-go { margin-right:auto; margin-left:0; width:40px; height:40px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; transition:transform .25s; }
-        .mental .sp-go { color:#4338ca; } .critical .sp-go { color:#be123c; }
+        .mental .sp-go { color:#4338ca; } .critical .sp-go { color:#be123c; } .psych .sp-go { color:#0f766e; }
         .sp-card:hover .sp-go { transform:translateX(-6px); }
         .sp-card-txt { flex:1; min-width:0; text-align:right; }
         .sp-go-l { font-size:12px; font-weight:700; opacity:.85; }
@@ -166,6 +168,26 @@
         .sp-ig:hover { background:linear-gradient(45deg,#f09433,#dc2743,#bc1888); transform:translateY(-2px); }
         .sp-ig span { direction:ltr; }
         .sp-dev { font-size:11px; color:rgba(148,163,184,.9); font-family:'Inter',system-ui,sans-serif; }
+        /* Keep the three subject cards on one screen on phones and short laptops */
+        @media (max-height: 1000px) {
+            .sp-wrap { padding:22px 18px 18px; }
+            .sp-emblem { width:84px; height:84px; margin-bottom:10px; }
+            .sp-emblem-in { width:74px; height:74px; font-size:32px; }
+            .sp-emblem::after { inset:-10px; }
+            .sp-title { font-size:clamp(28px,8vw,36px); }
+            .sp-sub { margin-top:6px; font-size:17px; }
+            .sp-uni { margin-top:8px; font-size:11px; padding:5px 12px; }
+            .sp-desc { margin-top:12px; font-size:14px; line-height:1.75; }
+            .sp-cta { margin-top:16px; font-size:12px; }
+            .sp-cards { margin-top:10px; gap:10px; }
+            .sp-card { padding:14px 16px 40px; border-radius:18px; }
+            .sp-ico { width:44px; height:44px; font-size:21px; border-radius:13px; }
+            .sp-go { width:34px; height:34px; font-size:14px; }
+            .sp-card h3 { font-size:17px; }
+            .sp-card .en, .sp-go-l { font-size:11px; }
+            #continueBtn { height:44px; margin-top:16px; font-size:15px; }
+            .sp-foot { margin-top:16px; gap:8px; }
+        }
         @media (prefers-reduced-motion: reduce) { #splash *, #splash *::before, #splash *::after { animation:none !important; } .sp-in { opacity:1; transform:none; } }
 
         /* ================= Redesign utilities ================= */
@@ -2598,11 +2620,26 @@
                         <path class="pulse" pathLength="100" d="M0 22 H48 L56 22 L62 8 L70 36 L78 16 L84 22 H124 L132 22 L138 8 L146 36 L154 16 L160 22 H200"/>
                     </svg>
                 </button>
+                <button class="sp-card psych sp-in" data-go="psych" style="animation-delay:0.78s" aria-label="Psychology">
+                    <div class="sp-card-top">
+                        <span class="sp-ico"><i class="fa-solid fa-puzzle-piece"></i></span>
+                        <div class="sp-card-txt">
+                            <div class="sp-go-l">الانتقال إلى</div>
+                            <h3>أسئلة علم النفس</h3>
+                            <p class="en">Psychology · <span class="sp-count" data-bank="psych"></span></p>
+                        </div>
+                        <span class="sp-go"><i class="fa-solid fa-arrow-left"></i></span>
+                    </div>
+                    <svg class="nq-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true" style="--dur:3.6s">
+                        <path class="base" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                        <path class="pulse" pathLength="100" d="M0 20 C 25 2, 50 2, 75 20 S 125 38, 150 20 S 190 2, 200 20"/>
+                    </svg>
+                </button>
             </div>
-            <button id="continueBtn" type="button" class="sp-in mt-6 w-full h-12 rounded-2xl bg-white/10 border border-white/25 text-white font-ar font-bold text-base hover:bg-white/20 transition flex items-center justify-center gap-2" style="animation-delay:.74s">
+            <button id="continueBtn" type="button" class="sp-in mt-6 w-full h-12 rounded-2xl bg-white/10 border border-white/25 text-white font-ar font-bold text-base hover:bg-white/20 transition flex items-center justify-center gap-2" style="animation-delay:.88s">
                 <i class="fa-solid fa-arrow-left"></i> متابعة من حيث توقفت
             </button>
-            <div class="sp-foot sp-in" style="animation-delay:.8s">
+            <div class="sp-foot sp-in" style="animation-delay:.96s">
                 <a class="sp-ig" href="https://www.instagram.com/m_d_l7" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i> <span>@m_d_l7</span></a>
                 <div class="sp-dev">تطوير: سالم محمد</div>
             </div>
